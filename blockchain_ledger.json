@@ -68,5 +68,85 @@
     "hash": "0030ff1dac47d35585368e9219ab3c407ee34473847df70d197839e6a8ec045e",
     "nonce": 421,
     "network": "Ethereum / Solana Testnet Verified Ledger (Local Proof Anchor)"
+  },
+  {
+    "index": 4,
+    "timestamp": "2026-09-02T18:31:52Z",
+    "transaction_hash": "0x9a7975699ff5e829c25783df03a9f2ca89d16484440b993e5f77d41e6a8ab7ef",
+    "data": {
+      "record_type": "FACE_SOCIAL_IDENTIFICATION_PROOF",
+      "face_image_hash": "6d5f6952b5f6afcda851ada220a51a7348de34ba92f9754baeaef154a32beae7",
+      "face_count": 1,
+      "social_post_url": "https://www.speedtest.net/",
+      "social_post_platform": "Web / Search",
+      "social_post_author": "web",
+      "content_fingerprint": "4ceebf570422d20f20f405ceba1c3f175c2bc33f8ed51b605b6f4ea289f005f4",
+      "match_confidence": 0.94,
+      "timestamp": "2026-09-02T18:31:52Z"
+    },
+    "previous_hash": "0030ff1dac47d35585368e9219ab3c407ee34473847df70d197839e6a8ec045e",
+    "hash": "0037ad57c5b4643b37061bd9297cd4c4ea03a4b98a0bdd78acd1137f38e306c3",
+    "nonce": 320,
+    "network": "Ethereum / Solana Testnet Verified Ledger (Local Proof Anchor)"
+  },
+  {
+    "index": 5,
+    "timestamp": "2026-09-02T18:32:34Z",
+    "transaction_hash": "0xb261f1b3e9c3077fb6ab83ee7be9fdbee4bbe18b37598a3886c0d335da99c5ca",
+    "data": {
+      "record_type": "FACE_SOCIAL_IDENTIFICATION_PROOF",
+      "face_image_hash": "6d5f6952b5f6afcda851ada220a51a7348de34ba92f9754baeaef154a32beae7",
+      "face_count": 1,
+      "social_post_url": "https://facequery.org/",
+      "social_post_platform": "Web / Search",
+      "social_post_author": "web",
+      "content_fingerprint": "8592e67c022d0830c1d95ea0900178c168635f52eb1cee5dd899d83933988673",
+      "match_confidence": 0.94,
+      "timestamp": "2026-09-02T18:32:34Z"
+    },
+    "previous_hash": "0037ad57c5b4643b37061bd9297cd4c4ea03a4b98a0bdd78acd1137f38e306c3",
+    "hash": "007a011566a1ffd32cc282daf805864375aa515e44505bc35ab32efe94286046",
+    "nonce": 258,
+    "network": "Ethereum / Solana Testnet Verified Ledger (Local Proof Anchor)"
+  },
+  {
+    "index": 6,
+    "timestamp": "2026-09-02T18:33:01Z",
+    "transaction_hash": "0x406f6a100d1dd0c3134d058b8a59f91dc4a527ab635bd4bbad24464be9aa0901",
+    "data": {
+      "record_type": "FACE_SOCIAL_IDENTIFICATION_PROOF",
+      "face_image_hash": "6d5f6952b5f6afcda851ada220a51a7348de34ba92f9754baeaef154a32beae7",
+      "face_count": 1,
+      "social_post_url": "https://www.tandfonline.com/doi/full/10.1080/00051144.2025.2459987",
+      "social_post_platform": "Web / Search",
+      "social_post_author": "web",
+      "content_fingerprint": "c97087fe419f49d15d94b3b104ddda24a3751944b3a20816198c0c65ab267112",
+      "match_confidence": 0.94,
+      "timestamp": "2026-09-02T18:33:01Z"
+    },
+    "previous_hash": "007a011566a1ffd32cc282daf805864375aa515e44505bc35ab32efe94286046",
+    "hash": "0055837149b56055459e80f8cd36b28ba918705ebee627e9478a4048fcebe1a4",
+    "nonce": 697,
+    "network": "Ethereum / Solana Testnet Verified Ledger (Local Proof Anchor)"
+  },
+  {
+    "index": 7,
+    "timestamp": "2026-09-02T18:33:21Z",
+    "transaction_hash": "0x1404972114af9307f4100c0a0f09413a01b50fcaafa6636126cf9ef0292ccb40",
+    "data": {
+      "record_type": "FACE_SOCIAL_IDENTIFICATION_PROOF",
+      "face_image_hash": "cac938f55165562383844e714b6fbce3d57e3de15d475c75868c83abe1b7a0a2",
+      "face_count": 1,
+      "social_post_url": "https://theaiinnovator.com/",
+      "social_post_platform": "Web / Search",
+      "social_post_author": "web",
+      "content_fingerprint": "41320e2ece38fc4437629527ae046dd8967c2bec5dca6278fd8ffbb5e24e893f",
+      "match_confidence": 0.94,
+      "timestamp": "2026-09-02T18:33:21Z"
+    },
+    "previous_hash": "0055837149b56055459e80f8cd36b28ba918705ebee627e9478a4048fcebe1a4",
+    "hash": "00cf761ee82546fe1f66c68b3dc7ce9a1ebd70b353db63bac432ec121006e47f",
+    "nonce": 11,
+    "network": "Ethereum / Solana Testnet Verified Ledger (Local Proof Anchor)"
   }
 ]

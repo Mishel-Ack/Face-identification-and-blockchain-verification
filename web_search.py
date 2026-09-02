@@ -54,7 +54,10 @@ class WebSearchEngine:
         """
         results = []
         try:
-            from duckduckgo_search import DDGS
+            try:
+                from ddgs import DDGS
+            except ImportError:
+                from duckduckgo_search import DDGS
             with DDGS() as ddgs:
                 ddg_results = list(ddgs.text(query, max_results=5))
                 for item in ddg_results:
