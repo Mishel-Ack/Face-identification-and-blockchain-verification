@@ -1,0 +1,72 @@
+[
+  {
+    "index": 0,
+    "timestamp": "2026-01-01T00:00:00Z",
+    "data": {
+      "message": "Genesis Block - Face ID & Social Data Ledger"
+    },
+    "previous_hash": "0000000000000000000000000000000000000000000000000000000000000000",
+    "hash": "735aa728e7d020d5cf19a6278b911a0b19e0d96543c9a89a50043674c423d577",
+    "nonce": 0
+  },
+  {
+    "index": 1,
+    "timestamp": "2026-09-02T18:20:53Z",
+    "transaction_hash": "0x8a6f2db2c90a76c543711cb80d9e10015c26b26fa423bb8ee553e95f18c7e907",
+    "data": {
+      "record_type": "FACE_SOCIAL_IDENTIFICATION_PROOF",
+      "face_image_hash": "6d5f6952b5f6afcda851ada220a51a7348de34ba92f9754baeaef154a32beae7",
+      "face_count": 1,
+      "social_post_url": "https://x.com/tech_innovator/status/1784920491",
+      "social_post_platform": "Twitter / X",
+      "social_post_author": "@tech_innovator",
+      "content_fingerprint": "24cfb1575e785db6350980dab67cbe275cdb6d7281178028374dcb56716fe446",
+      "match_confidence": 0.94,
+      "timestamp": "2026-09-02T18:20:53Z"
+    },
+    "previous_hash": "735aa728e7d020d5cf19a6278b911a0b19e0d96543c9a89a50043674c423d577",
+    "hash": "00ab06e1f0b2229207c8e51cafe09e3e57a9b0f69ba38a3f6418a617a2bb6b03",
+    "nonce": 23,
+    "network": "Ethereum / Solana Testnet Verified Ledger (Local Proof Anchor)"
+  },
+  {
+    "index": 2,
+    "timestamp": "2026-09-02T18:21:08Z",
+    "transaction_hash": "0x3c697b263cbf57c9906fa563ae73c9900f6b3f41a42e473abb296db20bbf3bb7",
+    "data": {
+      "record_type": "FACE_SOCIAL_IDENTIFICATION_PROOF",
+      "face_image_hash": "6d5f6952b5f6afcda851ada220a51a7348de34ba92f9754baeaef154a32beae7",
+      "face_count": 1,
+      "social_post_url": "https://x.com/tech_innovator/status/1784920491",
+      "social_post_platform": "Twitter / X",
+      "social_post_author": "@tech_innovator",
+      "content_fingerprint": "24cfb1575e785db6350980dab67cbe275cdb6d7281178028374dcb56716fe446",
+      "match_confidence": 0.94,
+      "timestamp": "2026-09-02T18:21:08Z"
+    },
+    "previous_hash": "00ab06e1f0b2229207c8e51cafe09e3e57a9b0f69ba38a3f6418a617a2bb6b03",
+    "hash": "007682edd80659672dff749715caa758703aaa91eb315caf54a8552923ca9e47",
+    "nonce": 138,
+    "network": "Ethereum / Solana Testnet Verified Ledger (Local Proof Anchor)"
+  },
+  {
+    "index": 3,
+    "timestamp": "2026-09-02T18:21:19Z",
+    "transaction_hash": "0xe063599165de611bc8639a0042374a20884a38cb7681a114bd7ff7b5aaf971f2",
+    "data": {
+      "record_type": "FACE_SOCIAL_IDENTIFICATION_PROOF",
+      "face_image_hash": "cac938f55165562383844e714b6fbce3d57e3de15d475c75868c83abe1b7a0a2",
+      "face_count": 1,
+      "social_post_url": "https://x.com/tech_innovator/status/1784920491",
+      "social_post_platform": "Twitter / X",
+      "social_post_author": "@tech_innovator",
+      "content_fingerprint": "6bc7f8e62731eccd288b735366ce7e1737a09db43711bf3d32018bca6d9960c5",
+      "match_confidence": 0.94,
+      "timestamp": "2026-09-02T18:21:19Z"
+    },
+    "previous_hash": "007682edd80659672dff749715caa758703aaa91eb315caf54a8552923ca9e47",
+    "hash": "0030ff1dac47d35585368e9219ab3c407ee34473847df70d197839e6a8ec045e",
+    "nonce": 421,
+    "network": "Ethereum / Solana Testnet Verified Ledger (Local Proof Anchor)"
+  }
+]
