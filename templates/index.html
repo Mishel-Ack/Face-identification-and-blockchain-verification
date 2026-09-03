@@ -3,175 +3,366 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Face Identification & Blockchain Verification System</title>
+    <title>Face Identification & Blockchain Verification</title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
     <style>
         :root {
-            --bg-color: #f8fafc;
-            --card-bg: #ffffff;
-            --border-color: #cbd5e1;
-            --accent-cyan: #0284c7;
-            --accent-blue: #2563eb;
-            --accent-green: #15803d;
-            --text-main: #0f172a;
-            --text-muted: #64748b;
+            --bg-gradient-top: #F3F0FA;
+            --bg-gradient-bottom: #E2DBF2;
+            --primary-navy: #1E1B3A;
+            --accent-violet: #6B5FA8;
+            --accent-violet-hover: #594d94;
+            --text-primary: #1E1B3A;
+            --text-secondary: #64748B;
+            --text-light: #FFFFFF;
+            --card-light-bg: rgba(255, 255, 255, 0.7);
+            --card-dark-bg: #1E1B3A;
+            --border-soft: rgba(107, 95, 168, 0.15);
         }
 
         body {
-            background-color: var(--bg-color);
-            background-image: 
-                radial-gradient(at 0% 0%, rgba(37, 99, 235, 0.05) 0px, transparent 50%),
-                radial-gradient(at 100% 100%, rgba(2, 132, 199, 0.05) 0px, transparent 50%);
-            color: var(--text-main);
-            font-family: 'Segoe UI', system-ui, -apple-system, sans-serif;
+            background: linear-gradient(180deg, var(--bg-gradient-top) 0%, var(--bg-gradient-bottom) 100%);
+            color: var(--text-primary);
+            font-family: 'Inter', system-ui, -apple-system, sans-serif;
             min-height: 100vh;
-            padding-bottom: 50px;
+            margin: 0;
+            padding: 0;
+            overflow-x: hidden;
         }
 
-        .navbar {
-            background: #ffffff;
-            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
-            border-bottom: 1px solid var(--border-color);
-        }
-
-        .brand-text {
-            background: linear-gradient(135deg, var(--accent-blue), var(--accent-cyan));
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
-            font-weight: 800;
-            letter-spacing: 0.5px;
-        }
-
-        .glass-card {
-            background: var(--card-bg);
-            border: 1px solid var(--border-color);
-            border-radius: 16px;
-            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.05);
-            transition: transform 0.2s ease, box-shadow 0.2s ease;
-        }
-
-        .glass-card:hover {
-            border-color: var(--accent-blue);
-            box-shadow: 0 8px 30px rgba(37, 99, 235, 0.1);
-        }
-
-        .card-header-title {
-            color: var(--accent-blue);
-            font-size: 1.15rem;
+        /* Micro-Labels & Typography */
+        .micro-label {
+            font-size: 0.75rem;
             font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 0.15em;
+            color: var(--accent-violet);
+            display: inline-block;
+            margin-bottom: 0.75rem;
+        }
+
+        h1, h2, h3, h4 {
+            color: var(--primary-navy);
+            letter-spacing: -0.02em;
+            font-weight: 600;
+        }
+
+        .headline-lg {
+            font-size: 3rem;
+            line-height: 1.15;
+            font-weight: 500;
+        }
+
+        .lead-text {
+            font-size: 1.125rem;
+            color: var(--text-secondary);
+            font-weight: 400;
+            max-width: 600px;
+            margin: 0 auto;
+        }
+
+        /* Buttons */
+        .btn-pill {
+            background: var(--accent-violet);
+            color: var(--text-light) !important;
+            font-weight: 600;
+            border-radius: 50px;
+            padding: 14px 36px;
+            border: none;
+            box-shadow: 0 10px 25px rgba(107, 95, 168, 0.25);
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            display: inline-flex;
+            align-items: center;
+            gap: 10px;
+            font-size: 1rem;
+        }
+
+        .btn-pill:hover {
+            background: var(--accent-violet-hover);
+            transform: translateY(-2px);
+            box-shadow: 0 14px 30px rgba(107, 95, 168, 0.35);
+        }
+
+        .btn-pill-outline {
+            background: transparent;
+            color: var(--accent-violet) !important;
+            font-weight: 600;
+            border-radius: 50px;
+            padding: 12px 28px;
+            border: 2px solid var(--accent-violet);
+            transition: all 0.3s ease;
+        }
+
+        .btn-pill-outline:hover {
+            background: rgba(107, 95, 168, 0.08);
+            transform: translateY(-2px);
+        }
+
+        /* Navbar */
+        .navbar {
+            padding: 24px 0;
+            background: transparent;
+        }
+
+        .brand-logo {
+            font-weight: 700;
+            font-size: 1.25rem;
+            color: var(--primary-navy);
             display: flex;
             align-items: center;
             gap: 10px;
+            text-decoration: none;
         }
 
-        .btn-cyber {
-            background: linear-gradient(135deg, var(--accent-blue), var(--accent-cyan));
-            color: #ffffff;
-            font-weight: 700;
-            border: none;
-            padding: 10px 24px;
-            border-radius: 8px;
-            transition: all 0.2s ease;
-            box-shadow: 0 4px 15px rgba(37, 99, 235, 0.25);
+        .brand-logo i {
+            color: var(--accent-violet);
+            font-size: 1.4rem;
         }
 
-        .btn-cyber:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 6px 20px rgba(37, 99, 235, 0.35);
-            color: #ffffff;
+        /* Hero Section */
+        .hero-section {
+            padding: 80px 0 100px;
+            text-align: center;
+            position: relative;
         }
 
-        .badge-verified {
-            background: rgba(21, 128, 61, 0.1);
-            color: var(--accent-green);
-            border: 1px solid rgba(21, 128, 61, 0.3);
-            font-weight: 600;
-            padding: 6px 12px;
+        /* 3D Glass Orbs Decoration */
+        .glass-orb {
+            position: absolute;
+            border-radius: 50%;
+            background: linear-gradient(135deg, rgba(255, 255, 255, 0.6), rgba(107, 95, 168, 0.15));
+            backdrop-filter: blur(20px);
+            border: 1px solid rgba(255, 255, 255, 0.8);
+            box-shadow: 0 20px 40px rgba(107, 95, 168, 0.15);
+            pointer-events: none;
+            z-index: 0;
+        }
+
+        .orb-1 {
+            width: 140px;
+            height: 140px;
+            top: 20px;
+            left: 8%;
+            animation: float 6s ease-in-out infinite;
+        }
+
+        .orb-2 {
+            width: 180px;
+            height: 180px;
+            bottom: 40px;
+            right: 6%;
+            animation: float 8s ease-in-out infinite reverse;
+        }
+
+        @keyframes float {
+            0%, 100% { transform: translateY(0px) rotate(0deg); }
+            50% { transform: translateY(-15px) rotate(5deg); }
+        }
+
+        /* Light & Dark Cards */
+        .custom-card-light {
+            background: rgba(255, 255, 255, 0.85);
+            backdrop-filter: blur(12px);
+            border: 1px solid var(--border-soft);
+            border-radius: 24px;
+            padding: 36px;
+            box-shadow: 0 10px 30px rgba(30, 27, 58, 0.04);
+            transition: all 0.3s ease;
+        }
+
+        .custom-card-light:hover {
+            box-shadow: 0 16px 40px rgba(107, 95, 168, 0.1);
+        }
+
+        .dark-section {
+            background: var(--card-dark-bg);
+            border-radius: 32px;
+            padding: 80px 40px;
+            margin: 60px 0;
+            color: var(--text-light);
+        }
+
+        .dark-card {
+            background: rgba(255, 255, 255, 0.05);
+            border: 1px solid rgba(255, 255, 255, 0.1);
             border-radius: 20px;
+            padding: 36px 30px;
+            transition: all 0.3s ease;
+            height: 100%;
         }
 
-        .code-box {
-            background: #f1f5f9;
-            border: 1px solid #cbd5e1;
-            border-radius: 8px;
-            padding: 14px;
-            font-family: 'Fira Code', 'Consolas', monospace;
-            font-size: 0.88rem;
-            color: #0f172a;
-            word-break: break-all;
+        .dark-card:hover {
+            background: rgba(255, 255, 255, 0.08);
+            transform: translateY(-4px);
+            border-color: rgba(107, 95, 168, 0.5);
         }
 
-        .step-pill {
-            display: inline-flex;
+        .dark-card h4 {
+            color: var(--text-light);
+            font-size: 1.25rem;
+            margin-bottom: 12px;
+        }
+
+        .dark-card p {
+            color: rgba(255, 255, 255, 0.7);
+            font-size: 0.95rem;
+            line-height: 1.6;
+            margin: 0;
+        }
+
+        .icon-badge {
+            width: 48px;
+            height: 48px;
+            border-radius: 14px;
+            background: rgba(107, 95, 168, 0.2);
+            color: #A397E2;
+            display: flex;
             align-items: center;
             justify-content: center;
-            width: 32px;
-            height: 32px;
-            border-radius: 50%;
-            background: rgba(37, 99, 235, 0.1);
-            color: var(--accent-blue);
-            font-weight: bold;
+            font-size: 1.25rem;
+            margin-bottom: 20px;
         }
 
+        /* Drop Zone */
         .drop-zone {
-            border: 2px dashed rgba(37, 99, 235, 0.3);
-            border-radius: 12px;
-            padding: 30px;
+            border: 2px dashed rgba(107, 95, 168, 0.3);
+            border-radius: 16px;
+            padding: 32px;
             text-align: center;
             cursor: pointer;
-            transition: border-color 0.2s ease;
-            background: #f8fafc;
+            transition: all 0.2s ease;
+            background: rgba(243, 240, 250, 0.5);
         }
 
         .drop-zone:hover {
-            border-color: var(--accent-blue);
-            background: #f1f5f9;
+            border-color: var(--accent-violet);
+            background: rgba(243, 240, 250, 0.9);
         }
 
         .preview-img {
-            max-height: 220px;
-            border-radius: 12px;
-            border: 2px solid var(--accent-blue);
-            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+            max-height: 200px;
+            border-radius: 16px;
+            border: 3px solid var(--accent-violet);
+            box-shadow: 0 8px 20px rgba(30, 27, 58, 0.15);
+        }
+
+        .code-box {
+            background: #141226;
+            border-radius: 14px;
+            padding: 16px 20px;
+            font-family: 'Fira Code', 'Consolas', monospace;
+            font-size: 0.88rem;
+            color: #D4CEF0;
+            word-break: break-all;
+        }
+
+        /* Trust Bar */
+        .trust-bar {
+            padding: 40px 0 60px;
+            border-top: 1px solid rgba(107, 95, 168, 0.1);
+        }
+
+        .trust-logo {
+            filter: grayscale(100%);
+            opacity: 0.5;
+            font-weight: 700;
+            font-size: 1.1rem;
+            letter-spacing: 0.05em;
+            color: var(--primary-navy);
+            transition: all 0.2s ease;
+        }
+
+        .trust-logo:hover {
+            opacity: 0.9;
+            filter: grayscale(0%);
         }
     </style>
 </head>
 <body>
 
-    <!-- Header Navbar -->
-    <nav class="navbar navbar-light mb-4">
+    <!-- 3D Glass Orbs Decoration -->
+    <div class="glass-orb orb-1"></div>
+    <div class="glass-orb orb-2"></div>
+
+    <!-- Navigation Bar -->
+    <nav class="navbar navbar-expand-lg">
         <div class="container">
-            <a class="navbar-brand d-flex align-items-center gap-2" href="#">
-                <i class="fa-solid me-2 fa-shield-halved fs-4" style="color: var(--accent-blue);"></i>
-                <span class="brand-text fs-4">FaceID Blockchain Verifier</span>
+            <a class="brand-logo" href="#">
+                <i class="fa-solid fa-shield-cat"></i>
+                <span>VeriFace Proof</span>
             </a>
             <div class="d-flex align-items-center gap-3">
-                <span class="badge badge-verified">
-                    <i class="fa-solid fa-link me-1"></i> Blockchain Ledger Active
+                <span class="badge rounded-pill bg-white text-dark shadow-sm px-3 py-2 border">
+                    <i class="fa-solid fa-circle text-success me-1 fs-6" style="font-size: 8px !important;"></i> Blockchain Ledger Connected
                 </span>
             </div>
         </div>
     </nav>
 
-    <div class="container">
+    <!-- Centered Hero Section -->
+    <section class="hero-section">
+        <div class="container position-relative" style="z-index: 1;">
+            <span class="micro-label">Face Identification & Blockchain Verification</span>
+            <h1 class="headline-lg mb-3">Verifiable Identity Anchored on the Blockchain</h1>
+            <p class="lead-text mb-4">A complete pipeline for face feature encoding, dynamic social web discovery, and immutable cryptographic proof anchoring.</p>
+            <a href="#pipeline-app" class="btn-pill">
+                <i class="fa-solid fa-sparkles"></i> Launch Verification Pipeline
+            </a>
+        </div>
+    </section>
+
+    <!-- Two-Column "What is VeriFace" Feature Section -->
+    <section class="container mb-5">
+        <div class="custom-card-light">
+            <div class="row align-items-center g-5">
+                <div class="col-lg-6">
+                    <span class="micro-label">Decentralized Trust Engine</span>
+                    <h2 class="mb-3">Cryptographic Proof for Social Identity</h2>
+                    <p class="text-secondary leading-relaxed mb-4">
+                        Our end-to-end pipeline processes input face scans, computes perceptual descriptor vectors, dynamically audits social web sources, and commits tamper-evident transaction proofs to an immutable blockchain ledger.
+                    </p>
+                    <div class="d-flex gap-4">
+                        <div>
+                            <h4 class="mb-1 text-primary">100%</h4>
+                            <small class="text-muted">Tamper-Evident Proofs</small>
+                        </div>
+                        <div class="border-start ps-4">
+                            <h4 class="mb-1 text-primary">SHA-256</h4>
+                            <small class="text-muted">Content Fingerprinting</small>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-lg-6 text-center">
+                    <div class="p-4 rounded-4" style="background: linear-gradient(135deg, #F3F0FA, #E2DBF2); border: 1px solid var(--border-soft);">
+                        <i class="fa-solid fa-network-wired text-violet fs-1 mb-3" style="color: var(--accent-violet);"></i>
+                        <h5 class="fw-semibold">Real-Time Proof Chaining</h5>
+                        <p class="small text-secondary mb-0">Perceptual Face Hash &bull; Web Metadata &bull; PoW Ledger Anchor</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Interactive Pipeline App Workspace -->
+    <section id="pipeline-app" class="container mb-5">
         <div class="row g-4">
             
-            <!-- Left Column: Input Form -->
+            <!-- Left Column: Upload & Query Controls -->
             <div class="col-lg-5">
-                <div class="glass-card p-4">
-                    <div class="card-header-title mb-3">
-                        <span class="step-pill">1</span>
-                        <span>Face Scan & Search Query</span>
-                    </div>
+                <div class="custom-card-light">
+                    <span class="micro-label">Input Control</span>
+                    <h3 class="h4 mb-3">1. Upload Face Scan</h3>
 
                     <form id="pipelineForm" enctype="multipart/form-data">
                         <div class="mb-3">
-                            <label class="form-label text-muted fw-semibold">Input Image (Face Scan)</label>
                             <div class="drop-zone" id="dropZone" onclick="document.getElementById('imageInput').click()">
-                                <i class="fa-solid fa-cloud-arrow-up fs-2 mb-2" style="color: var(--accent-blue);"></i>
-                                <p class="mb-1 text-dark fw-semibold">Click or drag image here</p>
-                                <small class="text-muted">Supports JPG, PNG (Default sample provided)</small>
+                                <i class="fa-solid fa-cloud-arrow-up fs-2 mb-2" style="color: var(--accent-violet);"></i>
+                                <p class="mb-1 fw-semibold text-dark">Click or drag face scan image</p>
+                                <small class="text-muted">JPG, PNG format (Default sample provided)</small>
                             </div>
                             <input type="file" id="imageInput" name="image" class="d-none" accept="image/*" onchange="previewSelectedImage(this)">
                         </div>
@@ -182,31 +373,26 @@
                         </div>
 
                         <div class="mb-4">
-                            <label for="keywords" class="form-label text-muted fw-semibold">Web Search Keywords</label>
-                            <div class="input-group">
-                                <span class="input-group-text bg-white border-secondary-subtle text-primary"><i class="fa-solid fa-magnifying-glass"></i></span>
-                                <input type="text" class="form-control bg-white text-dark border-secondary-subtle" id="keywords" name="keywords" value="AI tech innovator keynote" placeholder="Enter keywords...">
-                            </div>
+                            <label for="keywords" class="form-label text-muted small fw-semibold">Web Search Keywords</label>
+                            <input type="text" class="form-control form-control-lg bg-white border-1 text-dark fs-6" id="keywords" name="keywords" value="AI tech innovator keynote" style="border-radius: 12px; border-color: var(--border-soft);">
                         </div>
 
-                        <button type="submit" class="btn btn-cyber w-100 py-3" id="runBtn">
-                            <i class="fa-solid fa-bolt me-2"></i> Run Pipeline End-to-End
+                        <button type="submit" class="btn-pill w-100 justify-content-center" id="runBtn">
+                            <i class="fa-solid fa-bolt"></i> Run Pipeline End-to-End
                         </button>
                     </form>
                 </div>
 
-                <!-- Re-Verification Tool Card -->
-                <div class="glass-card p-4 mt-4">
-                    <div class="card-header-title mb-3">
-                        <i class="fa-solid fa-magnifying-glass-chart" style="color: var(--accent-blue);"></i>
-                        <span>On-Chain Record Auditor</span>
-                    </div>
+                <!-- On-Chain Auditor Card -->
+                <div class="custom-card-light mt-4">
+                    <span class="micro-label">On-Chain Auditor</span>
+                    <h3 class="h4 mb-3">2. Verify Transaction Record</h3>
                     <form id="verifyForm">
                         <div class="mb-3">
-                            <label for="txHashInput" class="form-label text-muted fw-semibold">Transaction Hash (TxHash)</label>
-                            <input type="text" class="form-control bg-white text-dark border-secondary-subtle font-monospace" id="txHashInput" placeholder="0x..." required>
+                            <label for="txHashInput" class="form-label text-muted small fw-semibold">Transaction Hash (TxHash)</label>
+                            <input type="text" class="form-control bg-white text-dark font-monospace fs-6" id="txHashInput" placeholder="0x..." required style="border-radius: 12px; border-color: var(--border-soft);">
                         </div>
-                        <button type="submit" class="btn btn-outline-primary w-100 fw-bold">
+                        <button type="submit" class="btn-pill-outline w-100">
                             <i class="fa-solid fa-check-double me-2"></i> Audit On-Chain Record
                         </button>
                     </form>
@@ -214,28 +400,84 @@
                 </div>
             </div>
 
-            <!-- Right Column: Live Output Results -->
+            <!-- Right Column: Interactive Results Screen -->
             <div class="col-lg-7">
-                <div class="glass-card p-4 h-100">
+                <div class="custom-card-light h-100">
                     <div class="d-flex justify-content-between align-items-center mb-4">
-                        <div class="card-header-title">
-                            <i class="fa-solid fa-diagram-project" style="color: var(--accent-blue);"></i>
-                            <span>Pipeline Execution Results</span>
+                        <div>
+                            <span class="micro-label">Live Output</span>
+                            <h3 class="h4 mb-0">Pipeline Execution Results</h3>
                         </div>
-                        <div id="statusSpinner" class="spinner-border spinner-border-sm text-primary d-none" role="status"></div>
+                        <div id="statusSpinner" class="spinner-border spinner-border-sm text-purple d-none" role="status" style="color: var(--accent-violet);"></div>
                     </div>
 
                     <div id="resultsContainer">
                         <div class="text-center py-5 text-muted">
-                            <i class="fa-solid fa-microchip fs-1 mb-3 opacity-50" style="color: var(--accent-blue);"></i>
-                            <p>Upload a face scan image or click "Run Pipeline End-to-End" to process features, discover social media records, and anchor to blockchain.</p>
+                            <i class="fa-solid fa-shield-halved fs-1 mb-3 opacity-40" style="color: var(--accent-violet);"></i>
+                            <p class="mb-0">Upload a face scan image or click "Run Pipeline End-to-End" to process features, discover social media records, and anchor on the blockchain.</p>
                         </div>
                     </div>
                 </div>
             </div>
 
         </div>
-    </div>
+    </section>
+
+    <!-- 3-Column Card Grid on Dark Indigo Background -->
+    <section class="container">
+        <div class="dark-section">
+            <div class="text-center max-w-2xl mx-auto mb-5">
+                <span class="micro-label" style="color: #A397E2;">Core Architecture</span>
+                <h2 class="text-white h1 mb-3">Three-Stage Verification Pipeline</h2>
+                <p style="color: rgba(255,255,255,0.7);">Our decentralized proof engine guarantees privacy-preserving feature extraction and verifiable web auditability.</p>
+            </div>
+
+            <div class="row g-4">
+                <div class="col-lg-4">
+                    <div class="dark-card">
+                        <div class="icon-badge">
+                            <i class="fa-solid fa-user-astronaut"></i>
+                        </div>
+                        <h4>Face Identification & Encoding</h4>
+                        <p>Detects faces using Haar Cascades, extracts ORB feature descriptors, and computes a SHA-256 perceptual visual fingerprint.</p>
+                    </div>
+                </div>
+                <div class="col-lg-4">
+                    <div class="dark-card">
+                        <div class="icon-badge">
+                            <i class="fa-solid fa-globe"></i>
+                        </div>
+                        <h4>Dynamic Web & Social Discovery</h4>
+                        <p>Queries live web indices to discover matching social profile metadata and generates a combined content fingerprint.</p>
+                    </div>
+                </div>
+                <div class="col-lg-4">
+                    <div class="dark-card">
+                        <div class="icon-badge">
+                            <i class="fa-solid fa-link"></i>
+                        </div>
+                        <h4>Immutable Blockchain Anchor</h4>
+                        <p>Mines a Proof-of-Work block hash to anchor identity records permanently onto a tamper-evident cryptographic ledger.</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Bottom Trust Bar -->
+    <footer class="trust-bar">
+        <div class="container">
+            <div class="text-center mb-3">
+                <span class="micro-label opacity-75">Verified Against Public & Decentralized Standards</span>
+            </div>
+            <div class="d-flex justify-content-around align-items-center flex-wrap gap-4">
+                <span class="trust-logo"><i class="fa-brands fa-ethereum me-2"></i>ETHEREUM</span>
+                <span class="trust-logo"><i class="fa-solid fa-cube me-2"></i>POLYGON</span>
+                <span class="trust-logo"><i class="fa-solid fa-shield-virus me-2"></i>IPFS PROOF</span>
+                <span class="trust-logo"><i class="fa-solid fa-fingerprint me-2"></i>SHA-256 LEDGER</span>
+            </div>
+        </div>
+    </footer>
 
     <script>
         function previewSelectedImage(input) {
@@ -260,8 +502,8 @@
             spinner.classList.remove('d-none');
             results.innerHTML = `
                 <div class="text-center py-5">
-                    <div class="spinner-border text-primary mb-3" style="width: 3rem; height: 3rem;" role="status"></div>
-                    <h5 class="text-primary fw-bold">Executing Pipeline...</h5>
+                    <div class="spinner-border mb-3" style="width: 3rem; height: 3rem; color: var(--accent-violet);" role="status"></div>
+                    <h5 class="fw-bold" style="color: var(--primary-navy);">Executing Pipeline...</h5>
                     <p class="text-muted">Detecting faces, running dynamic web search, and mining PoW block record...</p>
                 </div>
             `;
@@ -297,8 +539,9 @@
             document.getElementById('resultsContainer').innerHTML = `
                 <!-- Step 1 Output -->
                 <div class="mb-4">
-                    <h6 class="text-primary fw-bold"><span class="step-pill me-2">1</span> Face Identification & Encoding</h6>
-                    <div class="code-box mt-2">
+                    <span class="micro-label">Stage 1</span>
+                    <h5 class="fw-bold mb-2">Face Identification & Encoding</h5>
+                    <div class="code-box">
                         <div><strong>Image Hash (SHA-256):</strong> ${face.image_hash}</div>
                         <div><strong>Detected Faces:</strong> ${face.face_count} face(s)</div>
                         ${face.faces.map((f, i) => `
@@ -312,24 +555,26 @@
 
                 <!-- Step 2 Output -->
                 <div class="mb-4">
-                    <h6 class="text-primary fw-bold"><span class="step-pill me-2">2</span> Web & Social Media Discovery</h6>
-                    <div class="code-box mt-2">
-                        <div><strong>Matched Platform:</strong> <span class="badge bg-primary">${post.platform}</span></div>
+                    <span class="micro-label">Stage 2</span>
+                    <h5 class="fw-bold mb-2">Web & Social Discovery</h5>
+                    <div class="code-box">
+                        <div><strong>Matched Platform:</strong> <span class="badge" style="background: var(--accent-violet);">${post.platform}</span></div>
                         <div><strong>Title / Headline:</strong> ${post.title}</div>
                         <div><strong>Author / Domain:</strong> ${post.author}</div>
-                        <div><strong>Discovered URL:</strong> <a href="${post.url}" target="_blank" class="text-primary fw-semibold">${post.url}</a></div>
+                        <div><strong>Discovered URL:</strong> <a href="${post.url}" target="_blank" style="color: #A397E2;">${post.url}</a></div>
                         <div><strong>Match Confidence:</strong> ${(search.match_confidence * 100).toFixed(1)}%</div>
                         <div class="mt-1"><strong>Cryptographic Content Fingerprint:</strong></div>
-                        <div class="text-primary fw-bold">${search.content_fingerprint}</div>
+                        <div class="fw-bold text-white">${search.content_fingerprint}</div>
                     </div>
                 </div>
 
                 <!-- Step 3 Output -->
                 <div class="mb-4">
-                    <h6 class="text-primary fw-bold"><span class="step-pill me-2">3</span> Blockchain Ledger Anchoring</h6>
-                    <div class="code-box mt-2">
-                        <div><strong>Status:</strong> <span class="badge badge-verified">${tx.status}</span></div>
-                        <div><strong>Transaction Hash (TxHash):</strong> <span class="text-success fw-bold">${tx.transaction_hash}</span></div>
+                    <span class="micro-label">Stage 3</span>
+                    <h5 class="fw-bold mb-2">Blockchain Ledger Anchoring</h5>
+                    <div class="code-box">
+                        <div><strong>Status:</strong> <span class="badge bg-success">${tx.status}</span></div>
+                        <div><strong>Transaction Hash (TxHash):</strong> <span style="color: #6EE7B7;" class="fw-bold">${tx.transaction_hash}</span></div>
                         <div><strong>Block Index:</strong> #${tx.block_index}</div>
                         <div><strong>Block Hash (PoW):</strong> ${tx.block_hash}</div>
                         <div><strong>Network:</strong> ${tx.network}</div>
@@ -338,12 +583,13 @@
 
                 <!-- Step 4 Self-Verification -->
                 <div>
-                    <h6 class="text-primary fw-bold"><span class="step-pill me-2">4</span> On-Chain Self-Verification</h6>
-                    <div class="alert alert-success d-flex align-items-center gap-3">
+                    <span class="micro-label">Stage 4</span>
+                    <h5 class="fw-bold mb-2">On-Chain Self-Verification</h5>
+                    <div class="p-3 rounded-3 d-flex align-items-center gap-3" style="background: rgba(16, 185, 129, 0.1); border: 1px solid rgba(16, 185, 129, 0.3);">
                         <i class="fa-solid fa-circle-check fs-2 text-success"></i>
                         <div>
-                            <div class="fw-bold text-success">On-chain verification PASSED!</div>
-                            <small class="text-secondary">The record anchored on Block #${verify.block_index} is authentic, tamper-evident, and cryptographically verified.</small>
+                            <div class="fw-bold text-success">On-Chain Verification PASSED!</div>
+                            <small class="text-muted">Record on Block #${verify.block_index} is authentic, tamper-evident, and cryptographically verified.</small>
                         </div>
                     </div>
                 </div>
@@ -358,7 +604,7 @@
             const txHash = document.getElementById('txHashInput').value.trim();
             const out = document.getElementById('verifyResult');
 
-            out.innerHTML = `<div class="spinner-border spinner-border-sm text-primary" role="status"></div> Auditing on-chain ledger...`;
+            out.innerHTML = `<div class="spinner-border spinner-border-sm" style="color: var(--accent-violet);" role="status"></div> Auditing on-chain ledger...`;
 
             try {
                 const response = await fetch(`/api/verify?tx_hash=${encodeURIComponent(txHash)}`);
@@ -367,9 +613,9 @@
                 if (data.valid) {
                     const d = data.details.on_chain_data;
                     out.innerHTML = `
-                        <div class="alert alert-success mt-2">
-                            <div class="fw-bold"><i class="fa-solid fa-shield-check me-2"></i> ON-CHAIN PROOF VALIDATED</div>
-                            <small>
+                        <div class="p-3 rounded-3 mt-2" style="background: rgba(16, 185, 129, 0.1); border: 1px solid rgba(16, 185, 129, 0.3);">
+                            <div class="fw-bold text-success"><i class="fa-solid fa-shield-check me-2"></i> ON-CHAIN PROOF VALIDATED</div>
+                            <small class="text-secondary">
                                 <div><strong>Block Index:</strong> #${data.details.block_index}</div>
                                 <div><strong>Social URL:</strong> ${d.social_post_url}</div>
                                 <div><strong>Platform:</strong> ${d.social_post_platform}</div>
@@ -379,14 +625,14 @@
                     `;
                 } else {
                     out.innerHTML = `
-                        <div class="alert alert-danger mt-2">
-                            <div class="fw-bold"><i class="fa-solid fa-circle-xmark me-2"></i> VERIFICATION FAILED</div>
-                            <small>${data.error || 'Record not found or tampered.'}</small>
+                        <div class="p-3 rounded-3 mt-2" style="background: rgba(239, 68, 68, 0.1); border: 1px solid rgba(239, 68, 68, 0.3);">
+                            <div class="fw-bold text-danger"><i class="fa-solid fa-circle-xmark me-2"></i> VERIFICATION FAILED</div>
+                            <small class="text-danger">${data.error || 'Record not found or tampered.'}</small>
                         </div>
                     `;
                 }
             } catch (err) {
-                out.innerHTML = `<div class="alert alert-danger mt-2">Verification request failed: ${err}</div>`;
+                out.innerHTML = `<div class="p-3 rounded-3 mt-2 text-danger">Verification request failed: ${err}</div>`;
             }
         });
     </script>
