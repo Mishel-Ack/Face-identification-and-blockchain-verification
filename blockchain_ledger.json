@@ -148,5 +148,45 @@
     "hash": "00cf761ee82546fe1f66c68b3dc7ce9a1ebd70b353db63bac432ec121006e47f",
     "nonce": 11,
     "network": "Ethereum / Solana Testnet Verified Ledger (Local Proof Anchor)"
+  },
+  {
+    "index": 8,
+    "timestamp": "2026-09-03T12:10:34Z",
+    "transaction_hash": "0x61babc9f142c39a9f60dc3483f8ffd7a11724f8f6f9aad78fc777c14ddd2afed",
+    "data": {
+      "record_type": "FACE_SOCIAL_IDENTIFICATION_PROOF",
+      "face_image_hash": "cac938f55165562383844e714b6fbce3d57e3de15d475c75868c83abe1b7a0a2",
+      "face_count": 1,
+      "social_post_url": "https://theaiinnovator.com/",
+      "social_post_platform": "Web / Search",
+      "social_post_author": "web",
+      "content_fingerprint": "41320e2ece38fc4437629527ae046dd8967c2bec5dca6278fd8ffbb5e24e893f",
+      "match_confidence": 0.94,
+      "timestamp": "2026-09-03T12:10:34Z"
+    },
+    "previous_hash": "00cf761ee82546fe1f66c68b3dc7ce9a1ebd70b353db63bac432ec121006e47f",
+    "hash": "00557ce5d002dc2a844055e2d3aa2f4258e4c01f2455c45141580835af341381",
+    "nonce": 353,
+    "network": "Ethereum / Solana Testnet Verified Ledger (Local Proof Anchor)"
+  },
+  {
+    "index": 9,
+    "timestamp": "2026-09-03T12:11:08Z",
+    "transaction_hash": "0x56069d59dbe39c8cb2956a27027454c30a7e1c88a8367f1e98ae45d53d4533d7",
+    "data": {
+      "record_type": "FACE_SOCIAL_IDENTIFICATION_PROOF",
+      "face_image_hash": "6d5f6952b5f6afcda851ada220a51a7348de34ba92f9754baeaef154a32beae7",
+      "face_count": 1,
+      "social_post_url": "https://learn.microsoft.com/en-us/azure/ai-services/face/overview-identity",
+      "social_post_platform": "Web / Search",
+      "social_post_author": "web",
+      "content_fingerprint": "3712313c370f8ba303f434a17d66557f14d78ec08bdda514cc1436ad6f984bc8",
+      "match_confidence": 0.94,
+      "timestamp": "2026-09-03T12:11:08Z"
+    },
+    "previous_hash": "00557ce5d002dc2a844055e2d3aa2f4258e4c01f2455c45141580835af341381",
+    "hash": "003b852588b9130de34dfb322c720d43a26f62eaa094e8220c6beb3f7cb87772",
+    "nonce": 45,
+    "network": "Ethereum / Solana Testnet Verified Ledger (Local Proof Anchor)"
   }
 ]
