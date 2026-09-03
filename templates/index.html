@@ -8,21 +8,21 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <style>
         :root {
-            --bg-color: #0b0f19;
-            --card-bg: rgba(22, 31, 49, 0.75);
-            --border-color: rgba(64, 93, 138, 0.3);
-            --accent-cyan: #00f2fe;
-            --accent-blue: #4facfe;
-            --accent-green: #00e676;
-            --text-main: #e2e8f0;
-            --text-muted: #94a3b8;
+            --bg-color: #f8fafc;
+            --card-bg: #ffffff;
+            --border-color: #cbd5e1;
+            --accent-cyan: #0284c7;
+            --accent-blue: #2563eb;
+            --accent-green: #15803d;
+            --text-main: #0f172a;
+            --text-muted: #64748b;
         }
 
         body {
             background-color: var(--bg-color);
             background-image: 
-                radial-gradient(at 0% 0%, rgba(79, 172, 254, 0.12) 0px, transparent 50%),
-                radial-gradient(at 100% 100%, rgba(0, 242, 254, 0.1) 0px, transparent 50%);
+                radial-gradient(at 0% 0%, rgba(37, 99, 235, 0.05) 0px, transparent 50%),
+                radial-gradient(at 100% 100%, rgba(2, 132, 199, 0.05) 0px, transparent 50%);
             color: var(--text-main);
             font-family: 'Segoe UI', system-ui, -apple-system, sans-serif;
             min-height: 100vh;
@@ -30,8 +30,8 @@
         }
 
         .navbar {
-            background: rgba(15, 23, 42, 0.85);
-            backdrop-filter: blur(12px);
+            background: #ffffff;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
             border-bottom: 1px solid var(--border-color);
         }
 
@@ -45,20 +45,19 @@
 
         .glass-card {
             background: var(--card-bg);
-            backdrop-filter: blur(16px);
             border: 1px solid var(--border-color);
             border-radius: 16px;
-            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.35);
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.05);
             transition: transform 0.2s ease, box-shadow 0.2s ease;
         }
 
         .glass-card:hover {
-            border-color: rgba(79, 172, 254, 0.5);
-            box-shadow: 0 12px 36px rgba(0, 242, 254, 0.15);
+            border-color: var(--accent-blue);
+            box-shadow: 0 8px 30px rgba(37, 99, 235, 0.1);
         }
 
         .card-header-title {
-            color: var(--accent-cyan);
+            color: var(--accent-blue);
             font-size: 1.15rem;
             font-weight: 700;
             display: flex;
@@ -68,38 +67,38 @@
 
         .btn-cyber {
             background: linear-gradient(135deg, var(--accent-blue), var(--accent-cyan));
-            color: #0b0f19;
+            color: #ffffff;
             font-weight: 700;
             border: none;
             padding: 10px 24px;
             border-radius: 8px;
             transition: all 0.2s ease;
-            box-shadow: 0 4px 15px rgba(0, 242, 254, 0.3);
+            box-shadow: 0 4px 15px rgba(37, 99, 235, 0.25);
         }
 
         .btn-cyber:hover {
             transform: translateY(-2px);
-            box-shadow: 0 6px 20px rgba(0, 242, 254, 0.45);
-            color: #000;
+            box-shadow: 0 6px 20px rgba(37, 99, 235, 0.35);
+            color: #ffffff;
         }
 
         .badge-verified {
-            background: rgba(0, 230, 118, 0.15);
+            background: rgba(21, 128, 61, 0.1);
             color: var(--accent-green);
-            border: 1px solid rgba(0, 230, 118, 0.4);
+            border: 1px solid rgba(21, 128, 61, 0.3);
             font-weight: 600;
             padding: 6px 12px;
             border-radius: 20px;
         }
 
         .code-box {
-            background: #070a12;
-            border: 1px solid rgba(255, 255, 255, 0.1);
+            background: #f1f5f9;
+            border: 1px solid #cbd5e1;
             border-radius: 8px;
-            padding: 12px;
+            padding: 14px;
             font-family: 'Fira Code', 'Consolas', monospace;
             font-size: 0.88rem;
-            color: #a5f3fc;
+            color: #0f172a;
             word-break: break-all;
         }
 
@@ -110,41 +109,41 @@
             width: 32px;
             height: 32px;
             border-radius: 50%;
-            background: rgba(79, 172, 254, 0.2);
-            color: var(--accent-cyan);
+            background: rgba(37, 99, 235, 0.1);
+            color: var(--accent-blue);
             font-weight: bold;
         }
 
         .drop-zone {
-            border: 2px dashed rgba(79, 172, 254, 0.4);
+            border: 2px dashed rgba(37, 99, 235, 0.3);
             border-radius: 12px;
             padding: 30px;
             text-align: center;
             cursor: pointer;
             transition: border-color 0.2s ease;
-            background: rgba(15, 23, 42, 0.5);
+            background: #f8fafc;
         }
 
         .drop-zone:hover {
-            border-color: var(--accent-cyan);
-            background: rgba(15, 23, 42, 0.8);
+            border-color: var(--accent-blue);
+            background: #f1f5f9;
         }
 
         .preview-img {
             max-height: 220px;
             border-radius: 12px;
             border: 2px solid var(--accent-blue);
-            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.5);
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
         }
     </style>
 </head>
 <body>
 
     <!-- Header Navbar -->
-    <nav class="navbar navbar-dark mb-4">
+    <nav class="navbar navbar-light mb-4">
         <div class="container">
             <a class="navbar-brand d-flex align-items-center gap-2" href="#">
-                <i class="fa-solid me-2 fa-shield-halved fs-4" style="color: var(--accent-cyan);"></i>
+                <i class="fa-solid me-2 fa-shield-halved fs-4" style="color: var(--accent-blue);"></i>
                 <span class="brand-text fs-4">FaceID Blockchain Verifier</span>
             </a>
             <div class="d-flex align-items-center gap-3">
@@ -170,8 +169,8 @@
                         <div class="mb-3">
                             <label class="form-label text-muted fw-semibold">Input Image (Face Scan)</label>
                             <div class="drop-zone" id="dropZone" onclick="document.getElementById('imageInput').click()">
-                                <i class="fa-solid fa-cloud-arrow-up fs-2 text-cyan mb-2" style="color: var(--accent-cyan);"></i>
-                                <p class="mb-1 text-white fw-semibold">Click or drag image here</p>
+                                <i class="fa-solid fa-cloud-arrow-up fs-2 mb-2" style="color: var(--accent-blue);"></i>
+                                <p class="mb-1 text-dark fw-semibold">Click or drag image here</p>
                                 <small class="text-muted">Supports JPG, PNG (Default sample provided)</small>
                             </div>
                             <input type="file" id="imageInput" name="image" class="d-none" accept="image/*" onchange="previewSelectedImage(this)">
@@ -185,8 +184,8 @@
                         <div class="mb-4">
                             <label for="keywords" class="form-label text-muted fw-semibold">Web Search Keywords</label>
                             <div class="input-group">
-                                <span class="input-group-text bg-dark border-secondary text-cyan" style="color: var(--accent-cyan);"><i class="fa-solid fa-magnifying-glass"></i></span>
-                                <input type="text" class="form-control bg-dark text-white border-secondary" id="keywords" name="keywords" value="AI tech innovator keynote" placeholder="Enter keywords...">
+                                <span class="input-group-text bg-white border-secondary-subtle text-primary"><i class="fa-solid fa-magnifying-glass"></i></span>
+                                <input type="text" class="form-control bg-white text-dark border-secondary-subtle" id="keywords" name="keywords" value="AI tech innovator keynote" placeholder="Enter keywords...">
                             </div>
                         </div>
 
@@ -199,15 +198,15 @@
                 <!-- Re-Verification Tool Card -->
                 <div class="glass-card p-4 mt-4">
                     <div class="card-header-title mb-3">
-                        <i class="fa-solid fa-magnifying-glass-chart text-cyan" style="color: var(--accent-cyan);"></i>
+                        <i class="fa-solid fa-magnifying-glass-chart" style="color: var(--accent-blue);"></i>
                         <span>On-Chain Record Auditor</span>
                     </div>
                     <form id="verifyForm">
                         <div class="mb-3">
                             <label for="txHashInput" class="form-label text-muted fw-semibold">Transaction Hash (TxHash)</label>
-                            <input type="text" class="form-control bg-dark text-white border-secondary font-monospace" id="txHashInput" placeholder="0x..." required>
+                            <input type="text" class="form-control bg-white text-dark border-secondary-subtle font-monospace" id="txHashInput" placeholder="0x..." required>
                         </div>
-                        <button type="submit" class="btn btn-outline-info w-100 fw-bold">
+                        <button type="submit" class="btn btn-outline-primary w-100 fw-bold">
                             <i class="fa-solid fa-check-double me-2"></i> Audit On-Chain Record
                         </button>
                     </form>
@@ -220,15 +219,15 @@
                 <div class="glass-card p-4 h-100">
                     <div class="d-flex justify-content-between align-items-center mb-4">
                         <div class="card-header-title">
-                            <i class="fa-solid fa-diagram-project text-cyan" style="color: var(--accent-cyan);"></i>
+                            <i class="fa-solid fa-diagram-project" style="color: var(--accent-blue);"></i>
                             <span>Pipeline Execution Results</span>
                         </div>
-                        <div id="statusSpinner" class="spinner-border spinner-border-sm text-cyan d-none" role="status"></div>
+                        <div id="statusSpinner" class="spinner-border spinner-border-sm text-primary d-none" role="status"></div>
                     </div>
 
                     <div id="resultsContainer">
                         <div class="text-center py-5 text-muted">
-                            <i class="fa-solid fa-microchip fs-1 mb-3 opacity-50"></i>
+                            <i class="fa-solid fa-microchip fs-1 mb-3 opacity-50" style="color: var(--accent-blue);"></i>
                             <p>Upload a face scan image or click "Run Pipeline End-to-End" to process features, discover social media records, and anchor to blockchain.</p>
                         </div>
                     </div>
@@ -261,8 +260,8 @@
             spinner.classList.remove('d-none');
             results.innerHTML = `
                 <div class="text-center py-5">
-                    <div class="spinner-border text-info mb-3" style="width: 3rem; height: 3rem;" role="status"></div>
-                    <h5 class="text-cyan">Executing Pipeline...</h5>
+                    <div class="spinner-border text-primary mb-3" style="width: 3rem; height: 3rem;" role="status"></div>
+                    <h5 class="text-primary fw-bold">Executing Pipeline...</h5>
                     <p class="text-muted">Detecting faces, running dynamic web search, and mining PoW block record...</p>
                 </div>
             `;
@@ -298,7 +297,7 @@
             document.getElementById('resultsContainer').innerHTML = `
                 <!-- Step 1 Output -->
                 <div class="mb-4">
-                    <h6 class="text-cyan fw-bold"><span class="step-pill me-2">1</span> Face Identification & Encoding</h6>
+                    <h6 class="text-primary fw-bold"><span class="step-pill me-2">1</span> Face Identification & Encoding</h6>
                     <div class="code-box mt-2">
                         <div><strong>Image Hash (SHA-256):</strong> ${face.image_hash}</div>
                         <div><strong>Detected Faces:</strong> ${face.face_count} face(s)</div>
@@ -313,21 +312,21 @@
 
                 <!-- Step 2 Output -->
                 <div class="mb-4">
-                    <h6 class="text-cyan fw-bold"><span class="step-pill me-2">2</span> Web & Social Media Discovery</h6>
+                    <h6 class="text-primary fw-bold"><span class="step-pill me-2">2</span> Web & Social Media Discovery</h6>
                     <div class="code-box mt-2">
                         <div><strong>Matched Platform:</strong> <span class="badge bg-primary">${post.platform}</span></div>
                         <div><strong>Title / Headline:</strong> ${post.title}</div>
                         <div><strong>Author / Domain:</strong> ${post.author}</div>
-                        <div><strong>Discovered URL:</strong> <a href="${post.url}" target="_blank" class="text-info">${post.url}</a></div>
+                        <div><strong>Discovered URL:</strong> <a href="${post.url}" target="_blank" class="text-primary fw-semibold">${post.url}</a></div>
                         <div><strong>Match Confidence:</strong> ${(search.match_confidence * 100).toFixed(1)}%</div>
                         <div class="mt-1"><strong>Cryptographic Content Fingerprint:</strong></div>
-                        <div class="text-warning fw-bold">${search.content_fingerprint}</div>
+                        <div class="text-primary fw-bold">${search.content_fingerprint}</div>
                     </div>
                 </div>
 
                 <!-- Step 3 Output -->
                 <div class="mb-4">
-                    <h6 class="text-cyan fw-bold"><span class="step-pill me-2">3</span> Blockchain Ledger Anchoring</h6>
+                    <h6 class="text-primary fw-bold"><span class="step-pill me-2">3</span> Blockchain Ledger Anchoring</h6>
                     <div class="code-box mt-2">
                         <div><strong>Status:</strong> <span class="badge badge-verified">${tx.status}</span></div>
                         <div><strong>Transaction Hash (TxHash):</strong> <span class="text-success fw-bold">${tx.transaction_hash}</span></div>
@@ -339,12 +338,12 @@
 
                 <!-- Step 4 Self-Verification -->
                 <div>
-                    <h6 class="text-cyan fw-bold"><span class="step-pill me-2">4</span> On-Chain Self-Verification</h6>
+                    <h6 class="text-primary fw-bold"><span class="step-pill me-2">4</span> On-Chain Self-Verification</h6>
                     <div class="alert alert-success d-flex align-items-center gap-3">
                         <i class="fa-solid fa-circle-check fs-2 text-success"></i>
                         <div>
-                            <div class="fw-bold">On-chain verification PASSED!</div>
-                            <small class="text-light opacity-75">The record anchored on Block #${verify.block_index} is authentic, tamper-evident, and cryptographically verified.</small>
+                            <div class="fw-bold text-success">On-chain verification PASSED!</div>
+                            <small class="text-secondary">The record anchored on Block #${verify.block_index} is authentic, tamper-evident, and cryptographically verified.</small>
                         </div>
                     </div>
                 </div>
@@ -359,7 +358,7 @@
             const txHash = document.getElementById('txHashInput').value.trim();
             const out = document.getElementById('verifyResult');
 
-            out.innerHTML = `<div class="spinner-border spinner-border-sm text-info" role="status"></div> Auditing on-chain ledger...`;
+            out.innerHTML = `<div class="spinner-border spinner-border-sm text-primary" role="status"></div> Auditing on-chain ledger...`;
 
             try {
                 const response = await fetch(`/api/verify?tx_hash=${encodeURIComponent(txHash)}`);
