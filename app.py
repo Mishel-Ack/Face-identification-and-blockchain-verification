@@ -19,6 +19,12 @@ app.config['UPLOAD_FOLDER'] = tempfile.gettempdir()
 def index():
     return render_template('index.html')
 
+@app.route('/login', methods=['GET', 'POST'])
+def login():
+    if request.method == 'POST':
+        return render_template('index.html', logged_in=True, username="Alex Dev")
+    return render_template('login.html')
+
 @app.route('/api/run_pipeline', methods=['POST'])
 def api_run_pipeline():
     try:
