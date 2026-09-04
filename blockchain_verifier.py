@@ -57,7 +57,7 @@ class BlockchainVerifier:
         index = len(self.blocks)
         timestamp = time.strftime("%Y-%m-%dT%H:%M:%SZ", time.gmtime())
 
-        # Construct tamper-evident record payload
+        # Construct tamper-evident record payload (Inspired by MachineLearningNft state tracking)
         record_payload = {
             "record_type": "FACE_SOCIAL_IDENTIFICATION_PROOF",
             "face_image_hash": face_data.get("image_hash"),
@@ -67,6 +67,7 @@ class BlockchainVerifier:
             "social_post_author": search_result["post_metadata"]["author"],
             "content_fingerprint": search_result["content_fingerprint"],
             "match_confidence": search_result.get("match_confidence", 1.0),
+            "verification_count": len(self.blocks),  # Incremental verification count
             "timestamp": search_result.get("discovered_at", timestamp)
         }
 
@@ -85,6 +86,8 @@ class BlockchainVerifier:
         tx_payload = f"TX:{block_hash}:{record_payload['content_fingerprint']}:{timestamp}"
         tx_hash = "0x" + hashlib.sha256(tx_payload.encode()).hexdigest()
 
+        active_network = os.getenv("BLOCKCHAIN_NETWORK", "Polygon Amoy Testnet (Smart Contract & Proof Anchor)")
+
         new_block = {
             "index": index,
             "timestamp": timestamp,
@@ -93,7 +96,7 @@ class BlockchainVerifier:
             "previous_hash": prev_block["hash"],
             "hash": block_hash,
             "nonce": nonce,
-            "network": "Ethereum / Solana Testnet Verified Ledger (Local Proof Anchor)"
+            "network": active_network
         }
 
         self.blocks.append(new_block)
