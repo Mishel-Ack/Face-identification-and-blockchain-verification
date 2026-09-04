@@ -86,7 +86,7 @@ class FaceEngine:
 
         return {
             "keypoints_count": len(keypoints) if keypoints else 0,
-            "descriptors": descriptors if descriptors is not None else np.array([]),
+            "descriptors": descriptors.tolist() if descriptors is not None else [],
             "face_hash": sha256_hash,
             "embedding": embedding_vector.tolist(),
             "dimensions": {"width": face_img.shape[1], "height": face_img.shape[0]}
