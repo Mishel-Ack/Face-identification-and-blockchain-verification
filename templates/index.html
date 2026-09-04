@@ -107,6 +107,104 @@
             text-decoration: none !important;
         }
 
+        /* Mode Switcher Buttons (50-50 Equal Width & High Contrast) */
+        .mode-toggle-btn {
+            flex: 1 1 50%;
+            width: 50%;
+            padding: 10px 16px;
+            font-weight: 600;
+            border-radius: 50px !important;
+            border: none;
+            transition: all 0.25s ease;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 0.95rem;
+        }
+
+        .mode-toggle-btn.active {
+            background: var(--accent-violet) !important;
+            color: #FFFFFF !important;
+            box-shadow: 0 4px 14px rgba(107, 95, 168, 0.35);
+        }
+
+        .mode-toggle-btn.active i {
+            color: #FFFFFF !important;
+        }
+
+        .mode-toggle-btn.inactive {
+            background: transparent !important;
+            color: var(--primary-navy) !important;
+            box-shadow: none;
+        }
+
+        .mode-toggle-btn.inactive:hover {
+            color: var(--accent-violet) !important;
+            background: rgba(107, 95, 168, 0.1) !important;
+        }
+
+        /* Platform Selection Filter Chips */
+        .platform-chip-label {
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            padding: 7px 14px;
+            border-radius: 50px;
+            background: #FFFFFF;
+            border: 1.5px solid var(--border-soft);
+            color: var(--primary-navy);
+            font-size: 0.85rem;
+            font-weight: 600;
+            cursor: pointer;
+            user-select: none;
+            transition: all 0.2s ease;
+            box-shadow: 0 2px 6px rgba(0,0,0,0.03);
+        }
+
+        .platform-chip-input:checked + .platform-chip-label {
+            background: rgba(107, 95, 168, 0.12);
+            border-color: var(--accent-violet);
+            color: var(--accent-violet);
+            box-shadow: 0 4px 10px rgba(107, 95, 168, 0.15);
+        }
+
+        .platform-chip-label:hover {
+            transform: translateY(-1px);
+            border-color: var(--accent-violet);
+        }
+
+        /* Custom Form Input Controls matching theme */
+        .custom-form-input {
+            background: #FFFFFF !important;
+            border: 1.5px solid rgba(107, 95, 168, 0.22) !important;
+            border-radius: 12px !important;
+            color: var(--primary-navy) !important;
+            font-size: 0.88rem !important;
+            padding: 8px 14px !important;
+            transition: all 0.2s ease !important;
+            box-shadow: 0 2px 6px rgba(30, 27, 58, 0.02) !important;
+        }
+
+        .custom-form-input:focus {
+            border-color: var(--accent-violet) !important;
+            box-shadow: 0 0 0 3px rgba(107, 95, 168, 0.18) !important;
+            background: #FFFFFF !important;
+            outline: none !important;
+        }
+
+        .custom-form-input::placeholder {
+            color: #94A3B8 !important;
+            font-size: 0.85rem !important;
+        }
+
+        .form-label-theme {
+            color: var(--primary-navy) !important;
+            font-weight: 600 !important;
+            font-size: 0.8rem !important;
+            letter-spacing: 0.01em !important;
+            margin-bottom: 4px !important;
+        }
+
         /* Navbar */
         .navbar {
             padding: 24px 0;
@@ -219,11 +317,60 @@
             background: rgba(243, 240, 250, 0.95);
         }
 
-        .preview-img {
-            max-height: 200px;
-            border-radius: 16px;
-            border: 3px solid var(--accent-violet);
-            box-shadow: 0 8px 20px rgba(30, 27, 58, 0.15);
+        /* Face Scan Radar Animation */
+        .face-scanner-box {
+            position: relative;
+            width: 140px;
+            height: 140px;
+            margin: 0 auto 20px;
+            border-radius: 20px;
+            background: #141226;
+            border: 2px solid var(--accent-violet);
+            overflow: hidden;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            box-shadow: 0 0 25px rgba(107, 95, 168, 0.35);
+        }
+
+        .face-scanner-box i.face-icon {
+            font-size: 3.8rem;
+            color: rgba(163, 151, 226, 0.4);
+            animation: pulse-face 1.8s infinite ease-in-out;
+        }
+
+        .scanner-laser {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 4px;
+            background: linear-gradient(90deg, transparent 0%, #6EE7B7 50%, transparent 100%);
+            box-shadow: 0 0 12px #6EE7B7, 0 0 20px #6EE7B7;
+            animation: scan-beam 2s infinite ease-in-out;
+        }
+
+        .scan-corner {
+            position: absolute;
+            width: 16px;
+            height: 16px;
+            border-color: #6EE7B7;
+            border-style: solid;
+        }
+        .scan-corner-tl { top: 10px; left: 10px; border-width: 3px 0 0 3px; }
+        .scan-corner-tr { top: 10px; right: 10px; border-width: 3px 3px 0 0; }
+        .scan-corner-bl { bottom: 10px; left: 10px; border-width: 0 0 3px 3px; }
+        .scan-corner-br { bottom: 10px; right: 10px; border-width: 0 3px 3px 0; }
+
+        @keyframes scan-beam {
+            0% { top: 5%; opacity: 0.9; }
+            50% { top: 90%; opacity: 1; }
+            100% { top: 5%; opacity: 0.9; }
+        }
+
+        @keyframes pulse-face {
+            0%, 100% { transform: scale(1); opacity: 0.4; }
+            50% { transform: scale(1.08); opacity: 0.85; color: #A397E2; }
         }
 
         .code-box {
@@ -234,6 +381,8 @@
             font-size: 0.88rem;
             color: #D4CEF0;
             word-break: break-all;
+            overflow-wrap: anywhere;
+            max-width: 100%;
         }
 
         /* Trust Bar */
@@ -304,124 +453,226 @@
         </div>
     </nav>
 
-    <!-- Centered Hero Section with Background Image -->
+    <!-- Centered Hero & Decentralized Trust Engine Section -->
     <section class="hero-section">
         <div class="container position-relative" style="z-index: 1;">
-            <span class="micro-label">Face Identification & Blockchain Verification</span>
-            <h1 class="headline-lg mb-3">Verifiable Identity Anchored on the Blockchain</h1>
-            <p class="lead-text mb-4">A complete pipeline for face feature encoding, dynamic social web discovery, and immutable cryptographic proof anchoring.</p>
-            <a href="#pipeline-app" class="btn-pill">
-                <i class="fa-solid fa-sparkles"></i> Launch Verification Pipeline
-            </a>
-        </div>
-    </section>
+            <span class="micro-label mb-2"><i class="fa-solid fa-shield-cat me-1"></i> Decentralized Trust Engine</span>
+            <h1 class="headline-lg mb-3">Cryptographic Proof for Social Identity</h1>
+            <p class="lead-text mb-4">Our end-to-end pipeline processes input face scans, computes perceptual descriptor vectors, dynamically audits social web sources, and commits tamper-evident transaction proofs to an immutable blockchain ledger.</p>
+            
+            <!-- Key Metrics & Proof Highlights Bar -->
+            <div class="row justify-content-center g-4 my-4 max-w-800 mx-auto">
+                <div class="col-md-4">
+                    <div class="p-3 rounded-4 bg-white shadow-sm border text-center">
+                        <h3 class="mb-1 text-primary fw-bold">100%</h3>
+                        <small class="text-secondary fw-semibold">Tamper-Evident Proofs</small>
+                    </div>
+                </div>
+                <div class="col-md-4">
+                    <div class="p-3 rounded-4 bg-white shadow-sm border text-center">
+                        <h3 class="mb-1 text-primary fw-bold">SHA-256</h3>
+                        <small class="text-secondary fw-semibold">Content Fingerprinting</small>
+                    </div>
+                </div>
+                <div class="col-md-4">
+                    <div class="p-3 rounded-4 bg-white shadow-sm border text-center">
+                        <h5 class="mb-1 text-primary fw-bold"><i class="fa-solid fa-link me-1"></i> Proof Chaining</h5>
+                        <small class="text-secondary fw-semibold">Real-Time Ledger Anchor</small>
+                    </div>
+                </div>
+            </div>
 
-    <!-- Two-Column "What is VeriFace" Feature Section -->
-    <section class="container mb-5">
-        <div class="custom-card-light">
-            <div class="row align-items-center g-5">
-                <div class="col-lg-6">
-                    <span class="micro-label">Decentralized Trust Engine</span>
-                    <h2 class="mb-3">Cryptographic Proof for Social Identity</h2>
-                    <p class="text-secondary leading-relaxed mb-4">
-                        Our end-to-end pipeline processes input face scans, computes perceptual descriptor vectors, dynamically audits social web sources, and commits tamper-evident transaction proofs to an immutable blockchain ledger.
-                    </p>
-                    <div class="d-flex gap-4">
-                        <div>
-                            <h4 class="mb-1 text-primary">100%</h4>
-                            <small class="text-muted">Tamper-Evident Proofs</small>
-                        </div>
-                        <div class="border-start ps-4">
-                            <h4 class="mb-1 text-primary">SHA-256</h4>
-                            <small class="text-muted">Content Fingerprinting</small>
-                        </div>
-                    </div>
-                </div>
-                <div class="col-lg-6 text-center">
-                    <div class="p-4 rounded-4" style="background: linear-gradient(135deg, #F3F0FA, #E2DBF2); border: 1px solid var(--border-soft);">
-                        <i class="fa-solid fa-network-wired text-violet fs-1 mb-3" style="color: var(--accent-violet);"></i>
-                        <h5 class="fw-semibold">Real-Time Proof Chaining</h5>
-                        <p class="small text-secondary mb-0">Perceptual Face Hash &bull; Web Metadata &bull; PoW Ledger Anchor</p>
-                    </div>
-                </div>
+            <div class="badge bg-white text-dark px-4 py-2 rounded-pill shadow-sm border mb-4">
+                <i class="fa-solid fa-fingerprint me-2 text-violet" style="color: var(--accent-violet);"></i>
+                <span>Perceptual Face Hash &bull; Web Metadata &bull; PoW Ledger Anchor</span>
+            </div>
+
+            <div>
+                <a href="#pipeline-app" class="btn-pill">
+                    <i class="fa-solid fa-sparkles"></i> Launch Verification Pipeline
+                </a>
             </div>
         </div>
     </section>
 
-    <!-- Interactive Pipeline App Workspace -->
+    <!-- Interactive Pipeline App Workspace (Horizontal Layout Flow) -->
     <section id="pipeline-app" class="container mb-5">
-        <div class="row g-4">
-            
-            <!-- Left Column: Upload & Query Controls -->
-            <div class="col-lg-5">
-                <div class="custom-card-light">
-                    <span class="micro-label">Input Control</span>
-                    <h3 class="h4 mb-3">1. Upload Face Scan</h3>
+        
+        <!-- Action Mode Switcher: Generate SHA vs Verify SHA Pages -->
+        <div class="d-flex justify-content-center gap-3 mb-4">
+            <a href="/" class="btn-pill px-4 shadow-sm" id="btnGenSHA">
+                <i class="fa-solid fa-key me-1"></i> 1. Generate SHA (Run Pipeline)
+            </a>
+            <a href="/verify" class="btn-pill-outline px-4 shadow-sm" id="btnVerSHA">
+                <i class="fa-solid fa-shield-check me-1"></i> 2. Verify SHA (Ledger Audit Page)
+            </a>
+        </div>
 
-                    <form id="pipelineForm" enctype="multipart/form-data">
-                        <div class="mb-3">
+        <div class="custom-card-light mb-4" id="inputControlBlock">
+            <span class="micro-label"><i class="fa-solid fa-sliders me-1"></i> Pipeline Input Control</span>
+            <h3 class="h4 mb-4">1. Scan Face & Enter Identity Details</h3>
+
+            <form id="pipelineForm" enctype="multipart/form-data">
+                <div class="row g-4">
+                    <!-- Left Sub-Column: Face Image Capture / Upload -->
+                    <div class="col-lg-5">
+                        <label class="form-label text-dark fw-semibold small mb-2 d-block">Biometric Face Input</label>
+                        
+                        <!-- Dual Input Mode Selector (50-50 Equal Width: Scan Face First) -->
+                        <div class="d-flex w-100 mb-3" role="group" style="background: rgba(107, 95, 168, 0.12); padding: 4px; border-radius: 50px;">
+                            <button type="button" class="mode-toggle-btn active" id="webcamTabBtn" onclick="switchInputMode('webcam')">
+                                <i class="fa-solid fa-camera me-2"></i> Scan Face (Webcam)
+                            </button>
+                            <button type="button" class="mode-toggle-btn inactive" id="uploadTabBtn" onclick="switchInputMode('upload')">
+                                <i class="fa-solid fa-file-image me-2"></i> Upload Image
+                            </button>
+                        </div>
+
+                        <!-- Mode 1: Live Webcam Face Capture (Default Active) -->
+                        <div id="webcamInputSection" class="mb-3 text-center">
+                            <div class="p-3 rounded-4 position-relative" style="background: #141226; border: 2px dashed var(--accent-violet);">
+                                <video id="webcamVideo" autoplay playsinline muted style="width: 100%; max-height: 220px; border-radius: 12px; transform: scaleX(-1); object-fit: cover;"></video>
+                                <img id="webcamSnapshotImg" src="" alt="Webcam Face Snapshot" style="display: none; width: 100%; max-height: 220px; object-fit: cover; border-radius: 12px; border: 2px solid #6EE7B7; box-shadow: 0 4px 15px rgba(110, 231, 183, 0.25);">
+                                <canvas id="webcamCanvas" class="d-none"></canvas>
+                                <div class="mt-3 d-flex justify-content-center gap-2" id="webcamControls">
+                                    <button type="button" class="btn btn-sm btn-pill px-4" id="captureBtn" onclick="captureWebcamFrame()">
+                                        <i class="fa-solid fa-camera me-1"></i> Capture Face Snapshot
+                                    </button>
+                                    <button type="button" class="btn btn-sm btn-pill-outline text-white border-white px-4 d-none" id="retakeBtn" onclick="retakeWebcamPhoto()">
+                                        <i class="fa-solid fa-rotate-left me-1"></i> Retake Snapshot
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Mode 2: Drag & Drop File Upload -->
+                        <div id="uploadInputSection" class="mb-3 d-none">
                             <div class="drop-zone" id="dropZone" onclick="document.getElementById('imageInput').click()">
                                 <i class="fa-solid fa-cloud-arrow-up fs-2 mb-2" style="color: var(--accent-violet);"></i>
                                 <p class="mb-1 fw-semibold text-dark">Click or drag face scan image</p>
                                 <small class="text-muted">JPG, PNG format (Default sample provided)</small>
                             </div>
                             <input type="file" id="imageInput" name="image" class="d-none" accept="image/*" onchange="previewSelectedImage(this)">
-                        </div>
-
-                        <div id="imagePreviewContainer" class="text-center mb-3 d-none">
-                            <img id="imagePreview" class="preview-img mb-2" src="" alt="Preview">
-                            <div><small class="text-muted" id="imageFileName"></small></div>
-                        </div>
-
-                        <div class="mb-4">
-                            <label for="keywords" class="form-label text-muted small fw-semibold">Web Search Keywords</label>
-                            <input type="text" class="form-control form-control-lg bg-white border-1 text-dark fs-6" id="keywords" name="keywords" value="AI tech innovator keynote" style="border-radius: 12px; border-color: var(--border-soft);">
-                        </div>
-
-                        <button type="submit" class="btn-pill w-100 justify-content-center" id="runBtn">
-                            <i class="fa-solid fa-bolt"></i> Run Pipeline End-to-End
-                        </button>
-                    </form>
-                </div>
-
-                <!-- On-Chain Auditor Card -->
-                <div class="custom-card-light mt-4">
-                    <span class="micro-label">On-Chain Auditor</span>
-                    <h3 class="h4 mb-3">2. Verify Transaction Record</h3>
-                    <form id="verifyForm">
-                        <div class="mb-3">
-                            <label for="txHashInput" class="form-label text-muted small fw-semibold">Transaction Hash (TxHash)</label>
-                            <input type="text" class="form-control bg-white text-dark font-monospace fs-6" id="txHashInput" placeholder="0x..." required style="border-radius: 12px; border-color: var(--border-soft);">
-                        </div>
-                        <button type="submit" class="btn-pill-outline w-100">
-                            <i class="fa-solid fa-check-double me-2"></i> Audit On-Chain Record
-                        </button>
-                    </form>
-                    <div id="verifyResult" class="mt-3"></div>
-                </div>
-            </div>
-
-            <!-- Right Column: Interactive Results Screen -->
-            <div class="col-lg-7">
-                <div class="custom-card-light h-100">
-                    <div class="d-flex justify-content-between align-items-center mb-4">
-                        <div>
-                            <span class="micro-label">Live Output</span>
-                            <h3 class="h4 mb-0">Pipeline Execution Results</h3>
-                        </div>
-                        <div id="statusSpinner" class="spinner-border spinner-border-sm text-purple d-none" role="status" style="color: var(--accent-violet);"></div>
-                    </div>
-
-                    <div id="resultsContainer">
-                        <div class="text-center py-5 text-muted">
-                            <i class="fa-solid fa-shield-halved fs-1 mb-3 opacity-40" style="color: var(--accent-violet);"></i>
-                            <p class="mb-0">Upload a face scan image or click "Run Pipeline End-to-End" to process features, discover social media records, and anchor on the blockchain.</p>
+                            
+                            <!-- File Upload Preview -->
+                            <div id="uploadPreviewContainer" class="text-center mt-3 d-none">
+                                <img id="uploadPreviewImg" class="preview-img mb-2" src="" alt="Preview" style="max-height: 180px; border-radius: 12px; border: 2px solid var(--accent-violet);">
+                                <div><small class="text-muted" id="uploadFileName"></small></div>
+                            </div>
                         </div>
                     </div>
-                </div>
-            </div>
 
+                    <!-- Right Sub-Column: Identity Metadata Form Fields -->
+                    <div class="col-lg-7">
+                        <div class="p-3 rounded-4 h-100" style="background: rgba(255, 255, 255, 0.7); border: 1px solid var(--border-soft);">
+                            <div class="d-flex align-items-center gap-2 mb-3">
+                                <i class="fa-solid fa-magnifying-glass-nodes" style="color: var(--accent-violet);"></i>
+                                <span class="fw-bold small text-uppercase" style="color: var(--primary-navy); letter-spacing: 0.05em;">Target Identity Search Criteria</span>
+                            </div>
+
+                            <div class="row g-2 mb-2">
+                                <div class="col-6">
+                                    <label for="searchName" class="form-label-theme d-block">Full Name <span class="text-danger">*</span></label>
+                                    <input type="text" class="form-control custom-form-input" id="searchName" name="search_name" placeholder="e.g. Alex Dev" required>
+                                </div>
+                                <div class="col-6">
+                                    <label for="searchHandle" class="form-label-theme d-block">Username / Handle</label>
+                                    <input type="text" class="form-control custom-form-input" id="searchHandle" name="search_handle" placeholder="e.g. @alex_dev">
+                                </div>
+                            </div>
+
+                            <div class="mb-2">
+                                <label for="photoNotes" class="form-label-theme d-block">Additional Photo Info / Scan Context</label>
+                                <textarea class="form-control custom-form-input" id="photoNotes" name="photo_notes" rows="2" placeholder="e.g. Keynote photo from AI Summit conference stage, wearing dark jacket..."></textarea>
+                            </div>
+
+                            <div class="row g-2 mb-2">
+                                <div class="col-6">
+                                    <label for="searchDob" class="form-label-theme d-block">Date of Birth (Optional)</label>
+                                    <input type="date" class="form-control custom-form-input" id="searchDob" name="search_dob">
+                                </div>
+                                <div class="col-6">
+                                    <label for="searchLocation" class="form-label-theme d-block">Location / City / Country</label>
+                                    <input type="text" class="form-control custom-form-input" id="searchLocation" name="search_location" placeholder="e.g. San Francisco, USA">
+                                </div>
+                            </div>
+
+                            <div class="row g-2 mb-2">
+                                <div class="col-6">
+                                    <label for="searchOccupation" class="form-label-theme d-block">Occupation / Org</label>
+                                    <input type="text" class="form-control custom-form-input" id="searchOccupation" name="search_occupation" placeholder="e.g. AI Researcher">
+                                </div>
+                                <div class="col-6">
+                                    <label for="searchEducation" class="form-label-theme d-block">College / University / Company</label>
+                                    <input type="text" class="form-control custom-form-input" id="searchEducation" name="search_education" placeholder="e.g. Stanford University">
+                                </div>
+                            </div>
+
+                            <div class="mb-2">
+                                <label for="searchWebsite" class="form-label-theme d-block">Profile / Website URL (Optional)</label>
+                                <input type="url" class="form-control custom-form-input" id="searchWebsite" name="search_website" placeholder="https://alexdev.io">
+                            </div>
+
+                            <div class="mb-2">
+                                <label for="keywords" class="form-label-theme d-block">Keywords / Interests</label>
+                                <input type="text" class="form-control custom-form-input" id="keywords" name="keywords" value="AI tech innovator keynote">
+                            </div>
+
+                            <div>
+                                <label class="form-label text-dark extra-small fw-bold mb-2 d-block">Target Social Platforms</label>
+                                <div class="d-flex flex-wrap gap-2">
+                                    <div>
+                                        <input class="d-none platform-chip-input" type="checkbox" name="platforms" id="platLinkedIn" value="LinkedIn" checked>
+                                        <label class="platform-chip-label" for="platLinkedIn"><i class="fa-brands fa-linkedin text-primary"></i> LinkedIn</label>
+                                    </div>
+                                    <div>
+                                        <input class="d-none platform-chip-input" type="checkbox" name="platforms" id="platX" value="X" checked>
+                                        <label class="platform-chip-label" for="platX"><i class="fa-brands fa-x-twitter text-dark"></i> X / Twitter</label>
+                                    </div>
+                                    <div>
+                                        <input class="d-none platform-chip-input" type="checkbox" name="platforms" id="platInsta" value="Instagram" checked>
+                                        <label class="platform-chip-label" for="platInsta"><i class="fa-brands fa-instagram text-danger"></i> Instagram</label>
+                                    </div>
+                                    <div>
+                                        <input class="d-none platform-chip-input" type="checkbox" name="platforms" id="platFB" value="Facebook" checked>
+                                        <label class="platform-chip-label" for="platFB"><i class="fa-brands fa-facebook text-primary"></i> Facebook</label>
+                                    </div>
+                                    <div>
+                                        <input class="d-none platform-chip-input" type="checkbox" name="platforms" id="platWeb" value="Web" checked>
+                                        <label class="platform-chip-label" for="platWeb"><i class="fa-solid fa-globe text-secondary"></i> Web</label>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="mt-4 text-center">
+                    <button type="submit" class="btn-pill px-5 justify-content-center" id="runBtn">
+                        <i class="fa-solid fa-bolt"></i> Run Pipeline End-to-End
+                    </button>
+                </div>
+            </form>
         </div>
+
+        <!-- Full Width Pipeline Execution Results Container Below Inputs -->
+        <div class="custom-card-light mb-4">
+            <div class="d-flex justify-content-between align-items-center mb-4">
+                <div>
+                    <span class="micro-label"><i class="fa-solid fa-chart-line me-1"></i> Live Output</span>
+                    <h3 class="h4 mb-0">Pipeline Execution Results</h3>
+                </div>
+                <div id="statusSpinner" class="spinner-border spinner-border-sm text-purple d-none" role="status" style="color: var(--accent-violet);"></div>
+            </div>
+
+            <div id="resultsContainer">
+                <div class="text-center py-5 text-muted">
+                    <i class="fa-solid fa-shield-halved fs-1 mb-3 opacity-40" style="color: var(--accent-violet);"></i>
+                    <p class="mb-0">Scan face or upload image, enter search details, and click "Run Pipeline End-to-End" to process features, discover social media records, and anchor on the blockchain.</p>
+                </div>
+            </div>
+        </div>
+
     </section>
 
     <!-- 3-Column Card Grid on Dark Indigo Background -->
@@ -481,13 +732,127 @@
     </footer>
 
     <script>
+        let webcamStream = null;
+
+        function switchToPipelineMode(mode) {
+            const genBtn = document.getElementById('btnGenSHA');
+            const verBtn = document.getElementById('btnVerSHA');
+
+            if (mode === 'generate') {
+                genBtn.className = "btn-pill px-4 shadow-sm";
+                verBtn.className = "btn-pill-outline px-4 shadow-sm";
+                document.getElementById('inputControlBlock').scrollIntoView({ behavior: 'smooth', block: 'start' });
+            } else {
+                verBtn.className = "btn-pill px-4 shadow-sm";
+                genBtn.className = "btn-pill-outline px-4 shadow-sm";
+                document.getElementById('auditorSection').scrollIntoView({ behavior: 'smooth', block: 'center' });
+            }
+        }
+
+        function switchInputMode(mode) {
+            const uploadSec = document.getElementById('uploadInputSection');
+            const webcamSec = document.getElementById('webcamInputSection');
+            const uploadBtn = document.getElementById('uploadTabBtn');
+            const webcamBtn = document.getElementById('webcamTabBtn');
+
+            if (mode === 'upload') {
+                uploadSec.classList.remove('d-none');
+                webcamSec.classList.add('d-none');
+                uploadBtn.className = "mode-toggle-btn active";
+                webcamBtn.className = "mode-toggle-btn inactive";
+                if (webcamStream) {
+                    webcamStream.getTracks().forEach(track => track.stop());
+                    webcamStream = null;
+                }
+            } else {
+                uploadSec.classList.add('d-none');
+                webcamSec.classList.remove('d-none');
+                webcamBtn.className = "mode-toggle-btn active";
+                uploadBtn.className = "mode-toggle-btn inactive";
+                startWebcamStream();
+            }
+        }
+
+        async function startWebcamStream() {
+            try {
+                const video = document.getElementById('webcamVideo');
+                const snapImg = document.getElementById('webcamSnapshotImg');
+                if (snapImg) snapImg.style.display = 'none';
+                video.style.display = 'block';
+
+                webcamStream = await navigator.mediaDevices.getUserMedia({ video: true, audio: false });
+                video.srcObject = webcamStream;
+            } catch (err) {
+                console.warn("Camera access alert:", err.message);
+            }
+        }
+
+        window.addEventListener('DOMContentLoaded', () => {
+            // Automatically start webcam feed if default active tab is webcam scan
+            if (document.getElementById('webcamInputSection') && !document.getElementById('webcamInputSection').classList.contains('d-none')) {
+                startWebcamStream();
+            }
+        });
+
+        function captureWebcamFrame() {
+            const video = document.getElementById('webcamVideo');
+            const canvas = document.getElementById('webcamCanvas');
+            const snapImg = document.getElementById('webcamSnapshotImg');
+            const captureBtn = document.getElementById('captureBtn');
+            const retakeBtn = document.getElementById('retakeBtn');
+
+            canvas.width = video.videoWidth || 640;
+            canvas.height = video.videoHeight || 480;
+            const ctx = canvas.getContext('2d');
+            ctx.drawImage(video, 0, 0, canvas.width, canvas.height);
+
+            const dataUrl = canvas.toDataURL('image/jpeg');
+            snapImg.src = dataUrl;
+            snapImg.style.display = 'block';
+            video.style.display = 'none';
+
+            // Toggle control buttons (Show Retake Snapshot option)
+            captureBtn.classList.add('d-none');
+            retakeBtn.classList.remove('d-none');
+
+            // Stop live webcam feed stream once photo is taken
+            if (webcamStream) {
+                webcamStream.getTracks().forEach(track => track.stop());
+                webcamStream = null;
+            }
+
+            // Convert canvas DataURL to file payload for form submission
+            canvas.toBlob(blob => {
+                const file = new File([blob], "webcam_face_scan.jpg", { type: "image/jpeg" });
+                const container = new DataTransfer();
+                container.items.add(file);
+                document.getElementById('imageInput').files = container.files;
+            }, 'image/jpeg');
+        }
+
+        function retakeWebcamPhoto() {
+            const video = document.getElementById('webcamVideo');
+            const snapImg = document.getElementById('webcamSnapshotImg');
+            const captureBtn = document.getElementById('captureBtn');
+            const retakeBtn = document.getElementById('retakeBtn');
+
+            snapImg.style.display = 'none';
+            snapImg.src = '';
+            video.style.display = 'block';
+
+            retakeBtn.classList.add('d-none');
+            captureBtn.classList.remove('d-none');
+
+            startWebcamStream();
+        }
+
         function previewSelectedImage(input) {
             if (input.files && input.files[0]) {
                 const reader = new FileReader();
                 reader.onload = function(e) {
-                    document.getElementById('imagePreview').src = e.target.result;
-                    document.getElementById('imageFileName').textContent = input.files[0].name;
-                    document.getElementById('imagePreviewContainer').classList.remove('d-none');
+                    document.getElementById('uploadPreviewImg').src = e.target.result;
+                    document.getElementById('uploadFileName').textContent = input.files[0].name;
+                    document.getElementById('uploadPreviewContainer').classList.remove('d-none');
                 }
                 reader.readAsDataURL(input.files[0]);
             }
@@ -503,11 +868,21 @@
             spinner.classList.remove('d-none');
             results.innerHTML = `
                 <div class="text-center py-5">
-                    <div class="spinner-border mb-3" style="width: 3rem; height: 3rem; color: var(--accent-violet);" role="status"></div>
-                    <h5 class="fw-bold" style="color: var(--primary-navy);">Executing Pipeline...</h5>
-                    <p class="text-muted">Detecting faces, running dynamic web search, and mining PoW block record...</p>
+                    <div class="face-scanner-box">
+                        <i class="fa-solid fa-face-viewfinder face-icon"></i>
+                        <div class="scanner-laser"></div>
+                        <div class="scan-corner scan-corner-tl"></div>
+                        <div class="scan-corner scan-corner-tr"></div>
+                        <div class="scan-corner scan-corner-bl"></div>
+                        <div class="scan-corner scan-corner-br"></div>
+                    </div>
+                    <h5 class="fw-bold mb-2" style="color: var(--primary-navy);">Scanning & Verification in Progress...</h5>
+                    <p class="text-muted small max-w-400 mx-auto">Running deep neural face feature encoding, querying dynamic social web sources, and mining proof-of-work block record...</p>
                 </div>
             `;
+
+            // Smooth scroll up/across to live output results container
+            results.scrollIntoView({ behavior: 'smooth', block: 'center' });
 
             const formData = new FormData(this);
             try {
@@ -537,17 +912,23 @@
             const tx = data.tx_record;
             const verify = data.verification_result;
 
+            // Clean title display (strip excessive concatenated snippets)
+            let cleanTitle = post.title || 'Discovered Record';
+            if (cleanTitle.length > 90) {
+                cleanTitle = cleanTitle.substring(0, 90) + '...';
+            }
+
             document.getElementById('resultsContainer').innerHTML = `
                 <!-- Step 1 Output -->
                 <div class="mb-4">
                     <span class="micro-label">Stage 1</span>
                     <h5 class="fw-bold mb-2">Face Identification & Encoding</h5>
                     <div class="code-box">
-                        <div><strong>Image Hash (SHA-256):</strong> ${face.image_hash}</div>
+                        <div><strong>Image Hash (SHA-256):</strong> <span class="text-break">${face.image_hash}</span></div>
                         <div><strong>Detected Faces:</strong> ${face.face_count} face(s)</div>
                         ${face.faces.map((f, i) => `
                             <div class="ms-3 mt-1">
-                                <div>• Face #${i+1} Perceptual Hash: ${f.encoding.face_hash}</div>
+                                <div>• Face #${i+1} Perceptual Hash: <span class="text-break">${f.encoding.face_hash}</span></div>
                                 <div>• Bounding Box: [${f.bbox.join(', ')}]</div>
                             </div>
                         `).join('')}
@@ -560,12 +941,12 @@
                     <h5 class="fw-bold mb-2">Web & Social Discovery</h5>
                     <div class="code-box">
                         <div><strong>Matched Platform:</strong> <span class="badge" style="background: var(--accent-violet);">${post.platform}</span></div>
-                        <div><strong>Title / Headline:</strong> ${post.title}</div>
+                        <div><strong>Title / Headline:</strong> ${cleanTitle}</div>
                         <div><strong>Author / Domain:</strong> ${post.author}</div>
-                        <div><strong>Discovered URL:</strong> <a href="${post.url}" target="_blank" style="color: #A397E2;">${post.url}</a></div>
+                        <div><strong>Discovered URL:</strong> <a href="${post.url}" target="_blank" style="color: #A397E2; word-break: break-all;">${post.url}</a></div>
                         <div><strong>Match Confidence:</strong> ${(search.match_confidence * 100).toFixed(1)}%</div>
                         <div class="mt-1"><strong>Cryptographic Content Fingerprint:</strong></div>
-                        <div class="fw-bold text-white">${search.content_fingerprint}</div>
+                        <div class="fw-bold text-white text-break" style="word-break: break-all;">${search.content_fingerprint}</div>
                     </div>
                 </div>
 
@@ -575,67 +956,14 @@
                     <h5 class="fw-bold mb-2">Blockchain Ledger Anchoring</h5>
                     <div class="code-box">
                         <div><strong>Status:</strong> <span class="badge bg-success">${tx.status}</span></div>
-                        <div><strong>Transaction Hash (TxHash):</strong> <span style="color: #6EE7B7;" class="fw-bold">${tx.transaction_hash}</span></div>
+                        <div><strong>Transaction Hash (TxHash):</strong> <span style="color: #6EE7B7; word-break: break-all;" class="fw-bold text-break">${tx.transaction_hash}</span></div>
                         <div><strong>Block Index:</strong> #${tx.block_index}</div>
-                        <div><strong>Block Hash (PoW):</strong> ${tx.block_hash}</div>
+                        <div><strong>Block Hash (PoW):</strong> <span class="text-break">${tx.block_hash}</span></div>
                         <div><strong>Network:</strong> ${tx.network}</div>
                     </div>
                 </div>
 
-                <!-- Step 4 Self-Verification -->
-                <div>
-                    <span class="micro-label">Stage 4</span>
-                    <h5 class="fw-bold mb-2">On-Chain Self-Verification</h5>
-                    <div class="p-3 rounded-3 d-flex align-items-center gap-3" style="background: rgba(16, 185, 129, 0.1); border: 1px solid rgba(16, 185, 129, 0.3);">
-                        <i class="fa-solid fa-circle-check fs-2 text-success"></i>
-                        <div>
-                            <div class="fw-bold text-success">On-Chain Verification PASSED!</div>
-                            <small class="text-muted">Record on Block #${verify.block_index} is authentic, tamper-evident, and cryptographically verified.</small>
-                        </div>
-                    </div>
-                </div>
-            `;
-
-            // Auto fill audit input
-            document.getElementById('txHashInput').value = tx.transaction_hash;
         }
-
-        document.getElementById('verifyForm').addEventListener('submit', async function(e) {
-            e.preventDefault();
-            const txHash = document.getElementById('txHashInput').value.trim();
-            const out = document.getElementById('verifyResult');
-
-            out.innerHTML = `<div class="spinner-border spinner-border-sm" style="color: var(--accent-violet);" role="status"></div> Auditing on-chain ledger...`;
-
-            try {
-                const response = await fetch(`/api/verify?tx_hash=${encodeURIComponent(txHash)}`);
-                const data = await response.json();
-
-                if (data.valid) {
-                    const d = data.details.on_chain_data;
-                    out.innerHTML = `
-                        <div class="p-3 rounded-3 mt-2" style="background: rgba(16, 185, 129, 0.1); border: 1px solid rgba(16, 185, 129, 0.3);">
-                            <div class="fw-bold text-success"><i class="fa-solid fa-shield-check me-2"></i> ON-CHAIN PROOF VALIDATED</div>
-                            <small class="text-secondary">
-                                <div><strong>Block Index:</strong> #${data.details.block_index}</div>
-                                <div><strong>Social URL:</strong> ${d.social_post_url}</div>
-                                <div><strong>Platform:</strong> ${d.social_post_platform}</div>
-                                <div><strong>Fingerprint:</strong> ${d.content_fingerprint}</div>
-                            </small>
-                        </div>
-                    `;
-                } else {
-                    out.innerHTML = `
-                        <div class="p-3 rounded-3 mt-2" style="background: rgba(239, 68, 68, 0.1); border: 1px solid rgba(239, 68, 68, 0.3);">
-                            <div class="fw-bold text-danger"><i class="fa-solid fa-circle-xmark me-2"></i> VERIFICATION FAILED</div>
-                            <small class="text-danger">${data.error || 'Record not found or tampered.'}</small>
-                        </div>
-                    `;
-                }
-            } catch (err) {
-                out.innerHTML = `<div class="p-3 rounded-3 mt-2 text-danger">Verification request failed: ${err}</div>`;
-            }
-        });
     </script>
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
 </body>

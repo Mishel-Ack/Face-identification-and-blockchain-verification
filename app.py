@@ -19,6 +19,10 @@ app.config['UPLOAD_FOLDER'] = tempfile.gettempdir()
 def index():
     return render_template('index.html')
 
+@app.route('/verify')
+def verify_page():
+    return render_template('verify.html')
+
 @app.route('/login', methods=['GET', 'POST'])
 def login():
     if request.method == 'POST':
@@ -28,7 +32,21 @@ def login():
 @app.route('/api/run_pipeline', methods=['POST'])
 def api_run_pipeline():
     try:
-        keywords = request.form.get('keywords', 'AI tech innovator keynote')
+        # Extract identity metadata search fields
+        search_name = request.form.get('search_name', '').strip()
+        search_handle = request.form.get('search_handle', '').strip()
+        photo_notes = request.form.get('photo_notes', '').strip()
+        search_location = request.form.get('search_location', '').strip()
+        search_occupation = request.form.get('search_occupation', '').strip()
+        search_education = request.form.get('search_education', '').strip()
+        search_website = request.form.get('search_website', '').strip()
+        keywords = request.form.get('keywords', 'AI tech innovator keynote').strip()
+        target_platforms = request.form.getlist('platforms')
+
+        # Combine terms into an optimized search query string
+        query_parts = [p for p in [search_name, search_handle, photo_notes, search_occupation, search_education, search_location, keywords] if p]
+        full_query = " ".join(query_parts) if query_parts else (search_name or keywords)
+
         image_file = request.files.get('image')
 
         if image_file and image_file.filename != '':
@@ -45,9 +63,13 @@ def api_run_pipeline():
         face_engine = FaceEngine()
         face_data = face_engine.process_image(save_path)
 
-        # 2. Web Search
+        # 2. Dynamic Web & Social Search with Identity Criteria
         search_engine = WebSearchEngine()
-        search_result = search_engine.find_matching_post(face_data, query_keywords=keywords)
+        search_result = search_engine.find_matching_post(
+            face_data, 
+            query_keywords=full_query,
+            target_platforms=target_platforms
+        )
 
         # 3. Blockchain Anchoring
         verifier = BlockchainVerifier(ledger_db_path="blockchain_ledger.json")

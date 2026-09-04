@@ -1,0 +1,301 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Verify SHA Ledger Audit - VeriFace Proof</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --bg-gradient-top: #F3F0FA;
+            --bg-gradient-bottom: #E2DBF2;
+            --primary-navy: #1E1B3A;
+            --accent-violet: #6B5FA8;
+            --accent-violet-hover: #594d94;
+            --text-primary: #1E1B3A;
+            --text-secondary: #64748B;
+            --text-light: #FFFFFF;
+            --card-light-bg: rgba(255, 255, 255, 0.92);
+            --border-soft: rgba(107, 95, 168, 0.15);
+        }
+
+        body {
+            background: linear-gradient(180deg, rgba(243, 240, 250, 0.6) 0%, rgba(226, 219, 242, 0.8) 100%), url('/static/images/hero_bg.jpg') center/cover no-repeat;
+            color: var(--text-primary);
+            font-family: 'Inter', system-ui, -apple-system, sans-serif;
+            min-height: 100vh;
+            margin: 0;
+            padding: 0;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .micro-label {
+            font-size: 0.75rem;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 0.15em;
+            color: var(--accent-violet);
+            display: inline-block;
+            margin-bottom: 0.75rem;
+        }
+
+        .btn-pill {
+            background: var(--accent-violet);
+            color: var(--text-light) !important;
+            font-weight: 600;
+            border-radius: 50px;
+            padding: 12px 32px;
+            border: none;
+            text-decoration: none !important;
+            box-shadow: 0 10px 25px rgba(107, 95, 168, 0.25);
+            transition: all 0.3s ease;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+        }
+
+        .btn-pill:hover {
+            background: var(--accent-violet-hover);
+            transform: translateY(-2px);
+        }
+
+        .btn-pill-outline {
+            background: transparent;
+            color: var(--accent-violet) !important;
+            font-weight: 600;
+            border-radius: 50px;
+            padding: 12px 28px;
+            border: 2px solid var(--accent-violet);
+            text-decoration: none !important;
+            transition: all 0.3s ease;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+        }
+
+        .btn-pill-outline:hover {
+            background: rgba(107, 95, 168, 0.08);
+            transform: translateY(-2px);
+        }
+
+        .navbar {
+            padding: 24px 0;
+            background: transparent;
+        }
+
+        .brand-logo {
+            font-weight: 700;
+            font-size: 1.3rem;
+            color: var(--primary-navy);
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            text-decoration: none !important;
+        }
+
+        .brand-logo i {
+            color: var(--accent-violet);
+            font-size: 1.5rem;
+        }
+
+        .custom-card-light {
+            background: var(--card-light-bg);
+            backdrop-filter: blur(16px);
+            border: 1px solid var(--border-soft);
+            border-radius: 24px;
+            padding: 40px;
+            box-shadow: 0 15px 40px rgba(30, 27, 58, 0.08);
+        }
+
+        .code-box {
+            background: #141226;
+            border-radius: 14px;
+            padding: 16px 20px;
+            font-family: 'Fira Code', 'Consolas', monospace;
+            font-size: 0.88rem;
+            color: #D4CEF0;
+            word-break: break-all;
+            overflow-wrap: anywhere;
+        }
+
+        footer {
+            margin-top: auto;
+            padding: 30px 0;
+            border-top: 1px solid rgba(107, 95, 168, 0.1);
+        }
+    </style>
+</head>
+<body>
+
+    <!-- Navigation Bar -->
+    <nav class="navbar navbar-expand-lg">
+        <div class="container">
+            <a class="brand-logo" href="/">
+                <i class="fa-solid fa-shield-cat"></i>
+                <span>VeriFace Proof</span>
+            </a>
+            
+            <div class="d-flex align-items-center gap-3">
+                <a href="/" class="btn-pill-outline btn-sm px-4 py-2">
+                    <i class="fa-solid fa-arrow-left me-1"></i> Back to Main Generator Page
+                </a>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Dedicated Verify SHA Web Page Workspace -->
+    <main class="container my-5">
+        <div class="row justify-content-center">
+            <div class="col-lg-10">
+
+                <!-- Mode Navigation Switcher -->
+                <div class="d-flex justify-content-center gap-3 mb-4">
+                    <a href="/" class="btn-pill-outline px-4 shadow-sm">
+                        <i class="fa-solid fa-key me-1"></i> 1. Generate SHA (Run Pipeline)
+                    </a>
+                    <a href="/verify" class="btn-pill px-4 shadow-sm">
+                        <i class="fa-solid fa-shield-check me-1"></i> 2. Verify SHA (Ledger Audit Page)
+                    </a>
+                </div>
+
+                <div class="custom-card-light mb-4 text-center">
+                    <span class="micro-label"><i class="fa-solid fa-check-double me-1"></i> Decentralized Ledger Audit Page</span>
+                    <h2 class="headline-sm mb-3">Verify SHA-256 On-Chain Record</h2>
+                    <p class="text-secondary leading-relaxed mb-4 max-w-600 mx-auto">
+                        Enter any 64-character transaction hash (TxHash) or cryptographic content fingerprint digest below to instantly audit and verify its tamper-evident proof against our PoW blockchain ledger.
+                    </p>
+
+                    <form id="standaloneVerifyForm" class="max-w-700 mx-auto mb-3">
+                        <div class="input-group input-group-lg shadow-sm rounded-4 overflow-hidden mb-3">
+                            <span class="input-group-text bg-white border-0 ps-4 text-secondary">
+                                <i class="fa-solid fa-hashtag"></i>
+                            </span>
+                            <input type="text" class="form-control border-0 bg-white font-monospace fs-6 text-dark" id="standaloneTxHash" placeholder="Enter Transaction Hash (e.g. 0x7f8a9b... or 64-char Hex)" value="{{ request.args.get('tx_hash', '') }}" required>
+                            <button class="btn btn-pill px-4" type="submit" id="auditSubmitBtn" style="border-radius: 0 50px 50px 0;">
+                                <i class="fa-solid fa-magnifying-glass me-1"></i> Audit SHA Record
+                            </button>
+                        </div>
+                    </form>
+
+                    <div id="standaloneAuditResult" class="text-start mt-4">
+                        {% if request.args.get('tx_hash') %}
+                        <div class="text-center py-4">
+                            <div class="spinner-border text-purple mb-2" role="status" style="color: var(--accent-violet);"></div>
+                            <p class="text-muted small mb-0">Auditing transaction record...</p>
+                        </div>
+                        {% endif %}
+                    </div>
+                </div>
+
+                <!-- Sample Verification Queries -->
+                <div class="custom-card-light p-4">
+                    <h5 class="fw-bold mb-3" style="color: var(--primary-navy);"><i class="fa-solid fa-circle-info me-2 text-primary"></i>How Verification Works</h5>
+                    <div class="row g-4 text-secondary small">
+                        <div class="col-md-4">
+                            <h6 class="fw-bold text-dark mb-1">1. Canonical SHA Hash</h6>
+                            <p class="mb-0">Computes a 256-bit hash from normalized biometric face vectors and web metadata records.</p>
+                        </div>
+                        <div class="col-md-4">
+                            <h6 class="fw-bold text-dark mb-1">2. PoW Ledger Query</h6>
+                            <p class="mb-0">Searches the immutable block ledger to verify block index, miner signature, and timestamp.</p>
+                        </div>
+                        <div class="col-md-4">
+                            <h6 class="fw-bold text-dark mb-1">3. Proof Validation</h6>
+                            <p class="mb-0">Returns a cryptographic PASS/FAIL status confirming the record is 100% authentic & un-tampered.</p>
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+        </div>
+    </main>
+
+    <footer>
+        <div class="container text-center">
+            <span class="small text-muted">&copy; 2026 VeriFace Proof Engine &bull; Decentralized SHA Ledger Auditor</span>
+        </div>
+    </footer>
+
+    <script>
+        async function runAuditQuery(txHash) {
+            const out = document.getElementById('standaloneAuditResult');
+            const submitBtn = document.getElementById('auditSubmitBtn');
+
+            if (!txHash) return;
+
+            submitBtn.disabled = true;
+            out.innerHTML = `
+                <div class="text-center py-4">
+                    <div class="spinner-border mb-2" style="color: var(--accent-violet);" role="status"></div>
+                    <p class="text-muted small mb-0">Auditing transaction <code>${txHash}</code> on cryptographic block ledger...</p>
+                </div>
+            `;
+
+            try {
+                const response = await fetch(`/api/verify?tx_hash=${encodeURIComponent(txHash)}`);
+                const data = await response.json();
+
+                if (data.valid) {
+                    const d = data.details.on_chain_data;
+                    out.innerHTML = `
+                        <div class="p-4 rounded-4" style="background: rgba(16, 185, 129, 0.08); border: 2px solid rgba(16, 185, 129, 0.3);">
+                            <div class="d-flex align-items-center gap-3 mb-3">
+                                <i class="fa-solid fa-circle-check fs-1 text-success"></i>
+                                <div>
+                                    <h4 class="fw-bold text-success mb-0">SHA-256 ON-CHAIN PROOF VALIDATED!</h4>
+                                    <small class="text-muted">Record verified on Block #${data.details.block_index} &bull; Tamper-Evident Ledger Integrity PASSED</small>
+                                </div>
+                            </div>
+                            <div class="code-box">
+                                <div><strong>Transaction Hash (TxHash):</strong> <span class="text-success fw-bold">${txHash}</span></div>
+                                <div><strong>Block Index:</strong> #${data.details.block_index}</div>
+                                <div><strong>Social Post URL:</strong> <a href="${d.social_post_url}" target="_blank" style="color: #A397E2;">${d.social_post_url}</a></div>
+                                <div><strong>Platform:</strong> ${d.social_post_platform}</div>
+                                <div><strong>Discovered Title:</strong> ${d.social_post_title || 'N/A'}</div>
+                                <div class="mt-2"><strong>Content Fingerprint Digest (SHA-256):</strong></div>
+                                <div class="text-white fw-bold">${d.content_fingerprint}</div>
+                            </div>
+                        </div>
+                    `;
+                } else {
+                    out.innerHTML = `
+                        <div class="p-4 rounded-4" style="background: rgba(239, 68, 68, 0.08); border: 2px solid rgba(239, 68, 68, 0.3);">
+                            <div class="d-flex align-items-center gap-3 mb-2">
+                                <i class="fa-solid fa-circle-xmark fs-1 text-danger"></i>
+                                <div>
+                                    <h4 class="fw-bold text-danger mb-0">VERIFICATION FAILED</h4>
+                                    <small class="text-danger">${data.error || 'Record not found on blockchain ledger or hash tampered.'}</small>
+                                </div>
+                            </div>
+                        </div>
+                    `;
+                }
+            } catch (err) {
+                out.innerHTML = `<div class="alert alert-danger">Verification request failed: ${err}</div>`;
+            } finally {
+                submitBtn.disabled = false;
+            }
+        }
+
+        document.getElementById('standaloneVerifyForm').addEventListener('submit', function(e) {
+            e.preventDefault();
+            const txHash = document.getElementById('standaloneTxHash').value.trim();
+            runAuditQuery(txHash);
+        });
+
+        window.addEventListener('DOMContentLoaded', () => {
+            const initialTx = document.getElementById('standaloneTxHash').value.trim();
+            if (initialTx) {
+                runAuditQuery(initialTx);
+            }
+        });
+    </script>
+</body>
+</html>
