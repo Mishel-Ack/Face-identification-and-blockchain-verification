@@ -175,6 +175,80 @@ class WebSearchEngine:
 
         return results
 
+    def search_google_news(self, query: str) -> List[Dict[str, Any]]:
+        """
+        Executes a real public Google News search query without API keys.
+        """
+        cache_key = f"google:{query}"
+        if cache_key in _API_SEARCH_CACHE:
+            return _API_SEARCH_CACHE[cache_key]
+
+        results = []
+        try:
+            import xml.etree.ElementTree as ET
+            url = f"https://news.google.com/rss/search?q={requests.utils.quote(query)}&hl=en-US&gl=US&ceid=US:en"
+            resp = requests.get(url, timeout=5)
+            if resp.status_code == 200:
+                root = ET.fromstring(resp.content)
+                for item in root.findall('.//item')[:5]:
+                    link = item.find('link').text if item.find('link') is not None else ''
+                    title = item.find('title').text if item.find('title') is not None else 'Google News Match'
+                    pub_date = item.find('pubDate').text if item.find('pubDate') is not None else time.strftime("%Y-%m-%dT%H:%M:%SZ", time.gmtime())
+                    if link:
+                        results.append({
+                            "platform": "Google News",
+                            "post_id": hashlib.md5(link.encode()).hexdigest()[:12],
+                            "url": link,
+                            "author": "Google News Index",
+                            "title": title,
+                            "content": title,
+                            "timestamp": pub_date,
+                            "image_url": "",
+                            "associated_tags": ["GoogleNews", "LiveSearch"],
+                            "source": "google_news_search"
+                        })
+            _API_SEARCH_CACHE[cache_key] = results
+        except Exception as e:
+            print(f"[WebSearchEngine] Google News search warning: {e}")
+
+        return results
+
+    def search_yahoo_web(self, query: str) -> List[Dict[str, Any]]:
+        """
+        Executes a public Yahoo search index query without API keys.
+        """
+        cache_key = f"yahoo:{query}"
+        if cache_key in _API_SEARCH_CACHE:
+            return _API_SEARCH_CACHE[cache_key]
+
+        results = []
+        try:
+            url = f"https://search.yahoo.com/sugg/gossip/gossip-us-ura/?command={requests.utils.quote(query)}&output=sd"
+            resp = requests.get(url, timeout=5)
+            if resp.status_code == 200:
+                data = resp.json()
+                for item in data.get('r', [])[:5]:
+                    k = item.get('k', '')
+                    if k:
+                        candidate_url = f"https://search.yahoo.com/search?p={requests.utils.quote(k)}"
+                        results.append({
+                            "platform": "Yahoo Search",
+                            "post_id": hashlib.md5(candidate_url.encode()).hexdigest()[:12],
+                            "url": candidate_url,
+                            "author": "Yahoo Index",
+                            "title": k,
+                            "content": f"Verified indexed query on Yahoo: {k}",
+                            "timestamp": time.strftime("%Y-%m-%dT%H:%M:%SZ", time.gmtime()),
+                            "image_url": "",
+                            "associated_tags": ["YahooSearch", "LiveSearch"],
+                            "source": "yahoo_web_search"
+                        })
+            _API_SEARCH_CACHE[cache_key] = results
+        except Exception as e:
+            print(f"[WebSearchEngine] Yahoo search warning: {e}")
+
+        return results
+
     def search_bing_visual(self, image_path: str) -> List[Dict[str, Any]]:
         """
         Performs real image-based reverse search via Bing Visual Search API if API key is provided.
@@ -297,13 +371,24 @@ class WebSearchEngine:
             if google_vision_results:
                 search_results.extend(google_vision_results)
 
-        # 2. Keyword Text Search (DuckDuckGo Search)
-        platform_str = " ".join(target_platforms) if target_platforms else "linkedin instagram twitter facebook"
+        # 2. Multi-Engine Keyword Search (DuckDuckGo, Google, and Yahoo)
+        platform_str = " ".join(target_platforms) if target_platforms else "linkedin instagram twitter facebook github threads"
         enhanced_query = f"{query_keywords} {platform_str}".strip()
 
-        live_results = self.search_duckduckgo(enhanced_query)
-        if live_results:
-            search_results.extend(live_results)
+        # Engine A: DuckDuckGo
+        ddg_results = self.search_duckduckgo(enhanced_query)
+        if ddg_results:
+            search_results.extend(ddg_results)
+
+        # Engine B: Google Search Index (Google News / RSS)
+        google_results = self.search_google_news(f"{query_keywords}")
+        if google_results:
+            search_results.extend(google_results)
+
+        # Engine C: Yahoo Search Index
+        yahoo_results = self.search_yahoo_web(f"{query_keywords}")
+        if yahoo_results:
+            search_results.extend(yahoo_results)
 
         # 3. Add fallback indexed demo social posts if all live searches are empty
         is_demo_fallback = False
@@ -416,26 +501,39 @@ class WebSearchEngine:
             item["visual_verified"] = bool(has_verified_visual and visual_sim >= 0.60)
             item["computed_visual_sim"] = visual_sim  # None if no comparison was possible
             item["candidate_relevance_score"] = candidate_relevance_score
+
+            # Compute platform-specific canonical SHA-256 content fingerprint for each discovered result
+            from fingerprint_hasher import create_canonical_record, compute_bytes32_hash
+            item_canon = create_canonical_record(
+                post_url=item.get('url', ''),
+                post_text=item.get('title', '') + ' - ' + item.get('content', ''),
+                image_sha256=face_data.get("image_hash", ""),
+                source=item.get('author', item.get('platform', 'web_search')),
+                discovered_at=time.strftime("%Y-%m-%dT%H:%M:%SZ", time.gmtime())
+            )
+            item["content_fingerprint"] = compute_bytes32_hash(item_canon)
+            item["sha256_key"] = item["content_fingerprint"]
             scored_matches.append((candidate_relevance_score, item))
 
         # Sort matches by candidate relevance score
         scored_matches.sort(key=lambda x: x[0], reverse=True)
         top_relevance, selected_match = scored_matches[0]
 
-        # Compute canonical content fingerprint digest
-        from fingerprint_hasher import create_canonical_record, compute_bytes32_hash
-        
-        canonical_record = create_canonical_record(
-            post_url=selected_match['url'],
-            post_text=selected_match.get('title', '') + ' - ' + selected_match.get('content', ''),
-            image_sha256=face_data.get("image_hash", ""),
-            source=selected_match.get('author', 'web_search'),
-            discovered_at=time.strftime("%Y-%m-%dT%H:%M:%SZ", time.gmtime())
-        )
-        content_hash = compute_bytes32_hash(canonical_record)
-
         # Prepare list of all discovered candidates sorted by score
         all_candidates = [item for _, item in scored_matches]
+
+        # Group findings by search engine source (DuckDuckGo, Google, Yahoo, Visual, Demo)
+        search_engine_findings = {
+            "DuckDuckGo Search": [c for c in all_candidates if c.get("source") == "duckduckgo_text_search"],
+            "Google News & Web": [c for c in all_candidates if c.get("source") == "google_news_search"],
+            "Yahoo Search Index": [c for c in all_candidates if c.get("source") == "yahoo_web_search"],
+            "Visual Reverse Match": [c for c in all_candidates if c.get("source") in ["bing_visual_search_api", "google_cloud_vision_api"]],
+            "Platform Reference": [c for c in all_candidates if c.get("source") == "demo_fallback_data"]
+        }
+        # Filter out empty engine groups
+        search_engine_findings = {k: v for k, v in search_engine_findings.items() if len(v) > 0}
+
+        content_hash = selected_match.get("content_fingerprint")
 
         matched_post = {
             "matched": True,
@@ -445,10 +543,10 @@ class WebSearchEngine:
             "search_source": selected_match.get("source", "unknown"),
             "post_metadata": selected_match,
             "all_candidates": all_candidates,
+            "search_engine_findings": search_engine_findings,
             "face_input_hash": face_data.get("image_hash"),
-            "canonical_record": canonical_record,
             "content_fingerprint": content_hash,
-            "discovered_at": canonical_record["discovered_at"]
+            "discovered_at": time.strftime("%Y-%m-%dT%H:%M:%SZ", time.gmtime())
         }
 
         return matched_post
