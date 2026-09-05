@@ -12,8 +12,43 @@ import numpy as np
 import cv2
 from typing import List, Dict, Any
 
+# Simple in-memory response cache to prevent duplicate billed API calls & spend
+_API_SEARCH_CACHE = {}
+_LAST_API_CALL_TIME = 0.0
+
 class WebSearchEngine:
-    def __init__(self):
+    def __init__(self, verbose: bool = True):
+        # Cache & Spend Guardrails
+        self.min_api_interval_sec = float(os.getenv("API_RATE_LIMIT_SEC", "1.0"))  # minimum 1s between external paid API calls
+        self.max_calls_per_run = int(os.getenv("MAX_API_CALLS_PER_RUN", "10"))
+        
+        # Check backend availability at initialization
+        self.ddg_available = False
+        try:
+            import ddgs
+            self.ddg_available = True
+        except ImportError:
+            try:
+                from duckduckgo_search import DDGS
+                self.ddg_available = True
+            except ImportError:
+                self.ddg_available = False
+
+        self.bing_key_set = bool(os.getenv("BING_VISUAL_SEARCH_KEY"))
+        
+        self.google_sdk_installed = False
+        try:
+            from google.cloud import vision
+            self.google_sdk_installed = True
+        except ImportError:
+            self.google_sdk_installed = False
+
+        if verbose:
+            ddg_status = "yes" if self.ddg_available else "no (ddgs/duckduckgo_search missing)"
+            bing_status = "yes" if self.bing_key_set else "no (BING_VISUAL_SEARCH_KEY not set)"
+            google_status = "yes" if self.google_sdk_installed else "no (google-cloud-vision SDK missing)"
+            print(f"[WebSearchEngine] Active sources: DuckDuckGo ({ddg_status}), Bing Visual ({bing_status}), Google Vision ({google_status})")
+
         # Default mock web index for fallback simulation if external queries return 0 results
         self.mock_social_posts = [
             {
@@ -54,13 +89,34 @@ class WebSearchEngine:
             }
         ]
 
+    def _enforce_rate_limit(self):
+        """Spend Guardrail: Enforces minimum delay between paid external API calls."""
+        global _LAST_API_CALL_TIME
+        now = time.time()
+        elapsed = now - _LAST_API_CALL_TIME
+        if elapsed < self.min_api_interval_sec:
+            time.sleep(self.min_api_interval_sec - elapsed)
+        _LAST_API_CALL_TIME = time.time()
+
     def search_duckduckgo(self, query: str) -> List[Dict[str, Any]]:
         """
         Executes a real DuckDuckGo web/text search query.
         """
+        if not self.ddg_available:
+            return []
+
+        # Check in-memory cache
+        cache_key = f"ddg:{query}"
+        if cache_key in _API_SEARCH_CACHE:
+            return _API_SEARCH_CACHE[cache_key]
+
         results = []
         try:
-            from ddgs import DDGS
+            try:
+                from ddgs import DDGS
+            except ImportError:
+                from duckduckgo_search import DDGS
+                
             with DDGS() as ddgs:
                 ddg_results = list(ddgs.text(query, max_results=5))
                 for item in ddg_results:
@@ -73,17 +129,11 @@ class WebSearchEngine:
                         "title": item.get("title", ""),
                         "content": item.get("body", ""),
                         "timestamp": time.strftime("%Y-%m-%dT%H:%M:%SZ", time.gmtime()),
-                        # NOTE: DuckDuckGo's text search API does not return a
-                        # distinct preview image, only the page URL -- so there
-                        # is no real image to visually compare here. Leaving
-                        # image_url empty (rather than reusing the page URL)
-                        # ensures the scoring step below correctly treats this
-                        # as "no visual evidence available" instead of trying
-                        # and failing to decode an HTML page as an image.
                         "image_url": "",
                         "associated_tags": ["WebResult", "LiveSearch"],
                         "source": "duckduckgo_text_search"
                     })
+            _API_SEARCH_CACHE[cache_key] = results
         except Exception as e:
             print(f"[WebSearchEngine] DuckDuckGo query warning: {e}")
 
@@ -92,11 +142,20 @@ class WebSearchEngine:
     def search_bing_visual(self, image_path: str) -> List[Dict[str, Any]]:
         """
         Performs real image-based reverse search via Bing Visual Search API if API key is provided.
-        API Key read from environment variable `BING_VISUAL_SEARCH_KEY`.
+        Includes spend guardrails (caching + rate-limiting).
         """
         api_key = os.getenv("BING_VISUAL_SEARCH_KEY")
         if not api_key or not os.path.exists(image_path):
             return []
+
+        # Compute image hash for caching
+        with open(image_path, "rb") as f:
+            img_hash = hashlib.sha256(f.read()).hexdigest()
+        cache_key = f"bing_vis:{img_hash}"
+        if cache_key in _API_SEARCH_CACHE:
+            return _API_SEARCH_CACHE[cache_key]
+
+        self._enforce_rate_limit()
 
         results = []
         try:
@@ -128,6 +187,7 @@ class WebSearchEngine:
                                         "associated_tags": ["BingVisualSearch", "ReverseImageMatch"],
                                         "source": "bing_visual_search_api"
                                     })
+                _API_SEARCH_CACHE[cache_key] = results
         except Exception as e:
             print(f"[WebSearchEngine] Bing Visual Search API warning: {e}")
 
@@ -136,19 +196,22 @@ class WebSearchEngine:
     def search_google_vision_web(self, image_path: str) -> List[Dict[str, Any]]:
         """
         Performs real image-based reverse search via Google Cloud Vision WEB_DETECTION API.
-        Requires the `google-cloud-vision` package and valid Application Default
-        Credentials (env var GOOGLE_APPLICATION_CREDENTIALS pointing at a service
-        account JSON key, or `gcloud auth application-default login`).
+        Includes spend guardrails (caching + rate-limiting).
         """
+        if not self.google_sdk_installed or not os.path.exists(image_path):
+            return []
+
+        with open(image_path, "rb") as f:
+            img_hash = hashlib.sha256(f.read()).hexdigest()
+        cache_key = f"gvision_vis:{img_hash}"
+        if cache_key in _API_SEARCH_CACHE:
+            return _API_SEARCH_CACHE[cache_key]
+
+        self._enforce_rate_limit()
+
         results = []
         try:
             from google.cloud import vision
-        except ImportError:
-            print("[WebSearchEngine] Google Vision skipped: 'google-cloud-vision' "
-                  "not installed (pip install google-cloud-vision).")
-            return results
-
-        try:
             client = vision.ImageAnnotatorClient()
             with open(image_path, "rb") as image_file:
                 content = image_file.read()
@@ -171,6 +234,7 @@ class WebSearchEngine:
                         "associated_tags": ["GoogleCloudVision", "WebDetection"],
                         "source": "google_cloud_vision_api"
                     })
+                _API_SEARCH_CACHE[cache_key] = results
         except Exception as e:
             # Most common causes: missing/invalid Application Default Credentials,
             # billing not enabled on the GCP project, or API not enabled.

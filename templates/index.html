@@ -518,18 +518,19 @@
                     <div class="col-lg-5">
                         <label class="form-label text-dark fw-semibold small mb-2 d-block">Biometric Face Input</label>
                         
-                        <!-- Dual Input Mode Selector (50-50 Equal Width: Scan Face First) -->
+                        <!-- Dual Input Mode Selector (50-50 Equal Width: Upload Image First Default) -->
                         <div class="d-flex w-100 mb-3" role="group" style="background: rgba(107, 95, 168, 0.12); padding: 4px; border-radius: 50px;">
-                            <button type="button" class="mode-toggle-btn active" id="webcamTabBtn" onclick="switchInputMode('webcam')">
-                                <i class="fa-solid fa-camera me-2"></i> Scan Face (Webcam)
-                            </button>
-                            <button type="button" class="mode-toggle-btn inactive" id="uploadTabBtn" onclick="switchInputMode('upload')">
+                            <button type="button" class="mode-toggle-btn active" id="uploadTabBtn" onclick="switchInputMode('upload')">
                                 <i class="fa-solid fa-file-image me-2"></i> Upload Image
+                            </button>
+                            <button type="button" class="mode-toggle-btn inactive" id="webcamTabBtn" onclick="switchInputMode('webcam')">
+                                <i class="fa-solid fa-camera me-2"></i> Scan Face (Webcam)
                             </button>
                         </div>
 
-                        <!-- Mode 1: Live Webcam Face Capture (Default Active) -->
-                        <div id="webcamInputSection" class="mb-3 text-center">
+                        <!-- Mode 1: Live Webcam Face Capture -->
+                        <div id="webcamInputSection" class="mb-3 text-center d-none">
+                            <div id="webcamNotice" class="alert alert-warning py-2 px-3 small mb-2 d-none"></div>
                             <div class="p-3 rounded-4 position-relative" style="background: #141226; border: 2px dashed var(--accent-violet);">
                                 <video id="webcamVideo" autoplay playsinline muted style="width: 100%; max-height: 220px; border-radius: 12px; transform: scaleX(-1); object-fit: cover;"></video>
                                 <img id="webcamSnapshotImg" src="" alt="Webcam Face Snapshot" style="display: none; width: 100%; max-height: 220px; object-fit: cover; border-radius: 12px; border: 2px solid #6EE7B7; box-shadow: 0 4px 15px rgba(110, 231, 183, 0.25);">
@@ -545,8 +546,8 @@
                             </div>
                         </div>
 
-                        <!-- Mode 2: Drag & Drop File Upload -->
-                        <div id="uploadInputSection" class="mb-3 d-none">
+                        <!-- Mode 2: Drag & Drop File Upload (Default Visible) -->
+                        <div id="uploadInputSection" class="mb-3">
                             <div class="drop-zone" id="dropZone" onclick="document.getElementById('imageInput').click()">
                                 <i class="fa-solid fa-cloud-arrow-up fs-2 mb-2" style="color: var(--accent-violet);"></i>
                                 <p class="mb-1 fw-semibold text-dark">Click or drag face scan image</p>
@@ -647,9 +648,12 @@
                     </div>
                 </div>
 
-                <div class="mt-4 text-center">
+                <div class="mt-4 d-flex justify-content-center gap-3 align-items-center flex-wrap">
                     <button type="submit" class="btn-pill px-5 justify-content-center" id="runBtn">
-                        <i class="fa-solid fa-bolt"></i> Run Pipeline End-to-End
+                        <i class="fa-solid fa-bolt me-1"></i> Run Pipeline End-to-End
+                    </button>
+                    <button type="button" class="btn-pill-outline px-4 py-2 small" id="autoFillBtn" onclick="autoFillSampleData()">
+                        <i class="fa-solid fa-wand-magic-sparkles me-1"></i> Auto-Fill Sample Data
                     </button>
                 </div>
             </form>
@@ -777,20 +781,53 @@
             try {
                 const video = document.getElementById('webcamVideo');
                 const snapImg = document.getElementById('webcamSnapshotImg');
+                const camNotice = document.getElementById('webcamNotice');
                 if (snapImg) snapImg.style.display = 'none';
                 video.style.display = 'block';
 
-                webcamStream = await navigator.mediaDevices.getUserMedia({ video: true, audio: false });
+                webcamStream = await navigator.mediaDevices.getUserMedia({ video: { width: { ideal: 1280 }, height: { ideal: 720 }, facingMode: "user" }, audio: false });
                 video.srcObject = webcamStream;
+                if (camNotice) camNotice.classList.add('d-none');
             } catch (err) {
                 console.warn("Camera access alert:", err.message);
+                const camNotice = document.getElementById('webcamNotice');
+                if (camNotice) {
+                    camNotice.classList.remove('d-none');
+                    camNotice.innerHTML = `<i class="fa-solid fa-triangle-exclamation me-1"></i> Camera permission required for live scan. <button type="button" class="btn btn-link btn-sm p-0 text-decoration-underline text-warning" onclick="switchInputMode('upload')">Switch to File Upload</button>`;
+                }
             }
         }
 
         window.addEventListener('DOMContentLoaded', () => {
-            // Automatically start webcam feed if default active tab is webcam scan
             if (document.getElementById('webcamInputSection') && !document.getElementById('webcamInputSection').classList.contains('d-none')) {
                 startWebcamStream();
+            }
+
+            // Setup Drag & Drop handlers for file upload zone
+            const dropZone = document.getElementById('dropZone');
+            if (dropZone) {
+                ['dragenter', 'dragover', 'dragleave', 'drop'].forEach(eventName => {
+                    dropZone.addEventListener(eventName, preventDefaults, false);
+                });
+                function preventDefaults(e) {
+                    e.preventDefault();
+                    e.stopPropagation();
+                }
+                ['dragenter', 'dragover'].forEach(eventName => {
+                    dropZone.addEventListener(eventName, () => dropZone.classList.add('bg-white', 'border-primary'), false);
+                });
+                ['dragleave', 'drop'].forEach(eventName => {
+                    dropZone.addEventListener(eventName, () => dropZone.classList.remove('bg-white', 'border-primary'), false);
+                });
+                dropZone.addEventListener('drop', (e) => {
+                    const dt = e.dataTransfer;
+                    const files = dt.files;
+                    if (files && files.length > 0) {
+                        const input = document.getElementById('imageInput');
+                        input.files = files;
+                        previewSelectedImage(input);
+                    }
+                }, false);
             }
         });
 
@@ -811,17 +848,14 @@
             snapImg.style.display = 'block';
             video.style.display = 'none';
 
-            // Toggle control buttons (Show Retake Snapshot option)
             captureBtn.classList.add('d-none');
             retakeBtn.classList.remove('d-none');
 
-            // Stop live webcam feed stream once photo is taken
             if (webcamStream) {
                 webcamStream.getTracks().forEach(track => track.stop());
                 webcamStream = null;
             }
 
-            // Convert canvas DataURL to file payload for form submission
             canvas.toBlob(blob => {
                 const file = new File([blob], "webcam_face_scan.jpg", { type: "image/jpeg" });
                 const container = new DataTransfer();
@@ -856,6 +890,17 @@
                 }
                 reader.readAsDataURL(input.files[0]);
             }
+        }
+
+        function autoFillSampleData() {
+            document.getElementById('searchName').value = "Alex Dev";
+            document.getElementById('searchHandle').value = "@alex_dev";
+            document.getElementById('photoNotes').value = "Keynote photo from AI Summit conference stage";
+            document.getElementById('searchLocation').value = "San Francisco, USA";
+            document.getElementById('searchOccupation').value = "AI Developer & Keynote Speaker";
+            document.getElementById('searchEducation').value = "Computer Science";
+            document.getElementById('searchWebsite').value = "https://alexdev.tech";
+            switchInputMode('upload');
         }
 
         document.getElementById('pipelineForm').addEventListener('submit', async function(e) {
@@ -975,7 +1020,7 @@
                         <div><strong>Network:</strong> ${tx.network}</div>
                     </div>
                 </div>
-
+            `;
         }
     </script>
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>

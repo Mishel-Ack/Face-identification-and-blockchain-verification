@@ -143,6 +143,79 @@ class BlockchainVerifier:
 
         return True, "Chain integrity valid."
 
+    def send_web3_smart_contract_tx(self, content_fingerprint: str) -> Dict[str, Any]:
+        """
+        Submits real bytes32 content fingerprint transaction to ContentVerification.sol smart contract via Web3 RPC.
+        Enabled when environment variables `WEB3_RPC_URL`, `WEB3_PRIVATE_KEY`, and `WEB3_CONTRACT_ADDRESS` are configured.
+        """
+        rpc_url = self.rpc_url or os.getenv("WEB3_RPC_URL")
+        private_key = os.getenv("WEB3_PRIVATE_KEY")
+        contract_address = os.getenv("WEB3_CONTRACT_ADDRESS")
+
+        if not rpc_url or not private_key or not contract_address:
+            return {"web3_enabled": False, "reason": "Missing WEB3_RPC_URL, WEB3_PRIVATE_KEY, or WEB3_CONTRACT_ADDRESS"}
+
+        try:
+            from web3 import Web3
+            w3 = Web3(Web3.HTTPProvider(rpc_url))
+            if not w3.is_connected():
+                return {"web3_enabled": False, "reason": f"Could not connect to Web3 RPC at {rpc_url}"}
+
+            account = w3.eth.account.from_key(private_key)
+            contract_abi = [
+                {
+                    "inputs": [{"name": "contentHash", "type": "bytes32"}],
+                    "name": "registerRecord",
+                    "outputs": [],
+                    "stateMutability": "nonpayable",
+                    "type": "function"
+                },
+                {
+                    "inputs": [{"name": "contentHash", "type": "bytes32"}],
+                    "name": "verifyRecord",
+                    "outputs": [
+                        {"name": "exists", "type": "bool"},
+                        {"name": "timestamp", "type": "uint256"},
+                        {"name": "uploader", "type": "address"}
+                    ],
+                    "stateMutability": "view",
+                    "type": "function"
+                }
+            ]
+
+            contract = w3.eth.contract(address=Web3.to_checksum_address(contract_address), abi=contract_abi)
+            
+            # Format bytes32
+            if not content_fingerprint.startswith("0x"):
+                bytes32_hash = "0x" + content_fingerprint
+            else:
+                bytes32_hash = content_fingerprint
+
+            # Build & send transaction
+            nonce = w3.eth.get_transaction_count(account.address)
+            tx = contract.functions.registerRecord(bytes32_hash).build_transaction({
+                'from': account.address,
+                'nonce': nonce,
+                'gas': 150000,
+                'gasPrice': w3.eth.gas_price
+            })
+
+            signed_tx = w3.eth.account.sign_transaction(tx, private_key=private_key)
+            tx_hash_bytes = w3.eth.send_raw_transaction(signed_tx.rawTransaction)
+            onchain_tx_hash = w3.to_hex(tx_hash_bytes)
+
+            return {
+                "web3_enabled": True,
+                "status": "SUBMITTED_TO_TESTNET",
+                "onchain_tx_hash": onchain_tx_hash,
+                "contract_address": contract_address,
+                "uploader": account.address,
+                "network_id": w3.eth.chain_id
+            }
+        except Exception as e:
+            print(f"[BlockchainVerifier] Web3 contract error: {e}")
+            return {"web3_enabled": False, "reason": str(e)}
+
     def verify_on_chain_record(self, tx_hash: str, expected_content_fingerprint: str = None) -> Tuple[bool, Dict[str, Any]]:
         """
         Queries the blockchain ledger to verify transaction hash integrity & tamper status.
