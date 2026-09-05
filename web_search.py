@@ -86,6 +86,42 @@ class WebSearchEngine:
                 "image_url": "https://images.unsplash.com/photo-1500648767791-00dcc994a43e",
                 "associated_tags": ["Identity", "CyberSecurity", "Verification"],
                 "source": "demo_fallback_data"
+            },
+            {
+                "platform": "GitHub",
+                "post_id": "gh_user_992182",
+                "url": "https://github.com/alex-dev-ai",
+                "author": "alex-dev-ai",
+                "title": "Alex Dev - AI & Vision Research Engineer",
+                "content": "Building computer vision pipelines and biometric identification engines.",
+                "timestamp": "2026-09-02T10:00:00Z",
+                "image_url": "https://images.unsplash.com/photo-1534528741775-53994a69daeb",
+                "associated_tags": ["OpenSource", "GitHub", "Developer"],
+                "source": "demo_fallback_data"
+            },
+            {
+                "platform": "Snapchat",
+                "post_id": "snap_s910283",
+                "url": "https://snapchat.com/add/alex_dev_snap",
+                "author": "@alex_dev_snap",
+                "title": "Alex Dev on Snapchat",
+                "content": "Tech highlights and live updates from developer events.",
+                "timestamp": "2026-09-03T12:00:00Z",
+                "image_url": "https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d",
+                "associated_tags": ["Snapchat", "Tech", "Social"],
+                "source": "demo_fallback_data"
+            },
+            {
+                "platform": "Threads",
+                "post_id": "threads_t918237",
+                "url": "https://threads.net/@alex_dev",
+                "author": "@alex_dev",
+                "title": "Alex Dev (@alex_dev) on Threads",
+                "content": "Discussing next-gen decentralized identity verification and facial feature extraction.",
+                "timestamp": "2026-09-04T15:30:00Z",
+                "image_url": "https://images.unsplash.com/photo-1500648767791-00dcc994a43e",
+                "associated_tags": ["Threads", "AI", "Tech"],
+                "source": "demo_fallback_data"
             }
         ]
 
@@ -311,7 +347,7 @@ class WebSearchEngine:
 
             # Social platform boost
             url_lower = item.get("url", "").lower()
-            is_social = any(p in url_lower for p in ["twitter.com", "x.com", "linkedin.com", "instagram.com", "facebook.com", "github.com", "youtube.com", "reddit.com"])
+            is_social = any(p in url_lower for p in ["twitter.com", "x.com", "linkedin.com", "instagram.com", "facebook.com", "github.com", "youtube.com", "reddit.com", "snapchat.com", "threads.net"])
             platform_boost = 0.30 if is_social else 0.05
 
             # Real face visual similarity evaluation.
@@ -398,6 +434,9 @@ class WebSearchEngine:
         )
         content_hash = compute_bytes32_hash(canonical_record)
 
+        # Prepare list of all discovered candidates sorted by score
+        all_candidates = [item for _, item in scored_matches]
+
         matched_post = {
             "matched": True,
             "candidate_relevance_score": top_relevance,
@@ -405,6 +444,7 @@ class WebSearchEngine:
             "is_demo_fallback": is_demo_fallback,
             "search_source": selected_match.get("source", "unknown"),
             "post_metadata": selected_match,
+            "all_candidates": all_candidates,
             "face_input_hash": face_data.get("image_hash"),
             "canonical_record": canonical_record,
             "content_fingerprint": content_hash,

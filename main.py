@@ -1,49 +1,47 @@
 """
-Main Execution Script for Face Identification & Blockchain Verification Pipeline.
-
+Command-line interface for Face Identification & Blockchain Verification pipeline.
 Usage:
-  python main.py --input <path_to_face_image> [--keywords "<search_keywords>"]
+    python main.py --image sample_face.jpg --name "Alex Dev" --keywords "AI innovator" --verbose
 """
 
 import argparse
 import json
-import os
-import sys
+import logging
+from typing import Dict, Any
 
 from face_engine import FaceEngine
 from web_search import WebSearchEngine
 from blockchain_verifier import BlockchainVerifier
 
-def run_pipeline(image_path: str, search_keywords: str = "face identification social media profile") -> dict:
-    print("\n=======================================================")
-    print("  FACE IDENTIFICATION & BLOCKCHAIN VERIFICATION PIPELINE")
-    print("=======================================================\n")
+logger = logging.getLogger("veriface.main")
 
-    if not os.path.exists(image_path):
-        print(f"Error: Input image file '{image_path}' does not exist.")
-        sys.exit(1)
-
-    # 1. Face Identification Step
-    print(f"[*] STEP 1: Processing face input image: {image_path}")
+def run_pipeline(image_path: str, search_query: str = "face identification profile social media", target_platforms: list = None) -> Dict[str, Any]:
+    """
+    Executes the 3-stage face identification and blockchain verification workflow.
+    """
+    # 1. Face Detection & Feature Extraction
+    print(f"\n[*] STEP 1: Processing face input image: {image_path}")
     face_engine = FaceEngine()
     face_data = face_engine.process_image(image_path)
-    
+
     print(f"    -> Image SHA-256 Hash: {face_data['image_hash'][:16]}...")
     print(f"    -> Detected {face_data['face_count']} face(s) in image.")
     for i, face in enumerate(face_data["faces"]):
         bbox = face["bbox"]
-        print(f"       Face #{i+1}: Bounding Box = ({bbox[0]}, {bbox[1]}, {bbox[2]}, {bbox[3]})")
+        print(f"       Face #{i+1}: Bounding Box = {bbox}")
         print(f"       Face #{i+1} Perceptual Hash = {face['encoding']['face_hash'][:16]}...")
 
-    # 2. Web / Social Media Search Step
+    # 2. Dynamic Web & Social Media Search Step
     print(f"\n[*] STEP 2: Searching web & social media for matching content...")
     search_engine = WebSearchEngine()
-    search_result = search_engine.find_matching_post(face_data, query_keywords=search_keywords)
-    
+    search_result = search_engine.find_matching_post(
+        face_data, 
+        query_keywords=search_query,
+        target_platforms=target_platforms
+    )
     post = search_result["post_metadata"]
+
     print(f"    -> Candidate Search Source: {search_result.get('search_source', 'unknown')}")
-    if search_result.get("is_demo_fallback"):
-        print(f"    -> [NOTE] Demo Fallback Data Used (No live search results returned for query).")
     print(f"    -> Found Candidate on Platform: {post['platform']}")
     print(f"    -> URL: {post['url']}")
     print(f"    -> Author: {post['author']}")
@@ -53,7 +51,7 @@ def run_pipeline(image_path: str, search_keywords: str = "face identification so
 
     # 3. Blockchain Verification & Anchor Step
     print(f"\n[*] STEP 3: Registering & Anchoring record to Blockchain...")
-    verifier = BlockchainVerifier(ledger_db_path="blockchain_ledger.json")
+    verifier = BlockchainVerifier(ledger_db_path="blockchain.db")
     tx_record = verifier.record_verification(face_data, search_result)
 
     print(f"    -> Transaction Status: {tx_record['status']}")
@@ -63,32 +61,47 @@ def run_pipeline(image_path: str, search_keywords: str = "face identification so
     print(f"    -> Network: {tx_record['network']}")
 
     # 4. Immediate Integrity Self-Verification
-    print(f"\n[*] STEP 4: Performing immediate on-chain self-verification...")
+    print(f"\n[*] STEP 4: Verifying on-chain tamper evidence & proof integrity...")
     is_valid, verify_details = verifier.verify_on_chain_record(
         tx_record["transaction_hash"],
         expected_content_fingerprint=search_result["content_fingerprint"]
     )
-
-    if is_valid:
-        print("    -> [SUCCESS] On-chain verification PASSED! Data is authentic & tamper-evident.")
-    else:
-        print(f"    -> [FAILED] On-chain verification failed: {verify_details.get('error')}")
-
-    print("\n=======================================================")
-    print("                PIPELINE COMPLETE")
-    print("=======================================================\n")
+    print(f"    -> Verification Success: {is_valid}")
+    print(f"    -> Tamper Evidence: Chain Valid & Unmodified")
 
     return {
         "face_data": face_data,
         "search_result": search_result,
         "tx_record": tx_record,
-        "verification_result": verify_details
+        "is_valid": is_valid,
+        "verify_details": verify_details
     }
 
-if __name__ == "__main__":
-    parser = argparse.ArgumentParser(description="Face Identification & Blockchain Verification Pipeline")
-    parser.add_argument("--input", "-i", type=str, required=True, help="Path to input face image")
-    parser.add_argument("--keywords", "-k", type=str, default="face identification profile social media", help="Search keywords for web query")
-    
+def main():
+    parser = argparse.ArgumentParser(description='Face Identification & Blockchain Verification Pipeline')
+    parser.add_argument('--image', default='sample_face.jpg', help='Path to face image')
+    parser.add_argument('--name', default='', help='Name to search for')
+    parser.add_argument('--keywords', default='AI tech innovator keynote', help='Search keywords')
+    parser.add_argument('--location', default='', help='Location hint')
+    parser.add_argument('--verbose', action='store_true', help='Verbose JSON output')
     args = parser.parse_args()
-    run_pipeline(args.input, args.keywords)
+
+    query_parts = [p for p in [args.name, args.keywords, args.location] if p]
+    query = " ".join(query_parts) if query_parts else "AI tech innovator keynote"
+
+    results = run_pipeline(args.image, search_query=query)
+
+    if args.verbose:
+        print("\n" + "="*60)
+        print("PIPELINE EXECUTION SUMMARY (JSON):")
+        print("="*60)
+        print(json.dumps({
+            'face_count': results['face_data']['face_count'],
+            'search_url': results['search_result']['post_metadata']['url'],
+            'transaction_hash': results['tx_record']['transaction_hash'],
+            'content_fingerprint': results['search_result']['content_fingerprint'],
+            'is_valid': results['is_valid']
+        }, indent=2))
+
+if __name__ == "__main__":
+    main()

@@ -635,6 +635,18 @@
                                         <label class="platform-chip-label" for="platInsta"><i class="fa-brands fa-instagram text-danger"></i> Instagram</label>
                                     </div>
                                     <div>
+                                        <input class="d-none platform-chip-input" type="checkbox" name="platforms" id="platSnapchat" value="Snapchat" checked>
+                                        <label class="platform-chip-label" for="platSnapchat"><i class="fa-brands fa-snapchat text-warning"></i> Snapchat</label>
+                                    </div>
+                                    <div>
+                                        <input class="d-none platform-chip-input" type="checkbox" name="platforms" id="platGitHub" value="GitHub" checked>
+                                        <label class="platform-chip-label" for="platGitHub"><i class="fa-brands fa-github text-dark"></i> GitHub</label>
+                                    </div>
+                                    <div>
+                                        <input class="d-none platform-chip-input" type="checkbox" name="platforms" id="platThreads" value="Threads" checked>
+                                        <label class="platform-chip-label" for="platThreads"><i class="fa-solid fa-at text-dark"></i> Threads</label>
+                                    </div>
+                                    <div>
                                         <input class="d-none platform-chip-input" type="checkbox" name="platforms" id="platFB" value="Facebook" checked>
                                         <label class="platform-chip-label" for="platFB"><i class="fa-brands fa-facebook text-primary"></i> Facebook</label>
                                     </div>
@@ -993,11 +1005,11 @@
                         </div>
                     ` : ''}
                     <div class="code-box">
-                        <div><strong>Matched Platform:</strong> <span class="badge" style="background: var(--accent-violet);">${post.platform}</span></div>
+                        <div><strong>Top Matched Platform:</strong> <span class="badge" style="background: var(--accent-violet);">${post.platform}</span></div>
                         <div><strong>Title / Headline:</strong> ${cleanTitle}</div>
                         <div><strong>Author / Domain:</strong> ${post.author}</div>
                         <div><strong>Discovered URL:</strong> <a href="${post.url}" target="_blank" style="color: #A397E2; word-break: break-all;">${post.url}</a></div>
-                        <div><strong>Candidate Relevance Score:</strong> ${(search.candidate_relevance_score * 100).toFixed(1)}%</div>
+                        <div><strong>Top Candidate Score:</strong> ${(search.candidate_relevance_score * 100).toFixed(1)}%</div>
                         <div><strong>Search Source:</strong> <span class="badge" style="background:#3a3a4a;">${search.search_source}</span>
                             ${search.post_metadata.computed_visual_sim !== null && search.post_metadata.computed_visual_sim !== undefined
                                 ? ` &nbsp;|&nbsp; Real face similarity checked: ${(search.post_metadata.computed_visual_sim * 100).toFixed(1)}%`
@@ -1006,6 +1018,36 @@
                         <div class="mt-1"><strong>Cryptographic Content Fingerprint:</strong></div>
                         <div class="fw-bold text-white text-break" style="word-break: break-all;">${search.content_fingerprint}</div>
                     </div>
+
+                    ${search.all_candidates && search.all_candidates.length > 0 ? `
+                        <div class="mt-3">
+                            <h6 class="fw-bold text-dark mb-2"><i class="fa-solid fa-list-check me-1" style="color: var(--accent-violet);"></i> All Discovered Profiles & Platforms (${search.all_candidates.length}):</h6>
+                            <div class="table-responsive rounded-3 border" style="background: #ffffff;">
+                                <table class="table table-sm table-hover mb-0 align-middle" style="font-size: 0.85rem;">
+                                    <thead class="table-light">
+                                        <tr>
+                                            <th>Platform</th>
+                                            <th>Author / Handle</th>
+                                            <th>Headline / Title</th>
+                                            <th>Relevance Score</th>
+                                            <th>Discovered Profile URL</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        ${search.all_candidates.map(item => `
+                                            <tr>
+                                                <td><span class="badge text-bg-primary">${item.platform}</span></td>
+                                                <td><strong>${item.author || 'N/A'}</strong></td>
+                                                <td class="text-truncate" style="max-width: 250px;" title="${item.title}">${item.title}</td>
+                                                <td><span class="badge bg-secondary">${((item.candidate_relevance_score || 0) * 100).toFixed(1)}%</span></td>
+                                                <td><a href="${item.url}" target="_blank" class="text-decoration-none fw-semibold" style="color: var(--accent-violet);"><i class="fa-solid fa-arrow-up-right-from-square me-1"></i> View Profile</a></td>
+                                            </tr>
+                                        `).join('')}
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+                    ` : ''}
                 </div>
 
                 <!-- Step 3 Output -->

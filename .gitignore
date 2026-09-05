@@ -1,14 +1,52 @@
-# Python bytecode / cache
+# Python
 __pycache__/
 *.py[cod]
-*$py.class
+*.class
+*.so
+.Python
+venv/
+ENV/
+env/
+build/
+develop-eggs/
+dist/
+downloads/
+eggs/
+.eggs/
+lib/
+lib64/
+parts/
+sdist/
+var/
+wheels/
+pip-wheel-metadata/
 
-# Pytest / IDE
-.pytest_cache/
+# IDE & OS
 .vscode/
 .idea/
+*.swp
+*.swo
+*.sublime-*
+.DS_Store
+Thumbs.db
 
-# Environment / local state
+# Testing & Coverage
+.pytest_cache/
+.coverage
+htmlcov/
+.tox/
+
+# Project specific & runtime storage
+blockchain_ledger.json
+blockchain.db
+blockchain.db-journal
+face_vector_index.json
+test_output.json
 .env
 *.log
-sample_face.jpg
+app.log
+
+# Uploads & temporary files
+uploads/
+tmp/
+temp/

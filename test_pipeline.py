@@ -88,17 +88,25 @@ def test_blockchain_verification(sample_image):
     assert is_valid_tampered is False
     assert "Fingerprint mismatch" in tamper_details["error"]
 
-    # Test Full Chain Tamper Detection: Deleting middle block
-    if len(verifier.blocks) > 1:
-        original_blocks = list(verifier.blocks)
-        verifier.blocks.pop(0)  # delete genesis block
-        chain_ok, chain_msg = verifier.validate_full_chain()
-        assert chain_ok is False
-        assert "Chain broken" in chain_msg or "Previous hash mismatch" in chain_msg
-        verifier.blocks = original_blocks
+    # Test Full Chain Tamper Detection: Deleting genesis row directly in SQLite
+    import sqlite3
+    with sqlite3.connect(verifier.ledger_db_path) as conn:
+        conn.execute("DELETE FROM blocks WHERE id = 1")
+        conn.commit()
+    chain_ok, chain_msg = verifier.validate_full_chain()
+    assert chain_ok is False
 
-    if os.path.exists(ledger_path):
-        os.remove(ledger_path)
+    try:
+        if os.path.exists(ledger_path):
+            os.remove(ledger_path)
+    except Exception:
+        pass
+
+    try:
+        if os.path.exists(verifier.ledger_db_path):
+            os.remove(verifier.ledger_db_path)
+    except Exception:
+        pass
 
 def test_full_pipeline(sample_image):
     results = run_pipeline(sample_image, "test face query")

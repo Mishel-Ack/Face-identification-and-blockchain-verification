@@ -470,5 +470,26 @@
     "hash": "0007acbc1d2410b0e61055e56be32a510ca3eb249e9cbde5774fa90ab7a1040d",
     "nonce": 122,
     "network": "Cryptographic Local Ledger (SHA-256 Proof Anchor)"
+  },
+  {
+    "index": 23,
+    "timestamp": "2026-09-05T13:21:42Z",
+    "transaction_hash": "0xdd1fb2c24f2f3f4566805f7f1073702ae52fdbcb2c225221d00eff673a6f924c",
+    "data": {
+      "record_type": "FACE_SOCIAL_IDENTIFICATION_PROOF",
+      "face_image_hash": "6d5f6952b5f6afcda851ada220a51a7348de34ba92f9754baeaef154a32beae7",
+      "face_count": 1,
+      "social_post_url": "https://www.linkedin.com/posts/santhosh-s-alur_sql-activity-7362886084764069890-WdyL",
+      "social_post_platform": "Web (www.linkedin.com)",
+      "social_post_author": "www.linkedin.com",
+      "content_fingerprint": "0x8f84f02cdfb294318e85498a53c20e0f125dfae4a8a9a58f8ffd2d9c36ccfc86",
+      "match_confidence": 0.55,
+      "verification_count": 23,
+      "timestamp": "2026-09-05T13:21:42Z"
+    },
+    "previous_hash": "0007acbc1d2410b0e61055e56be32a510ca3eb249e9cbde5774fa90ab7a1040d",
+    "hash": "006dc1d5cbf2256dd4be0c861b4163706f35be02a20bcf92131f47eea7221e44",
+    "nonce": 434,
+    "network": "Cryptographic Local Ledger (SHA-256 Proof Anchor)"
   }
 ]
