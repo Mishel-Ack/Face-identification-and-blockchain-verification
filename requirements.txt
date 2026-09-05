@@ -1,5 +1,5 @@
 opencv-python>=4.8.0
-numpy>=1.24.0
+numpy>=1.24.0,<2.0.0
 pillow>=10.0.0
 requests>=2.31.0
 ddgs>=9.0.0
@@ -7,3 +7,18 @@ web3>=6.0.0
 cryptography>=41.0.0
 pytest>=7.0.0
 flask>=3.0.0
+
+# Primary face recognition backend: pure pip wheels, no C++ compiler needed.
+# Downloads ~130MB of ONNX model weights from GitHub releases on first run
+# (cached to ~/.insightface/models afterwards).
+onnxruntime>=1.16.0
+insightface>=0.7.3
+
+# Optional legacy/alternate backends (only used if already installed --
+# NOT required). dlib requires cmake + a C++ toolchain to build and is
+# known to fail to install in many minimal/CI/container environments;
+# keep it optional rather than pinning it in requirements.
+# dlib>=19.24.0
+# face_recognition>=1.3.0
+# deepface>=0.0.90
+

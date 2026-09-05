@@ -41,11 +41,14 @@ def run_pipeline(image_path: str, search_keywords: str = "face identification so
     search_result = search_engine.find_matching_post(face_data, query_keywords=search_keywords)
     
     post = search_result["post_metadata"]
-    print(f"    -> Found Match on Platform: {post['platform']}")
+    print(f"    -> Candidate Search Source: {search_result.get('search_source', 'unknown')}")
+    if search_result.get("is_demo_fallback"):
+        print(f"    -> [NOTE] Demo Fallback Data Used (No live search results returned for query).")
+    print(f"    -> Found Candidate on Platform: {post['platform']}")
     print(f"    -> URL: {post['url']}")
     print(f"    -> Author: {post['author']}")
     print(f"    -> Title: {post['title']}")
-    print(f"    -> Match Confidence: {search_result['match_confidence'] * 100:.1f}%")
+    print(f"    -> Candidate Relevance Score (Text + Platform + Visual Similarity): {search_result['candidate_relevance_score'] * 100:.1f}%")
     print(f"    -> Content Fingerprint: {search_result['content_fingerprint']}")
 
     # 3. Blockchain Verification & Anchor Step
