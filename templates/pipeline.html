@@ -1,0 +1,1288 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Face Identification & Blockchain Verification</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --bg-gradient-top: #F3F0FA;
+            --bg-gradient-bottom: #E2DBF2;
+            --primary-navy: #1E1B3A;
+            --accent-violet: #6B5FA8;
+            --accent-violet-hover: #594d94;
+            --text-primary: #1E1B3A;
+            --text-secondary: #64748B;
+            --text-light: #FFFFFF;
+            --card-light-bg: rgba(255, 255, 255, 0.85);
+            --card-dark-bg: #1E1B3A;
+            --border-soft: rgba(107, 95, 168, 0.15);
+        }
+
+        body {
+            background: linear-gradient(180deg, rgba(243, 240, 250, 0.6) 0%, rgba(226, 219, 242, 0.8) 100%), url('/static/images/hero_bg.jpg') center/cover no-repeat;
+            background-attachment: fixed;
+            color: var(--text-primary);
+            font-family: 'Inter', system-ui, -apple-system, sans-serif;
+            min-height: 100vh;
+            margin: 0;
+            padding: 0;
+            overflow-x: hidden;
+        }
+
+        /* Micro-Labels & Typography */
+        .micro-label {
+            font-size: 0.75rem;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 0.15em;
+            color: var(--accent-violet);
+            display: inline-block;
+            margin-bottom: 0.75rem;
+        }
+
+        h1, h2, h3, h4 {
+            color: var(--primary-navy);
+            letter-spacing: -0.02em;
+            font-weight: 600;
+        }
+
+        .headline-lg {
+            font-size: 2.15rem;
+            line-height: 1.15;
+            font-weight: 600;
+        }
+
+        .lead-text {
+            font-size: 0.92rem;
+            color: var(--text-secondary);
+            font-weight: 400;
+            max-width: 620px;
+            margin: 0 auto;
+        }
+
+        /* Buttons */
+        .btn-pill {
+            background: var(--accent-violet);
+            color: var(--text-light) !important;
+            font-weight: 600;
+            border-radius: 50px;
+            padding: 9px 24px;
+            border: none;
+            text-decoration: none !important;
+            box-shadow: 0 10px 25px rgba(107, 95, 168, 0.25);
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+            font-size: 1rem;
+        }
+
+        .btn-pill:hover, .btn-pill:focus, .btn-pill:active {
+            background: var(--accent-violet-hover);
+            transform: translateY(-2px);
+            box-shadow: 0 14px 30px rgba(107, 95, 168, 0.35);
+            color: var(--text-light) !important;
+            text-decoration: none !important;
+        }
+
+        .btn-pill-outline {
+            background: #FFFFFF !important;
+            color: var(--accent-violet) !important;
+            font-weight: 600;
+            border-radius: 50px;
+            padding: 8px 20px;
+            border: 2px solid var(--accent-violet);
+            box-shadow: 0 4px 14px rgba(30, 27, 58, 0.08);
+            text-decoration: none !important;
+            transition: all 0.3s ease;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+        }
+
+        .btn-pill-outline:hover {
+            background: #F3F0FA !important;
+            color: var(--accent-violet-hover) !important;
+            transform: translateY(-2px);
+            box-shadow: 0 6px 18px rgba(107, 95, 168, 0.2);
+            text-decoration: none !important;
+        }
+
+        /* Mode Switcher Buttons (50-50 Equal Width & High Contrast) */
+        .mode-toggle-btn {
+            flex: 1 1 50%;
+            width: 50%;
+            padding: 10px 16px;
+            font-weight: 600;
+            border-radius: 50px !important;
+            border: none;
+            transition: all 0.25s ease;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 0.95rem;
+        }
+
+        .mode-toggle-btn.active {
+            background: var(--accent-violet) !important;
+            color: #FFFFFF !important;
+            box-shadow: 0 4px 14px rgba(107, 95, 168, 0.35);
+        }
+
+        .mode-toggle-btn.active i {
+            color: #FFFFFF !important;
+        }
+
+        .mode-toggle-btn.inactive {
+            background: transparent !important;
+            color: var(--primary-navy) !important;
+            box-shadow: none;
+        }
+
+        .mode-toggle-btn.inactive:hover {
+            color: var(--accent-violet) !important;
+            background: rgba(107, 95, 168, 0.1) !important;
+        }
+
+        /* Platform Selection Filter Chips */
+        .platform-chip-label {
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            padding: 7px 14px;
+            border-radius: 50px;
+            background: #FFFFFF;
+            border: 1.5px solid var(--border-soft);
+            color: var(--primary-navy);
+            font-size: 0.85rem;
+            font-weight: 600;
+            cursor: pointer;
+            user-select: none;
+            transition: all 0.2s ease;
+            box-shadow: 0 2px 6px rgba(0,0,0,0.03);
+        }
+
+        .platform-chip-input:checked + .platform-chip-label {
+            background: rgba(107, 95, 168, 0.12);
+            border-color: var(--accent-violet);
+            color: var(--accent-violet);
+            box-shadow: 0 4px 10px rgba(107, 95, 168, 0.15);
+        }
+
+        .platform-chip-label:hover {
+            transform: translateY(-1px);
+            border-color: var(--accent-violet);
+        }
+
+        /* Custom Form Input Controls matching theme */
+        .custom-form-input {
+            background: #FFFFFF !important;
+            border: 1.5px solid rgba(107, 95, 168, 0.22) !important;
+            border-radius: 12px !important;
+            color: var(--primary-navy) !important;
+            font-size: 0.88rem !important;
+            padding: 8px 14px !important;
+            transition: all 0.2s ease !important;
+            box-shadow: 0 2px 6px rgba(30, 27, 58, 0.02) !important;
+        }
+
+        .custom-form-input:focus {
+            border-color: var(--accent-violet) !important;
+            box-shadow: 0 0 0 3px rgba(107, 95, 168, 0.18) !important;
+            background: #FFFFFF !important;
+            outline: none !important;
+        }
+
+        .custom-form-input::placeholder {
+            color: #94A3B8 !important;
+            font-size: 0.85rem !important;
+        }
+
+        .form-label-theme {
+            color: var(--primary-navy) !important;
+            font-weight: 600 !important;
+            font-size: 0.8rem !important;
+            letter-spacing: 0.01em !important;
+            margin-bottom: 4px !important;
+        }
+
+        /* Navbar */
+        .navbar {
+            padding: 10px 0;
+            background: #FFFFFF !important;
+            box-shadow: 0 4px 20px rgba(30, 27, 58, 0.07);
+            border-bottom: 1px solid rgba(107, 95, 168, 0.12);
+        }
+
+        .brand-logo {
+            font-weight: 700;
+            font-size: 1.15rem;
+            color: var(--primary-navy);
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            text-decoration: none !important;
+        }
+
+        .brand-logo i {
+            color: var(--accent-violet);
+            font-size: 1.5rem;
+        }
+
+        /* Hero Section with Vibrant Background Image */
+        .hero-section {
+            padding: 100px 0 120px;
+            text-align: center;
+            position: relative;
+            background: linear-gradient(180deg, rgba(243, 240, 250, 0.4) 0%, rgba(226, 219, 242, 0.55) 100%), url('/static/images/hero_bg.jpg') center/cover no-repeat;
+            border-radius: 0 0 40px 40px;
+            box-shadow: 0 10px 40px rgba(107, 95, 168, 0.15);
+            margin-bottom: 60px;
+        }
+
+        /* Light & Dark Cards */
+        .custom-card-light {
+            background: rgba(255, 255, 255, 0.9);
+            backdrop-filter: blur(16px);
+            border: 1px solid var(--border-soft);
+            border-radius: 24px;
+            padding: 36px;
+            box-shadow: 0 10px 30px rgba(30, 27, 58, 0.04);
+            transition: all 0.3s ease;
+        }
+
+        .custom-card-light:hover {
+            box-shadow: 0 16px 40px rgba(107, 95, 168, 0.12);
+        }
+
+        /* Interactive Web Search & Social Media Filter Buttons */
+        .engine-nav-btn {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            padding: 9px 18px;
+            border-radius: 50px;
+            font-size: 0.88rem;
+            font-weight: 600;
+            border: 1.5px solid var(--border-soft);
+            background: #FFFFFF;
+            color: var(--primary-navy);
+            cursor: pointer;
+            transition: all 0.25s ease;
+            box-shadow: 0 2px 6px rgba(0, 0, 0, 0.04);
+            user-select: none;
+        }
+
+        .engine-nav-btn:hover {
+            border-color: var(--accent-violet);
+            color: var(--accent-violet);
+            transform: translateY(-2px);
+            box-shadow: 0 6px 16px rgba(107, 95, 168, 0.18);
+        }
+
+        .engine-nav-btn.active {
+            background: linear-gradient(135deg, var(--accent-violet) 0%, #8375C4 100%) !important;
+            color: #FFFFFF !important;
+            border-color: var(--accent-violet) !important;
+            box-shadow: 0 6px 18px rgba(107, 95, 168, 0.35);
+        }
+
+        .engine-nav-btn.active i, .engine-nav-btn.active span.badge {
+            color: #FFFFFF !important;
+        }
+
+        .social-filter-btn {
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            padding: 6px 14px;
+            border-radius: 50px;
+            font-size: 0.80rem;
+            font-weight: 600;
+            border: 1px solid rgba(107, 95, 168, 0.25);
+            background: #F6F4FB;
+            color: var(--primary-navy);
+            cursor: pointer;
+            transition: all 0.2s ease;
+            user-select: none;
+        }
+
+        .social-filter-btn:hover {
+            border-color: var(--accent-violet);
+            background: rgba(107, 95, 168, 0.1);
+            color: var(--accent-violet);
+        }
+
+        .social-filter-btn.active {
+            background: var(--accent-violet) !important;
+            color: #FFFFFF !important;
+            border-color: var(--accent-violet) !important;
+            box-shadow: 0 3px 10px rgba(107, 95, 168, 0.25);
+        }
+
+        .social-filter-btn.active i {
+            color: #FFFFFF !important;
+        }
+
+        .dark-section {
+            background: var(--card-dark-bg);
+            border-radius: 32px;
+            padding: 80px 40px;
+            margin: 60px 0;
+            color: var(--text-light);
+        }
+
+        .dark-card {
+            background: rgba(255, 255, 255, 0.05);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 20px;
+            padding: 36px 30px;
+            transition: all 0.3s ease;
+            height: 100%;
+        }
+
+        .dark-card:hover {
+            background: rgba(255, 255, 255, 0.08);
+            transform: translateY(-4px);
+            border-color: rgba(107, 95, 168, 0.5);
+        }
+
+        .dark-card h4 {
+            color: var(--text-light);
+            font-size: 1.25rem;
+            margin-bottom: 12px;
+        }
+
+        .dark-card p {
+            color: rgba(255, 255, 255, 0.7);
+            font-size: 0.95rem;
+            line-height: 1.6;
+            margin: 0;
+        }
+
+        .icon-badge {
+            width: 48px;
+            height: 48px;
+            border-radius: 14px;
+            background: rgba(107, 95, 168, 0.2);
+            color: #A397E2;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.25rem;
+            margin-bottom: 20px;
+        }
+
+        /* Drop Zone */
+        .drop-zone {
+            border: 2px dashed rgba(107, 95, 168, 0.3);
+            border-radius: 16px;
+            padding: 32px;
+            text-align: center;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            background: rgba(243, 240, 250, 0.6);
+        }
+
+        .drop-zone:hover {
+            border-color: var(--accent-violet);
+            background: rgba(243, 240, 250, 0.95);
+        }
+
+        /* Face Scan Radar Animation */
+        .face-scanner-box {
+            position: relative;
+            width: 140px;
+            height: 140px;
+            margin: 0 auto 20px;
+            border-radius: 20px;
+            background: #141226;
+            border: 2px solid var(--accent-violet);
+            overflow: hidden;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            box-shadow: 0 0 25px rgba(107, 95, 168, 0.35);
+        }
+
+        .face-scanner-box i.face-icon {
+            font-size: 3.8rem;
+            color: rgba(163, 151, 226, 0.4);
+            animation: pulse-face 1.8s infinite ease-in-out;
+        }
+
+        .scanner-laser {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 4px;
+            background: linear-gradient(90deg, transparent 0%, #6EE7B7 50%, transparent 100%);
+            box-shadow: 0 0 12px #6EE7B7, 0 0 20px #6EE7B7;
+            animation: scan-beam 2s infinite ease-in-out;
+        }
+
+        .scan-corner {
+            position: absolute;
+            width: 16px;
+            height: 16px;
+            border-color: #6EE7B7;
+            border-style: solid;
+        }
+        .scan-corner-tl { top: 10px; left: 10px; border-width: 3px 0 0 3px; }
+        .scan-corner-tr { top: 10px; right: 10px; border-width: 3px 3px 0 0; }
+        .scan-corner-bl { bottom: 10px; left: 10px; border-width: 0 0 3px 3px; }
+        .scan-corner-br { bottom: 10px; right: 10px; border-width: 0 3px 3px 0; }
+
+        @keyframes scan-beam {
+            0% { top: 5%; opacity: 0.9; }
+            50% { top: 90%; opacity: 1; }
+            100% { top: 5%; opacity: 0.9; }
+        }
+
+        @keyframes pulse-face {
+            0%, 100% { transform: scale(1); opacity: 0.4; }
+            50% { transform: scale(1.08); opacity: 0.85; color: #A397E2; }
+        }
+
+        .code-box {
+            background: #141226;
+            border-radius: 14px;
+            padding: 16px 20px;
+            font-family: 'Fira Code', 'Consolas', monospace;
+            font-size: 0.88rem;
+            color: #D4CEF0;
+            word-break: break-all;
+            overflow-wrap: anywhere;
+            max-width: 100%;
+        }
+
+        /* Trust Bar */
+        .trust-bar {
+            padding: 40px 0 60px;
+            border-top: 1px solid rgba(107, 95, 168, 0.1);
+        }
+
+        .trust-logo {
+            filter: grayscale(100%);
+            opacity: 0.5;
+            font-weight: 700;
+            font-size: 0.92rem;
+            letter-spacing: 0.05em;
+            color: var(--primary-navy);
+            transition: all 0.2s ease;
+        }
+
+        .trust-logo:hover {
+            opacity: 0.9;
+            filter: grayscale(0%);
+        }
+    </style>
+</head>
+<body>
+
+    <!-- Navigation Bar -->
+    <nav class="navbar navbar-expand-lg">
+        <div class="container">
+            <a class="brand-logo" href="/">
+                <i class="fa-solid fa-shield-cat"></i>
+                <span>VeriFace Proof</span>
+            </a>
+            
+            <button class="navbar-toggler border-0" type="button" data-bs-toggle="collapse" data-bs-target="#navbarContent">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+
+            <div class="collapse navbar-collapse" id="navbarContent">
+                <ul class="navbar-nav mx-auto mb-2 mb-lg-0 gap-4 font-semibold">
+                    <li class="nav-item">
+                        <a class="nav-link text-primary fw-bold" href="/pipeline"><i class="fa-solid fa-key me-1" style="color: var(--accent-violet);"></i> Generate SHA</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link text-dark fw-semibold" href="/verify"><i class="fa-solid fa-shield-check me-1 text-success"></i> Verify SHA</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link text-dark fw-semibold" href="/pipeline-details"><i class="fa-solid fa-diagram-project me-1 text-primary"></i> Pipeline Detailed</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link text-dark fw-semibold" href="/history"><i class="fa-solid fa-clock-rotate-left me-1 text-warning"></i> SHA History</a>
+                    </li>
+                </ul>
+
+                <div class="d-flex align-items-center gap-3">
+                    <a href="/team" class="btn-pill btn-sm px-4 py-2">
+                        <i class="fa-solid fa-users-viewfinder me-1"></i> Team GenZ
+                    </a>
+                </div>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Interactive Pipeline App Workspace (Generate SHA Page) -->
+    <main class="container my-5" id="pipeline-app">
+        
+        <!-- Action Mode Switcher: Generate SHA vs Verify SHA vs History Pages -->
+        <div class="d-flex justify-content-center gap-3 mb-4">
+            <a href="/pipeline" class="btn-pill px-4 shadow-sm" id="btnGenSHA">
+                <i class="fa-solid fa-key me-1"></i> 1. Generate SHA (Run Pipeline)
+            </a>
+            <a href="/verify" class="btn-pill-outline px-4 shadow-sm" id="btnVerSHA">
+                <i class="fa-solid fa-shield-check me-1"></i> 2. Verify SHA (Ledger Audit Page)
+            </a>
+            <a href="/history" class="btn-pill-outline px-4 shadow-sm" id="btnHistorySHA">
+                <i class="fa-solid fa-clock-rotate-left me-1"></i> 3. SHA Search History
+            </a>
+        </div>
+
+        <div class="custom-card-light mb-4" id="inputControlBlock">
+            <span class="micro-label"><i class="fa-solid fa-sliders me-1"></i> Pipeline Input Control</span>
+            <h3 class="h4 mb-4">1. Scan Face & Enter Identity Details</h3>
+
+            <form id="pipelineForm" enctype="multipart/form-data">
+                <div class="row g-4">
+                    <!-- Left Sub-Column: Face Image Capture / Upload -->
+                    <div class="col-lg-5">
+                        <label class="form-label text-dark fw-semibold small mb-2 d-block">Biometric Face Input</label>
+                        
+                        <!-- Dual Input Mode Selector (50-50 Equal Width: Upload Image First Default) -->
+                        <div class="d-flex w-100 mb-3" role="group" style="background: rgba(107, 95, 168, 0.12); padding: 4px; border-radius: 50px;">
+                            <button type="button" class="mode-toggle-btn active" id="uploadTabBtn" onclick="switchInputMode('upload')">
+                                <i class="fa-solid fa-file-image me-2"></i> Upload Image
+                            </button>
+                            <button type="button" class="mode-toggle-btn inactive" id="webcamTabBtn" onclick="switchInputMode('webcam')">
+                                <i class="fa-solid fa-camera me-2"></i> Scan Face (Webcam)
+                            </button>
+                        </div>
+
+                        <!-- Mode 1: Live Webcam Face Capture -->
+                        <div id="webcamInputSection" class="mb-3 text-center d-none">
+                            <div id="webcamNotice" class="alert alert-warning py-2 px-3 small mb-2 d-none"></div>
+                            <div class="p-3 rounded-4 position-relative" style="background: #141226; border: 2px dashed var(--accent-violet);">
+                                <video id="webcamVideo" autoplay playsinline muted style="width: 100%; max-height: 220px; border-radius: 12px; transform: scaleX(-1); object-fit: cover;"></video>
+                                <img id="webcamSnapshotImg" src="" alt="Webcam Face Snapshot" style="display: none; width: 100%; max-height: 220px; object-fit: cover; border-radius: 12px; border: 2px solid #6EE7B7; box-shadow: 0 4px 15px rgba(110, 231, 183, 0.25);">
+                                <canvas id="webcamCanvas" class="d-none"></canvas>
+                                <div class="mt-3 d-flex justify-content-center gap-2" id="webcamControls">
+                                    <button type="button" class="btn btn-sm btn-pill px-4" id="captureBtn" onclick="captureWebcamFrame()">
+                                        <i class="fa-solid fa-camera me-1"></i> Capture Face Snapshot
+                                    </button>
+                                    <button type="button" class="btn btn-sm btn-pill-outline text-white border-white px-4 d-none" id="retakeBtn" onclick="retakeWebcamPhoto()">
+                                        <i class="fa-solid fa-rotate-left me-1"></i> Retake Snapshot
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Mode 2: Drag & Drop File Upload (Default Visible) -->
+                        <div id="uploadInputSection" class="mb-3">
+                            <div class="drop-zone" id="dropZone" onclick="document.getElementById('imageInput').click()">
+                                <i class="fa-solid fa-cloud-arrow-up fs-2 mb-2" style="color: var(--accent-violet);"></i>
+                                <p class="mb-1 fw-semibold text-dark">Click or drag face scan image</p>
+                                <small class="text-muted">JPG, PNG format (Default sample provided)</small>
+                            </div>
+                            <input type="file" id="imageInput" name="image" class="d-none" accept="image/*" onchange="previewSelectedImage(this)">
+                            
+                            <!-- File Upload Preview -->
+                            <div id="uploadPreviewContainer" class="text-center mt-3 d-none">
+                                <img id="uploadPreviewImg" class="preview-img mb-2" src="" alt="Preview" style="max-height: 180px; border-radius: 12px; border: 2px solid var(--accent-violet);">
+                                <div><small class="text-muted" id="uploadFileName"></small></div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Right Sub-Column: Identity Metadata Form Fields -->
+                    <div class="col-lg-7">
+                        <div class="p-3 rounded-4 h-100" style="background: rgba(255, 255, 255, 0.7); border: 1px solid var(--border-soft);">
+                            <div class="d-flex align-items-center gap-2 mb-3">
+                                <i class="fa-solid fa-magnifying-glass-nodes" style="color: var(--accent-violet);"></i>
+                                <span class="fw-bold small text-uppercase" style="color: var(--primary-navy); letter-spacing: 0.05em;">Target Identity Search Criteria</span>
+                            </div>
+
+                            <div class="row g-2 mb-2">
+                                <div class="col-6">
+                                    <label for="searchName" class="form-label-theme d-block">Full Name <span class="text-danger">*</span></label>
+                                    <input type="text" class="form-control custom-form-input" id="searchName" name="search_name" placeholder="e.g. Alex Dev" required>
+                                </div>
+                                <div class="col-6">
+                                    <label for="searchHandle" class="form-label-theme d-block">Username / Handle</label>
+                                    <input type="text" class="form-control custom-form-input" id="searchHandle" name="search_handle" placeholder="e.g. @alex_dev">
+                                </div>
+                            </div>
+
+                            <div class="mb-2">
+                                <label for="photoNotes" class="form-label-theme d-block">Additional Photo Info / Scan Context</label>
+                                <textarea class="form-control custom-form-input" id="photoNotes" name="photo_notes" rows="2" placeholder="e.g. Keynote photo from AI Summit conference stage, wearing dark jacket..."></textarea>
+                            </div>
+
+                            <div class="row g-2 mb-2">
+                                <div class="col-6">
+                                    <label for="searchDob" class="form-label-theme d-block">Date of Birth (Optional)</label>
+                                    <input type="date" class="form-control custom-form-input" id="searchDob" name="search_dob">
+                                </div>
+                                <div class="col-6">
+                                    <label for="searchLocation" class="form-label-theme d-block">Location / City / Country</label>
+                                    <input type="text" class="form-control custom-form-input" id="searchLocation" name="search_location" placeholder="e.g. San Francisco, USA">
+                                </div>
+                            </div>
+
+                            <div class="row g-2 mb-2">
+                                <div class="col-6">
+                                    <label for="searchOccupation" class="form-label-theme d-block">Occupation / Org</label>
+                                    <input type="text" class="form-control custom-form-input" id="searchOccupation" name="search_occupation" placeholder="e.g. AI Researcher">
+                                </div>
+                                <div class="col-6">
+                                    <label for="searchEducation" class="form-label-theme d-block">College / University / Company</label>
+                                    <input type="text" class="form-control custom-form-input" id="searchEducation" name="search_education" placeholder="e.g. Stanford University">
+                                </div>
+                            </div>
+
+                            <div class="mb-2">
+                                <label for="searchWebsite" class="form-label-theme d-block">Profile / Website URL (Optional)</label>
+                                <input type="url" class="form-control custom-form-input" id="searchWebsite" name="search_website" placeholder="https://alexdev.io">
+                            </div>
+
+                            <div class="mb-2">
+                                <label for="keywords" class="form-label-theme d-block">Keywords / Interests</label>
+                                <input type="text" class="form-control custom-form-input" id="keywords" name="keywords" value="" placeholder="e.g. AI tech innovator keynote">
+                            </div>
+
+                            <div>
+                                <label class="form-label text-dark extra-small fw-bold mb-2 d-block">Target Social Platforms</label>
+                                <div class="d-flex flex-wrap gap-2">
+                                    <div>
+                                        <input class="d-none platform-chip-input" type="checkbox" name="platforms" id="platLinkedIn" value="LinkedIn" checked>
+                                        <label class="platform-chip-label" for="platLinkedIn"><i class="fa-brands fa-linkedin text-primary"></i> LinkedIn</label>
+                                    </div>
+                                    <div>
+                                        <input class="d-none platform-chip-input" type="checkbox" name="platforms" id="platX" value="X" checked>
+                                        <label class="platform-chip-label" for="platX"><i class="fa-brands fa-x-twitter text-dark"></i> X / Twitter</label>
+                                    </div>
+                                    <div>
+                                        <input class="d-none platform-chip-input" type="checkbox" name="platforms" id="platInsta" value="Instagram" checked>
+                                        <label class="platform-chip-label" for="platInsta"><i class="fa-brands fa-instagram text-danger"></i> Instagram</label>
+                                    </div>
+                                    <div>
+                                        <input class="d-none platform-chip-input" type="checkbox" name="platforms" id="platSnapchat" value="Snapchat" checked>
+                                        <label class="platform-chip-label" for="platSnapchat"><i class="fa-brands fa-snapchat text-warning"></i> Snapchat</label>
+                                    </div>
+                                    <div>
+                                        <input class="d-none platform-chip-input" type="checkbox" name="platforms" id="platGitHub" value="GitHub" checked>
+                                        <label class="platform-chip-label" for="platGitHub"><i class="fa-brands fa-github text-dark"></i> GitHub</label>
+                                    </div>
+                                    <div>
+                                        <input class="d-none platform-chip-input" type="checkbox" name="platforms" id="platThreads" value="Threads" checked>
+                                        <label class="platform-chip-label" for="platThreads"><i class="fa-solid fa-at text-dark"></i> Threads</label>
+                                    </div>
+                                    <div>
+                                        <input class="d-none platform-chip-input" type="checkbox" name="platforms" id="platFB" value="Facebook" checked>
+                                        <label class="platform-chip-label" for="platFB"><i class="fa-brands fa-facebook text-primary"></i> Facebook</label>
+                                    </div>
+                                    <div>
+                                        <input class="d-none platform-chip-input" type="checkbox" name="platforms" id="platWeb" value="Web" checked>
+                                        <label class="platform-chip-label" for="platWeb"><i class="fa-solid fa-globe text-secondary"></i> Web</label>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="mt-4 d-flex justify-content-center gap-3 align-items-center flex-wrap">
+                    <button type="submit" class="btn-pill px-5 justify-content-center" id="runBtn">
+                        <i class="fa-solid fa-bolt me-1"></i> Run Pipeline End-to-End
+                    </button>
+                    <button type="button" class="btn-pill-outline px-4 py-2 small" id="autoFillBtn" onclick="autoFillSampleData()">
+                        <i class="fa-solid fa-wand-magic-sparkles me-1"></i> Auto-Fill Sample Data
+                    </button>
+                </div>
+            </form>
+        </div>
+
+        <!-- Full Width Pipeline Execution Results Container Below Inputs -->
+        <div class="custom-card-light mb-4">
+            <div class="d-flex justify-content-between align-items-center mb-4">
+                <div>
+                    <span class="micro-label"><i class="fa-solid fa-chart-line me-1"></i> Live Output</span>
+                    <h3 class="h4 mb-0">Pipeline Execution Results</h3>
+                </div>
+                <div id="statusSpinner" class="spinner-border spinner-border-sm text-purple d-none" role="status" style="color: var(--accent-violet);"></div>
+            </div>
+
+            <div id="resultsContainer">
+                <div class="text-center py-5 text-muted">
+                    <i class="fa-solid fa-shield-halved fs-1 mb-3 opacity-40" style="color: var(--accent-violet);"></i>
+                    <p class="mb-0">Scan face or upload image, enter search details, and click "Run Pipeline End-to-End" to process features, discover social media records, and anchor on the blockchain.</p>
+                </div>
+            </div>
+        </div>
+
+    </main>
+
+    <script>
+        let webcamStream = null;
+
+        function switchToPipelineMode(mode) {
+            const genBtn = document.getElementById('btnGenSHA');
+            const verBtn = document.getElementById('btnVerSHA');
+
+            if (mode === 'generate') {
+                genBtn.className = "btn-pill px-4 shadow-sm";
+                verBtn.className = "btn-pill-outline px-4 shadow-sm";
+                document.getElementById('inputControlBlock').scrollIntoView({ behavior: 'smooth', block: 'start' });
+            } else {
+                verBtn.className = "btn-pill px-4 shadow-sm";
+                genBtn.className = "btn-pill-outline px-4 shadow-sm";
+                document.getElementById('auditorSection').scrollIntoView({ behavior: 'smooth', block: 'center' });
+            }
+        }
+
+        function switchInputMode(mode) {
+            const uploadSec = document.getElementById('uploadInputSection');
+            const webcamSec = document.getElementById('webcamInputSection');
+            const uploadBtn = document.getElementById('uploadTabBtn');
+            const webcamBtn = document.getElementById('webcamTabBtn');
+
+            if (mode === 'upload') {
+                uploadSec.classList.remove('d-none');
+                webcamSec.classList.add('d-none');
+                uploadBtn.className = "mode-toggle-btn active";
+                webcamBtn.className = "mode-toggle-btn inactive";
+                if (webcamStream) {
+                    webcamStream.getTracks().forEach(track => track.stop());
+                    webcamStream = null;
+                }
+            } else {
+                uploadSec.classList.add('d-none');
+                webcamSec.classList.remove('d-none');
+                webcamBtn.className = "mode-toggle-btn active";
+                uploadBtn.className = "mode-toggle-btn inactive";
+                startWebcamStream();
+            }
+        }
+
+        async function startWebcamStream() {
+            try {
+                const video = document.getElementById('webcamVideo');
+                const snapImg = document.getElementById('webcamSnapshotImg');
+                const camNotice = document.getElementById('webcamNotice');
+                if (snapImg) snapImg.style.display = 'none';
+                video.style.display = 'block';
+
+                webcamStream = await navigator.mediaDevices.getUserMedia({ video: { width: { ideal: 1280 }, height: { ideal: 720 }, facingMode: "user" }, audio: false });
+                video.srcObject = webcamStream;
+                if (camNotice) camNotice.classList.add('d-none');
+            } catch (err) {
+                console.warn("Camera access alert:", err.message);
+                const camNotice = document.getElementById('webcamNotice');
+                if (camNotice) {
+                    camNotice.classList.remove('d-none');
+                    camNotice.innerHTML = `<i class="fa-solid fa-triangle-exclamation me-1"></i> Camera permission required for live scan. <button type="button" class="btn btn-link btn-sm p-0 text-decoration-underline text-warning" onclick="switchInputMode('upload')">Switch to File Upload</button>`;
+                }
+            }
+        }
+
+        window.addEventListener('DOMContentLoaded', () => {
+            if (document.getElementById('webcamInputSection') && !document.getElementById('webcamInputSection').classList.contains('d-none')) {
+                startWebcamStream();
+            }
+
+            // Setup Drag & Drop handlers for file upload zone
+            const dropZone = document.getElementById('dropZone');
+            if (dropZone) {
+                ['dragenter', 'dragover', 'dragleave', 'drop'].forEach(eventName => {
+                    dropZone.addEventListener(eventName, preventDefaults, false);
+                });
+                function preventDefaults(e) {
+                    e.preventDefault();
+                    e.stopPropagation();
+                }
+                ['dragenter', 'dragover'].forEach(eventName => {
+                    dropZone.addEventListener(eventName, () => dropZone.classList.add('bg-white', 'border-primary'), false);
+                });
+                ['dragleave', 'drop'].forEach(eventName => {
+                    dropZone.addEventListener(eventName, () => dropZone.classList.remove('bg-white', 'border-primary'), false);
+                });
+                dropZone.addEventListener('drop', (e) => {
+                    const dt = e.dataTransfer;
+                    const files = dt.files;
+                    if (files && files.length > 0) {
+                        const input = document.getElementById('imageInput');
+                        input.files = files;
+                        previewSelectedImage(input);
+                    }
+                }, false);
+            }
+        });
+
+        function captureWebcamFrame() {
+            const video = document.getElementById('webcamVideo');
+            const canvas = document.getElementById('webcamCanvas');
+            const snapImg = document.getElementById('webcamSnapshotImg');
+            const captureBtn = document.getElementById('captureBtn');
+            const retakeBtn = document.getElementById('retakeBtn');
+
+            canvas.width = video.videoWidth || 640;
+            canvas.height = video.videoHeight || 480;
+            const ctx = canvas.getContext('2d');
+            ctx.drawImage(video, 0, 0, canvas.width, canvas.height);
+
+            const dataUrl = canvas.toDataURL('image/jpeg');
+            snapImg.src = dataUrl;
+            snapImg.style.display = 'block';
+            video.style.display = 'none';
+
+            captureBtn.classList.add('d-none');
+            retakeBtn.classList.remove('d-none');
+
+            if (webcamStream) {
+                webcamStream.getTracks().forEach(track => track.stop());
+                webcamStream = null;
+            }
+
+            canvas.toBlob(blob => {
+                const file = new File([blob], "webcam_face_scan.jpg", { type: "image/jpeg" });
+                const container = new DataTransfer();
+                container.items.add(file);
+                document.getElementById('imageInput').files = container.files;
+            }, 'image/jpeg');
+        }
+
+        function retakeWebcamPhoto() {
+            const video = document.getElementById('webcamVideo');
+            const snapImg = document.getElementById('webcamSnapshotImg');
+            const captureBtn = document.getElementById('captureBtn');
+            const retakeBtn = document.getElementById('retakeBtn');
+
+            snapImg.style.display = 'none';
+            snapImg.src = '';
+            video.style.display = 'block';
+
+            retakeBtn.classList.add('d-none');
+            captureBtn.classList.remove('d-none');
+
+            startWebcamStream();
+        }
+
+        function previewSelectedImage(input) {
+            if (input.files && input.files[0]) {
+                const reader = new FileReader();
+                reader.onload = function(e) {
+                    document.getElementById('uploadPreviewImg').src = e.target.result;
+                    document.getElementById('uploadFileName').textContent = input.files[0].name;
+                    document.getElementById('uploadPreviewContainer').classList.remove('d-none');
+                }
+                reader.readAsDataURL(input.files[0]);
+            }
+        }
+
+        function autoFillSampleData() {
+            document.getElementById('searchName').value = "Alex Dev";
+            document.getElementById('searchHandle').value = "@alex_dev";
+            document.getElementById('photoNotes').value = "Keynote photo from AI Summit conference stage";
+            document.getElementById('searchLocation').value = "San Francisco, USA";
+            document.getElementById('searchOccupation').value = "AI Developer & Keynote Speaker";
+            document.getElementById('searchEducation').value = "Computer Science";
+            document.getElementById('searchWebsite').value = "https://alexdev.tech";
+            switchInputMode('upload');
+        }
+
+        document.getElementById('pipelineForm').addEventListener('submit', async function(e) {
+            e.preventDefault();
+            const btn = document.getElementById('runBtn');
+            const spinner = document.getElementById('statusSpinner');
+            const results = document.getElementById('resultsContainer');
+
+            btn.disabled = true;
+            spinner.classList.remove('d-none');
+            results.innerHTML = `
+                <div class="text-center py-5">
+                    <div class="face-scanner-box">
+                        <i class="fa-solid fa-face-viewfinder face-icon"></i>
+                        <div class="scanner-laser"></div>
+                        <div class="scan-corner scan-corner-tl"></div>
+                        <div class="scan-corner scan-corner-tr"></div>
+                        <div class="scan-corner scan-corner-bl"></div>
+                        <div class="scan-corner scan-corner-br"></div>
+                    </div>
+                    <h5 class="fw-bold mb-2" style="color: var(--primary-navy);">Scanning & Verification in Progress...</h5>
+                    <p class="text-muted small max-w-400 mx-auto">Running deep neural face feature encoding, querying dynamic social web sources, and mining proof-of-work block record...</p>
+                </div>
+            `;
+
+            // Smooth scroll up/across to live output results container
+            results.scrollIntoView({ behavior: 'smooth', block: 'center' });
+
+            const formData = new FormData(this);
+            try {
+                const response = await fetch('/api/run_pipeline', {
+                    method: 'POST',
+                    body: formData
+                });
+                const data = await response.json();
+                
+                if (data.success) {
+                    renderResults(data);
+                } else {
+                    results.innerHTML = `<div class="alert alert-danger"><i class="fa-solid fa-triangle-exclamation me-2"></i> Error: ${data.error}</div>`;
+                }
+            } catch (err) {
+                results.innerHTML = `<div class="alert alert-danger"><i class="fa-solid fa-triangle-exclamation me-2"></i> Pipeline execution failed: ${err}</div>`;
+            } finally {
+                btn.disabled = false;
+                spinner.classList.add('d-none');
+            }
+        });
+
+        function renderResults(data) {
+            const face = data.face_data;
+            const search = data.search_result;
+            const post = search.post_metadata;
+            const tx = data.tx_record;
+            const verify = data.verification_result;
+
+            // Clean title display (strip excessive concatenated snippets)
+            let cleanTitle = post.title || 'Discovered Record';
+            if (cleanTitle.length > 90) {
+                cleanTitle = cleanTitle.substring(0, 90) + '...';
+            }
+
+            // Flatten all candidates from search_engine_findings for filter buttons and counters
+            const all_candidates = search.search_engine_findings 
+                ? Object.values(search.search_engine_findings).flat() 
+                : [];
+            const all_platforms = Array.from(new Set(all_candidates.map(item => item.platform))).filter(Boolean);
+
+            document.getElementById('resultsContainer').innerHTML = `
+                <!-- Step 1 Output -->
+                <div class="mb-4">
+                    <span class="micro-label">Stage 1</span>
+                    <h5 class="fw-bold mb-2">Face Identification & Encoding</h5>
+                    <div class="code-box">
+                        <div class="mb-2">
+                            <div class="d-flex align-items-center justify-content-between">
+                                <strong>Image Hash (SHA-256):</strong>
+                                <button type="button" class="btn btn-sm btn-outline-light py-0 px-2 border-0" title="Copy Image Hash" onclick="copyShaKey('${face.image_hash}', this)" style="font-size: 0.78rem; color: #A397E2;">
+                                    <i class="fa-regular fa-copy me-1"></i> Copy SHA
+                                </button>
+                            </div>
+                            <span class="text-break font-monospace" style="color: #6EE7B7;">${face.image_hash}</span>
+                        </div>
+                        <div class="mb-2"><strong>Detected Faces:</strong> ${face.face_count} face(s)</div>
+                        ${face.faces.map((f, i) => `
+                            <div class="ms-3 mt-2 p-2 rounded" style="background: rgba(255,255,255,0.04);">
+                                <div class="d-flex align-items-center justify-content-between">
+                                    <span>• Face #${i+1} Perceptual Hash:</span>
+                                    <button type="button" class="btn btn-sm btn-outline-light py-0 px-2 border-0" title="Copy Face Hash" onclick="copyShaKey('${f.encoding.face_hash}', this)" style="font-size: 0.75rem; color: #A397E2;">
+                                        <i class="fa-regular fa-copy me-1"></i> Copy SHA
+                                    </button>
+                                </div>
+                                <div class="text-break font-monospace" style="color: #D4CEF0; font-size: 0.8rem;">${f.encoding.face_hash}</div>
+                                <div class="extra-small text-muted mt-1">• Bounding Box: [${f.bbox.join(', ')}]</div>
+                            </div>
+                        `).join('')}
+                    </div>
+                </div>
+
+                <!-- Step 2 Output -->
+                <div class="mb-4">
+                    <span class="micro-label">Stage 2</span>
+                    <h5 class="fw-bold mb-2">Web & Social Discovery</h5>
+                    ${search.is_demo_fallback ? `
+                        <div class="alert alert-warning py-2 px-3 mb-2" style="font-size: 0.9rem;">
+                            <i class="fa-solid fa-triangle-exclamation me-2"></i>
+                            <strong>Demo data:</strong> no live search results were found for this
+                            query, so the result below is placeholder/sample data, not a real match
+                            discovered on the web.
+                        </div>
+                    ` : ''}
+                    <div class="code-box">
+                        <div><strong>Top Matched Platform:</strong> <span class="badge" style="background: var(--accent-violet);">${post.platform}</span></div>
+                        <div><strong>Title / Headline:</strong> ${cleanTitle}</div>
+                        <div><strong>Author / Domain:</strong> ${post.author}</div>
+                        <div><strong>Discovered URL:</strong> <a href="${post.url}" target="_blank" style="color: #A397E2; word-break: break-all;">${post.url}</a></div>
+                        <div><strong>Top Candidate Score:</strong> ${(search.candidate_relevance_score * 100).toFixed(1)}%</div>
+                        <div><strong>Search Source:</strong> <span class="badge" style="background:#3a3a4a;">${search.search_source}</span>
+                            ${search.post_metadata.computed_visual_sim !== null && search.post_metadata.computed_visual_sim !== undefined
+                                ? ` &nbsp;|&nbsp; Real face similarity checked: ${(search.post_metadata.computed_visual_sim * 100).toFixed(1)}%`
+                                : ' &nbsp;|&nbsp; No candidate image could be visually compared'}
+                        </div>
+                        <div class="mt-2 d-flex align-items-center justify-content-between">
+                            <strong>Cryptographic Content Fingerprint:</strong>
+                            <button type="button" class="btn btn-sm btn-outline-light py-0 px-2 border-0" title="Copy Fingerprint" onclick="copyShaKey('${search.content_fingerprint}', this)" style="font-size: 0.78rem; color: #A397E2;">
+                                <i class="fa-regular fa-copy me-1"></i> Copy
+                            </button>
+                        </div>
+                        <div class="fw-bold text-white text-break" style="word-break: break-all;">${search.content_fingerprint}</div>
+                    </div>
+
+                    ${search.search_engine_findings ? `
+                        <div class="mt-4 p-3 rounded-4" style="background: rgba(243, 240, 250, 0.55); border: 1.5px solid var(--border-soft);">
+                            <div class="d-flex justify-content-between align-items-center flex-wrap gap-2 mb-3">
+                                <div>
+                                    <span class="micro-label" style="font-size: 0.72rem;"><i class="fa-solid fa-filter me-1"></i> Interactive Explorer</span>
+                                    <h6 class="fw-bold text-dark mb-0"><i class="fa-solid fa-layer-group me-1" style="color: var(--accent-violet);"></i> Web Search Engine Findings & Platform-Assigned SHA Keys</h6>
+                                </div>
+                                <span class="badge" style="background: var(--accent-violet);">${all_candidates.length} Total Records Discovered</span>
+                            </div>
+
+                            <!-- 1. Web Search Engine Selection Buttons -->
+                            <div class="mb-3">
+                                <label class="extra-small text-muted fw-bold text-uppercase d-block mb-2" style="letter-spacing: 0.05em;">
+                                    <i class="fa-solid fa-magnifying-glass me-1 text-primary"></i> 1. Select Search Engine:
+                                </label>
+                                <div class="d-flex flex-wrap gap-2" id="engineBtnGroup">
+                                    <button type="button" class="engine-nav-btn active" onclick="switchEngineFilter('ALL', this)">
+                                        <i class="fa-solid fa-globe"></i> All Search Engines <span class="badge bg-secondary ms-1">${all_candidates.length}</span>
+                                    </button>
+                                    ${Object.entries(search.search_engine_findings).map(([engineName, items]) => {
+                                        let engineIcon = 'fa-solid fa-magnifying-glass';
+                                        if (engineName.includes('DuckDuckGo')) engineIcon = 'fa-solid fa-feather';
+                                        else if (engineName.includes('Google')) engineIcon = 'fa-brands fa-google';
+                                        else if (engineName.includes('Yahoo')) engineIcon = 'fa-brands fa-yahoo';
+                                        else if (engineName.includes('Bing')) engineIcon = 'fa-brands fa-microsoft';
+                                        else if (engineName.includes('Wikipedia')) engineIcon = 'fa-brands fa-wikipedia-w';
+                                        else if (engineName.includes('Visual')) engineIcon = 'fa-solid fa-camera-rotate';
+                                        else if (engineName.includes('Platform')) engineIcon = 'fa-solid fa-database';
+
+                                        return `
+                                            <button type="button" class="engine-nav-btn" onclick="switchEngineFilter('${engineName.replace(/'/g, "\\'")}', this)">
+                                                <i class="${engineIcon}"></i> ${engineName} <span class="badge bg-secondary ms-1">${items.length}</span>
+                                            </button>
+                                        `;
+                                    }).join('')}
+                                </div>
+                            </div>
+
+                            <!-- 2. Inside Selected Engine: Social Media Platform Buttons -->
+                            <div class="mb-3 p-2 rounded-3 bg-white border">
+                                <div class="d-flex align-items-center justify-content-between flex-wrap gap-2 mb-2">
+                                    <label class="extra-small text-muted fw-bold text-uppercase mb-0" style="letter-spacing: 0.05em;">
+                                        <i class="fa-solid fa-hashtag me-1" style="color: var(--accent-violet);"></i> 2. Filter by Social Media Platform:
+                                    </label>
+                                    <span class="badge bg-light text-muted border" id="activeSocialCountDisplay">Showing all platforms</span>
+                                </div>
+                                <div class="d-flex flex-wrap gap-2" id="socialBtnGroup">
+                                    <button type="button" class="social-filter-btn active" onclick="switchSocialFilter('ALL', this)">
+                                        <i class="fa-solid fa-border-all"></i> All Social Media
+                                    </button>
+                                    ${Array.from(new Set(all_candidates.map(item => item.platform))).map(platform => {
+                                        let platIcon = 'fa-solid fa-share-nodes';
+                                        if (platform === 'LinkedIn') platIcon = 'fa-brands fa-linkedin text-primary';
+                                        else if (platform === 'X' || platform === 'Twitter') platIcon = 'fa-brands fa-x-twitter text-dark';
+                                        else if (platform === 'Instagram') platIcon = 'fa-brands fa-instagram text-danger';
+                                        else if (platform === 'Snapchat') platIcon = 'fa-brands fa-snapchat text-warning';
+                                        else if (platform === 'GitHub') platIcon = 'fa-brands fa-github text-dark';
+                                        else if (platform === 'Threads') platIcon = 'fa-solid fa-at text-dark';
+                                        else if (platform === 'Facebook') platIcon = 'fa-brands fa-facebook text-primary';
+                                        else if (platform === 'YouTube') platIcon = 'fa-brands fa-youtube text-danger';
+                                        else if (platform === 'Reddit') platIcon = 'fa-brands fa-reddit text-danger';
+
+                                        return `
+                                            <button type="button" class="social-filter-btn" data-platform="${platform}" onclick="switchSocialFilter('${platform.replace(/'/g, "\\'")}', this)">
+                                                <i class="${platIcon}"></i> ${platform}
+                                            </button>
+                                        `;
+                                    }).join('')}
+                                </div>
+                            </div>
+
+                            <!-- 3. Dynamic Interactive Results Container -->
+                            <div id="findingsDisplayArea">
+                                ${Object.entries(search.search_engine_findings).map(([engineName, items]) => `
+                                    <div class="engine-finding-block mb-3 p-3 rounded-3 border" data-engine="${engineName}" style="background: #ffffff;">
+                                        <div class="d-flex justify-content-between align-items-center mb-2">
+                                            <div class="fw-bold" style="color: var(--primary-navy);">
+                                                <i class="fa-solid fa-magnifying-glass me-1" style="color: var(--accent-violet);"></i> ${engineName}
+                                            </div>
+                                            <span class="badge" style="background: var(--accent-violet);">${items.length} Record(s)</span>
+                                        </div>
+                                        <div class="table-responsive">
+                                            <table class="table table-sm table-hover mb-0 align-middle" style="font-size: 0.83rem;">
+                                                <thead class="table-light">
+                                                    <tr>
+                                                        <th style="width: 14%;">Social Media</th>
+                                                        <th style="width: 20%;">Author / Handle</th>
+                                                        <th style="width: 26%;">Headline / Title</th>
+                                                        <th style="width: 30%;">Platform-Assigned SHA-256 Key</th>
+                                                        <th style="width: 10%;">Link</th>
+                                                    </tr>
+                                                </thead>
+                                                <tbody>
+                                                    ${items.map(item => `
+                                                        <tr class="candidate-row" data-platform="${item.platform}" data-engine="${engineName}">
+                                                            <td><span class="badge bg-secondary-subtle text-dark border">${item.platform}</span></td>
+                                                            <td><strong class="text-truncate d-inline-block" style="max-width: 130px;" title="${item.author}">${item.author || 'N/A'}</strong></td>
+                                                            <td><span class="text-truncate d-inline-block" style="max-width: 170px;" title="${item.title}">${item.title}</span></td>
+                                                            <td>
+                                                                <div class="d-flex align-items-center justify-content-between p-1 px-2 rounded bg-light border" style="background: #F9F8FD !important;">
+                                                                    <div class="font-monospace text-break me-2" style="font-size: 0.72rem; color: #6B5FA8; line-height: 1.3;">
+                                                                        <i class="fa-solid fa-key me-1 text-muted"></i><span>${item.sha256_key || item.content_fingerprint || 'N/A'}</span>
+                                                                    </div>
+                                                                    <button type="button" class="btn btn-sm btn-outline-secondary py-0 px-1 border-0" title="Copy SHA Key" onclick="copyShaKey('${item.sha256_key || item.content_fingerprint || ''}', this)" style="font-size: 0.75rem; color: var(--accent-violet);">
+                                                                        <i class="fa-regular fa-copy"></i>
+                                                                    </button>
+                                                                </div>
+                                                            </td>
+                                                            <td>
+                                                                <a href="${item.url}" target="_blank" class="btn btn-sm btn-outline-primary py-0 px-2" style="font-size: 0.75rem;">
+                                                                    <i class="fa-solid fa-arrow-up-right-from-square"></i>
+                                                                </a>
+                                                            </td>
+                                                        </tr>
+                                                    `).join('')}
+                                                </tbody>
+                                            </table>
+                                        </div>
+                                    </div>
+                                `).join('')}
+                            </div>
+                        </div>
+                    ` : ''}
+                </div>
+
+                <!-- Step 3 Output -->
+                <div class="mb-4">
+                    <span class="micro-label">Stage 3</span>
+                    <h5 class="fw-bold mb-2">Blockchain Ledger Anchoring</h5>
+                    <div class="code-box">
+                        <div class="mb-2"><strong>Status:</strong> <span class="badge bg-success">${tx.status}</span></div>
+                        
+                        <div class="mb-2">
+                            <div class="d-flex align-items-center justify-content-between">
+                                <strong>Transaction Hash (TxHash):</strong>
+                                <button type="button" class="btn btn-sm btn-outline-light py-0 px-2 border-0" title="Copy TxHash" onclick="copyShaKey('${tx.transaction_hash}', this)" style="font-size: 0.78rem; color: #6EE7B7;">
+                                    <i class="fa-regular fa-copy me-1"></i> Copy SHA
+                                </button>
+                            </div>
+                            <span style="color: #6EE7B7; word-break: break-all;" class="fw-bold text-break font-monospace">${tx.transaction_hash}</span>
+                        </div>
+
+                        <div class="mb-2"><strong>Block Index:</strong> #${tx.block_index}</div>
+
+                        <div class="mb-2">
+                            <div class="d-flex align-items-center justify-content-between">
+                                <strong>Block Hash (PoW):</strong>
+                                <button type="button" class="btn btn-sm btn-outline-light py-0 px-2 border-0" title="Copy Block Hash" onclick="copyShaKey('${tx.block_hash}', this)" style="font-size: 0.78rem; color: #A397E2;">
+                                    <i class="fa-regular fa-copy me-1"></i> Copy SHA
+                                </button>
+                            </div>
+                            <span class="text-break font-monospace" style="color: #D4CEF0;">${tx.block_hash}</span>
+                        </div>
+
+                        <div><strong>Network:</strong> ${tx.network}</div>
+                    </div>
+                </div>
+            `;
+        }
+
+        // Filter State for Web Search Engine & Social Media
+        let currentSelectedEngine = 'ALL';
+        let currentSelectedPlatform = 'ALL';
+
+        function switchEngineFilter(engineName, buttonEl) {
+            currentSelectedEngine = engineName;
+            
+            // Update active class on engine buttons
+            const allEngineBtns = document.querySelectorAll('#engineBtnGroup .engine-nav-btn');
+            allEngineBtns.forEach(btn => btn.classList.remove('active'));
+            if (buttonEl) buttonEl.classList.add('active');
+
+            applyFindingsFilter();
+        }
+
+        function switchSocialFilter(platformName, buttonEl) {
+            currentSelectedPlatform = platformName;
+
+            // Update active class on social platform buttons
+            const allSocialBtns = document.querySelectorAll('#socialBtnGroup .social-filter-btn');
+            allSocialBtns.forEach(btn => btn.classList.remove('active'));
+            if (buttonEl) buttonEl.classList.add('active');
+
+            applyFindingsFilter();
+        }
+
+        function applyFindingsFilter() {
+            const engineBlocks = document.querySelectorAll('.engine-finding-block');
+            let totalVisibleRows = 0;
+
+            engineBlocks.forEach(block => {
+                const blockEngine = block.getAttribute('data-engine');
+                const engineMatches = (currentSelectedEngine === 'ALL' || currentSelectedEngine === blockEngine);
+
+                if (!engineMatches) {
+                    block.style.display = 'none';
+                } else {
+                    block.style.display = 'block';
+                    const rows = block.querySelectorAll('.candidate-row');
+                    let visibleRowsInBlock = 0;
+
+                    rows.forEach(row => {
+                        const rowPlatform = row.getAttribute('data-platform');
+                        const platformMatches = (currentSelectedPlatform === 'ALL' || currentSelectedPlatform === rowPlatform);
+
+                        if (platformMatches) {
+                            row.style.display = '';
+                            visibleRowsInBlock++;
+                            totalVisibleRows++;
+                        } else {
+                            row.style.display = 'none';
+                        }
+                    });
+
+                    // If all rows in this engine block are filtered out by the selected social media, hide the block
+                    if (visibleRowsInBlock === 0 && currentSelectedPlatform !== 'ALL') {
+                        block.style.display = 'none';
+                    }
+                }
+            });
+
+            // Update badge text
+            const displayBadge = document.getElementById('activeSocialCountDisplay');
+            if (displayBadge) {
+                const engText = currentSelectedEngine === 'ALL' ? 'All Engines' : currentSelectedEngine;
+                const socText = currentSelectedPlatform === 'ALL' ? 'All Platforms' : currentSelectedPlatform;
+                displayBadge.textContent = `${engText} • ${socText} (${totalVisibleRows} shown)`;
+            }
+        }
+
+        function copyShaKey(shaValue, btn) {
+            if (!shaValue) return;
+            navigator.clipboard.writeText(shaValue).then(() => {
+                const originalHtml = btn.innerHTML;
+                btn.innerHTML = `<i class="fa-solid fa-check text-success"></i>`;
+                btn.title = "Copied!";
+                setTimeout(() => {
+                    btn.innerHTML = originalHtml;
+                    btn.title = "Copy SHA Key";
+                }, 1800);
+            }).catch(err => {
+                // Fallback for older browsers
+                const tempInput = document.createElement('input');
+                tempInput.value = shaValue;
+                document.body.appendChild(tempInput);
+                tempInput.select();
+                document.execCommand('copy');
+                document.body.removeChild(tempInput);
+                const originalHtml = btn.innerHTML;
+                btn.innerHTML = `<i class="fa-solid fa-check text-success"></i>`;
+                setTimeout(() => {
+                    btn.innerHTML = originalHtml;
+                }, 1800);
+            });
+        }
+    </script>
+
+    <footer class="py-2 text-center border-top text-muted small bg-white mt-auto" style="font-size: 0.78rem;">
+        VeriFace Proof &bull; Cryptographic Identity Verification Platform
+    </footer>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>

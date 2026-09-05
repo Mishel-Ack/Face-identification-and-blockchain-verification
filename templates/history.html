@@ -1,0 +1,327 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SHA Search History - VeriFace Proof</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --bg-gradient-top: #F3F0FA;
+            --bg-gradient-bottom: #E2DBF2;
+            --primary-navy: #1E1B3A;
+            --accent-violet: #6B5FA8;
+            --accent-violet-hover: #594d94;
+            --text-primary: #1E1B3A;
+            --text-secondary: #1E1B3A;
+            --text-light: #FFFFFF;
+            --card-light-bg: rgba(255, 255, 255, 0.94);
+            --border-soft: rgba(107, 95, 168, 0.15);
+        }
+
+        body {
+            background: linear-gradient(180deg, rgba(243, 240, 250, 0.6) 0%, rgba(226, 219, 242, 0.8) 100%), url('/static/images/hero_bg.jpg') center/cover no-repeat;
+            background-attachment: fixed;
+            color: var(--text-primary);
+            font-family: 'Inter', system-ui, -apple-system, sans-serif;
+            min-height: 100vh;
+            margin: 0;
+            padding: 0;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .micro-label {
+            font-size: 0.75rem;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 0.15em;
+            color: var(--accent-violet);
+            display: inline-block;
+            margin-bottom: 0.75rem;
+        }
+
+        .btn-pill {
+            background: var(--accent-violet);
+            color: var(--text-light) !important;
+            font-weight: 600;
+            border-radius: 50px;
+            padding: 9px 24px;
+            border: none;
+            text-decoration: none !important;
+            box-shadow: 0 10px 25px rgba(107, 95, 168, 0.25);
+            transition: all 0.3s ease;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+        }
+
+        .btn-pill:hover {
+            background: var(--accent-violet-hover);
+            transform: translateY(-2px);
+        }
+
+        .btn-pill-outline {
+            background: #FFFFFF !important;
+            color: var(--accent-violet) !important;
+            font-weight: 600;
+            border-radius: 50px;
+            padding: 8px 20px;
+            border: 2px solid var(--accent-violet);
+            box-shadow: 0 4px 14px rgba(30, 27, 58, 0.08);
+            text-decoration: none !important;
+            transition: all 0.3s ease;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+        }
+
+        .btn-pill-outline:hover {
+            background: #F3F0FA !important;
+            color: var(--accent-violet-hover) !important;
+            transform: translateY(-2px);
+            box-shadow: 0 6px 18px rgba(107, 95, 168, 0.2);
+            text-decoration: none !important;
+        }
+
+        .navbar {
+            padding: 10px 0;
+            background: #FFFFFF !important;
+            box-shadow: 0 4px 20px rgba(30, 27, 58, 0.07);
+            border-bottom: 1px solid rgba(107, 95, 168, 0.12);
+        }
+
+        .brand-logo {
+            font-weight: 700;
+            font-size: 1.15rem;
+            color: var(--primary-navy);
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            text-decoration: none !important;
+        }
+
+        .brand-logo i {
+            color: var(--accent-violet);
+            font-size: 1.5rem;
+        }
+
+        .custom-card-light {
+            background: var(--card-light-bg);
+            backdrop-filter: blur(16px);
+            border: 1px solid var(--border-soft);
+            border-radius: 24px;
+            padding: 36px;
+            box-shadow: 0 15px 40px rgba(30, 27, 58, 0.06);
+            transition: all 0.3s ease;
+        }
+
+        .hash-code-inline {
+            background: #141226;
+            color: #6EE7B7;
+            font-family: 'Consolas', 'Fira Code', monospace;
+            padding: 4px 10px;
+            border-radius: 8px;
+            font-size: 0.82rem;
+            word-break: break-all;
+        }
+    </style>
+</head>
+<body>
+
+    <!-- Navigation Bar -->
+    <nav class="navbar navbar-expand-lg">
+        <div class="container">
+            <a class="brand-logo" href="/">
+                <i class="fa-solid fa-shield-cat"></i>
+                <span>VeriFace Proof</span>
+            </a>
+            
+            <button class="navbar-toggler border-0" type="button" data-bs-toggle="collapse" data-bs-target="#navbarContent">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+
+            <div class="collapse navbar-collapse" id="navbarContent">
+                <ul class="navbar-nav mx-auto mb-2 mb-lg-0 gap-4 font-semibold">
+                    <li class="nav-item">
+                        <a class="nav-link text-dark fw-semibold" href="/pipeline"><i class="fa-solid fa-key me-1" style="color: var(--accent-violet);"></i> Generate SHA</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link text-dark fw-semibold" href="/verify"><i class="fa-solid fa-shield-check me-1 text-success"></i> Verify SHA</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link text-dark fw-semibold" href="/pipeline-details"><i class="fa-solid fa-diagram-project me-1 text-primary"></i> Pipeline Detailed</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link text-primary fw-bold" href="/history"><i class="fa-solid fa-clock-rotate-left me-1 text-warning"></i> SHA History</a>
+                    </li>
+                </ul>
+
+                <div class="d-flex align-items-center gap-3">
+                    <a href="/team" class="btn-pill btn-sm px-4 py-2">
+                        <i class="fa-solid fa-users-viewfinder me-1"></i> Team GenZ
+                    </a>
+                </div>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Main Workspace -->
+    <main class="container my-5">
+        
+        <!-- Mode Navigation Switcher -->
+        <div class="d-flex justify-content-center gap-3 mb-4">
+            <a href="/pipeline" class="btn-pill-outline px-4 shadow-sm">
+                <i class="fa-solid fa-key me-1"></i> 1. Generate SHA
+            </a>
+            <a href="/verify" class="btn-pill-outline px-4 shadow-sm">
+                <i class="fa-solid fa-shield-check me-1"></i> 2. Verify SHA
+            </a>
+            <a href="/history" class="btn-pill px-4 shadow-sm">
+                <i class="fa-solid fa-clock-rotate-left me-1"></i> 3. SHA Search History
+            </a>
+        </div>
+
+        <div class="custom-card-light mb-4">
+            <div class="d-flex justify-content-between align-items-center mb-4">
+                <div>
+                    <span class="micro-label"><i class="fa-solid fa-database me-1"></i> Ledger Search Vault</span>
+                    <h2 class="h3 mb-1" style="color: var(--primary-navy); font-weight: 700;">SHA Search History & Best-Fit Records</h2>
+                    <p class="text-dark fw-semibold mb-0" style="color: #000000 !important;">Audit all past mined block proofs, copy best-fit transaction hashes, or jump directly into on-chain verification.</p>
+                </div>
+                <div>
+                    <span class="badge bg-white text-primary border border-primary-subtle px-3 py-2 rounded-pill shadow-sm fs-6">
+                        <i class="fa-solid fa-cube me-1"></i> On-Chain Audit Records
+                    </span>
+                </div>
+            </div>
+
+            <div id="historyContainer">
+                <div class="text-center py-5">
+                    <div class="spinner-border text-primary me-2" role="status"></div>
+                    <span class="fw-semibold text-secondary">Loading SHA search history from blockchain ledger...</span>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <footer class="py-2 text-center border-top text-muted small bg-white mt-auto" style="font-size: 0.78rem;">
+        VeriFace Proof &bull; Cryptographic Identity Verification Platform
+    </footer>
+
+    <script>
+        async function fetchHistory() {
+            try {
+                const res = await fetch('/api/history');
+                const data = await res.json();
+                const container = document.getElementById('historyContainer');
+
+                if (data.success && data.records && data.records.length > 0) {
+                    let html = `
+                        <div class="table-responsive">
+                            <table class="table table-hover align-middle mb-0" style="font-size: 0.9rem;">
+                                <thead class="table-light">
+                                    <tr>
+                                        <th>Block #</th>
+                                        <th>Best Fit Match</th>
+                                        <th>Identity & Handle</th>
+                                        <th>Platform</th>
+                                        <th>Transaction SHA-256 Hash</th>
+                                        <th class="text-end">Actions</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                    `;
+
+                    data.records.forEach(rec => {
+                        const shortHash = rec.transaction_hash ? (rec.transaction_hash.substring(0, 22) + '...' + rec.transaction_hash.substring(rec.transaction_hash.length - 8)) : '';
+                        html += `
+                            <tr>
+                                <td>
+                                    <span class="badge bg-secondary-subtle text-dark border px-2 py-1">#${rec.block_index}</span>
+                                </td>
+                                <td>
+                                    <span class="badge bg-success-subtle text-success border border-success-subtle px-3 py-1 rounded-pill fw-bold">
+                                        <i class="fa-solid fa-circle-check me-1"></i> ${rec.match_percentage} Best Fit
+                                    </span>
+                                </td>
+                                <td>
+                                    <div class="fw-bold text-dark">${rec.social_post_author || 'Identity Record'}</div>
+                                    <small class="text-muted">${rec.timestamp || ''}</small>
+                                </td>
+                                <td>
+                                    <span class="badge bg-white text-dark border px-2 py-1">${rec.social_post_platform}</span>
+                                </td>
+                                <td>
+                                    <div class="d-flex align-items-center gap-2">
+                                        <span class="hash-code-inline">${shortHash}</span>
+                                        <button class="btn btn-sm btn-light border p-1 rounded-2" title="Copy SHA Key" onclick="copyShaKey('${rec.transaction_hash}', this)">
+                                            <i class="fa-regular fa-copy"></i>
+                                        </button>
+                                    </div>
+                                </td>
+                                <td class="text-end">
+                                    <a href="/verify?tx_hash=${rec.transaction_hash}" class="btn btn-sm btn-pill px-3 py-1 fs-7">
+                                        <i class="fa-solid fa-magnifying-glass me-1"></i> Verify SHA Direct
+                                    </a>
+                                </td>
+                            </tr>
+                        `;
+                    });
+
+                    html += `
+                                </tbody>
+                            </table>
+                        </div>
+                    `;
+                    container.innerHTML = html;
+                } else {
+                    container.innerHTML = `
+                        <div class="text-center py-5 text-muted">
+                            <i class="fa-solid fa-folder-open fs-1 mb-3 opacity-40" style="color: var(--accent-violet);"></i>
+                            <p class="mb-0">No SHA search history recorded yet. Run the pipeline to generate and anchor your first SHA proof.</p>
+                            <a href="/pipeline" class="btn-pill mt-3 px-4"><i class="fa-solid fa-bolt me-1"></i> Run Pipeline Now</a>
+                        </div>
+                    `;
+                }
+            } catch (err) {
+                document.getElementById('historyContainer').innerHTML = `<div class="alert alert-danger"><i class="fa-solid fa-triangle-exclamation me-2"></i> Failed to load history: ${err}</div>`;
+            }
+        }
+
+        function copyShaKey(shaValue, btn) {
+            if (!shaValue) return;
+            navigator.clipboard.writeText(shaValue).then(() => {
+                const originalHtml = btn.innerHTML;
+                btn.innerHTML = `<i class="fa-solid fa-check text-success"></i>`;
+                btn.title = "Copied!";
+                setTimeout(() => {
+                    btn.innerHTML = originalHtml;
+                    btn.title = "Copy SHA Key";
+                }, 1800);
+            }).catch(err => {
+                const tempInput = document.createElement('input');
+                tempInput.value = shaValue;
+                document.body.appendChild(tempInput);
+                tempInput.select();
+                document.execCommand('copy');
+                document.body.removeChild(tempInput);
+                const originalHtml = btn.innerHTML;
+                btn.innerHTML = `<i class="fa-solid fa-check text-success"></i>`;
+                setTimeout(() => {
+                    btn.innerHTML = originalHtml;
+                }, 1800);
+            });
+        }
+
+        window.addEventListener('DOMContentLoaded', fetchHistory);
+    </script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>

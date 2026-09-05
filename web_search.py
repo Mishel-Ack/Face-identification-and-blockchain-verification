@@ -8,9 +8,37 @@ import hashlib
 import time
 import os
 import requests
+import xml.etree.ElementTree as ET
 import numpy as np
 import cv2
 from typing import List, Dict, Any
+
+def clean_social_platform_name(domain_or_url: str) -> str:
+    """Cleanly extracts well-known social media platform names from domain or URL."""
+    low = (domain_or_url or "").lower()
+    if "linkedin.com" in low:
+        return "LinkedIn"
+    if "twitter.com" in low or "x.com" in low:
+        return "X"
+    if "instagram.com" in low:
+        return "Instagram"
+    if "snapchat.com" in low:
+        return "Snapchat"
+    if "github.com" in low:
+        return "GitHub"
+    if "threads.net" in low:
+        return "Threads"
+    if "facebook.com" in low:
+        return "Facebook"
+    if "youtube.com" in low:
+        return "YouTube"
+    if "reddit.com" in low:
+        return "Reddit"
+    if "wikipedia.org" in low:
+        return "Wikipedia"
+    # Fallback to domain name without www
+    clean_d = low.replace("www.", "")
+    return clean_d.capitalize() if clean_d else "Web"
 
 # Simple in-memory response cache to prevent duplicate billed API calls & spend
 _API_SEARCH_CACHE = {}
@@ -158,7 +186,7 @@ class WebSearchEngine:
                 for item in ddg_results:
                     domain = item["href"].split("//")[-1].split("/")[0]
                     results.append({
-                        "platform": f"Web ({domain})",
+                        "platform": clean_social_platform_name(domain),
                         "post_id": hashlib.md5(item["href"].encode()).hexdigest()[:12],
                         "url": item["href"],
                         "author": domain,
@@ -246,6 +274,85 @@ class WebSearchEngine:
             _API_SEARCH_CACHE[cache_key] = results
         except Exception as e:
             print(f"[WebSearchEngine] Yahoo search warning: {e}")
+
+        return results
+
+    def search_bing_web(self, query: str) -> List[Dict[str, Any]]:
+        """
+        Executes a public Bing web search query via RSS without requiring paid API keys.
+        """
+        cache_key = f"bing_web:{query}"
+        if cache_key in _API_SEARCH_CACHE:
+            return _API_SEARCH_CACHE[cache_key]
+
+        results = []
+        try:
+            url = f"https://www.bing.com/search?q={requests.utils.quote(query)}&format=rss"
+            headers = {"User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36"}
+            resp = requests.get(url, headers=headers, timeout=5)
+            if resp.status_code == 200:
+                root = ET.fromstring(resp.content)
+                for item in root.findall('.//item')[:5]:
+                    link = item.find('link').text if item.find('link') is not None else ''
+                    title = item.find('title').text if item.find('title') is not None else 'Bing Result'
+                    pub_date = item.find('pubDate').text if item.find('pubDate') is not None else time.strftime("%Y-%m-%dT%H:%M:%SZ", time.gmtime())
+                    desc = item.find('description').text if item.find('description') is not None else title
+                    if link:
+                        domain = link.split("//")[-1].split("/")[0]
+                        results.append({
+                            "platform": clean_social_platform_name(domain),
+                            "post_id": hashlib.md5(link.encode()).hexdigest()[:12],
+                            "url": link,
+                            "author": domain,
+                            "title": title,
+                            "content": desc or title,
+                            "timestamp": pub_date,
+                            "image_url": "",
+                            "associated_tags": ["BingSearch", "LiveWeb"],
+                            "source": "bing_web_search"
+                        })
+            _API_SEARCH_CACHE[cache_key] = results
+        except Exception as e:
+            print(f"[WebSearchEngine] Bing web search warning: {e}")
+
+        return results
+
+    def search_wikipedia(self, query: str) -> List[Dict[str, Any]]:
+        """
+        Executes a live Wikipedia Knowledge & OpenSearch query without API keys.
+        """
+        cache_key = f"wiki:{query}"
+        if cache_key in _API_SEARCH_CACHE:
+            return _API_SEARCH_CACHE[cache_key]
+
+        results = []
+        try:
+            url = f"https://en.wikipedia.org/w/api.php?action=opensearch&search={requests.utils.quote(query)}&limit=5&format=json"
+            headers = {"User-Agent": "VeriFaceVerification/1.0 (academic; verification)"}
+            resp = requests.get(url, headers=headers, timeout=5)
+            if resp.status_code == 200:
+                data = resp.json()
+                # format: [query, [titles], [descriptions], [urls]]
+                if len(data) >= 4:
+                    titles = data[1]
+                    descriptions = data[2]
+                    urls = data[3]
+                    for title, desc, link in zip(titles, descriptions, urls):
+                        results.append({
+                            "platform": "Wikipedia",
+                            "post_id": hashlib.md5(link.encode()).hexdigest()[:12],
+                            "url": link,
+                            "author": "Wikipedia Knowledge Base",
+                            "title": title,
+                            "content": desc or f"Wikipedia verified entry for {title}",
+                            "timestamp": time.strftime("%Y-%m-%dT%H:%M:%SZ", time.gmtime()),
+                            "image_url": "",
+                            "associated_tags": ["Wikipedia", "KnowledgeBase", "PublicRecord"],
+                            "source": "wikipedia_search"
+                        })
+            _API_SEARCH_CACHE[cache_key] = results
+        except Exception as e:
+            print(f"[WebSearchEngine] Wikipedia search warning: {e}")
 
         return results
 
@@ -390,6 +497,16 @@ class WebSearchEngine:
         if yahoo_results:
             search_results.extend(yahoo_results)
 
+        # Engine D: Bing Web Search Index
+        bing_results = self.search_bing_web(f"{query_keywords}")
+        if bing_results:
+            search_results.extend(bing_results)
+
+        # Engine E: Wikipedia Knowledge & Identity OpenSearch
+        wiki_results = self.search_wikipedia(f"{query_keywords}")
+        if wiki_results:
+            search_results.extend(wiki_results)
+
         # 3. Add fallback indexed demo social posts if all live searches are empty
         is_demo_fallback = False
         if not search_results:
@@ -522,16 +639,83 @@ class WebSearchEngine:
         # Prepare list of all discovered candidates sorted by score
         all_candidates = [item for _, item in scored_matches]
 
-        # Group findings by search engine source (DuckDuckGo, Google, Yahoo, Visual, Demo)
+        # Group findings by search engine source (DuckDuckGo, Google, Yahoo, Bing, Wikipedia, Visual, Demo)
         search_engine_findings = {
             "DuckDuckGo Search": [c for c in all_candidates if c.get("source") == "duckduckgo_text_search"],
+            "Bing Web Index": [c for c in all_candidates if c.get("source") == "bing_web_search"],
             "Google News & Web": [c for c in all_candidates if c.get("source") == "google_news_search"],
             "Yahoo Search Index": [c for c in all_candidates if c.get("source") == "yahoo_web_search"],
+            "Wikipedia Knowledge": [c for c in all_candidates if c.get("source") == "wikipedia_search"],
             "Visual Reverse Match": [c for c in all_candidates if c.get("source") in ["bing_visual_search_api", "google_cloud_vision_api"]],
             "Platform Reference": [c for c in all_candidates if c.get("source") == "demo_fallback_data"]
         }
-        # Filter out empty engine groups
-        search_engine_findings = {k: v for k, v in search_engine_findings.items() if len(v) > 0}
+        # If an engine has 0 findings for this specific query, provide a search query link item so the engine is always accessible
+        for eng_name, items in list(search_engine_findings.items()):
+            if len(items) == 0:
+                # Provide contextual index link so the engine button is visible and clickable
+                if eng_name == "Bing Web Index":
+                    bing_link = f"https://www.bing.com/search?q={requests.utils.quote(query_keywords)}"
+                    items.append({
+                        "platform": "Bing",
+                        "post_id": hashlib.md5(bing_link.encode()).hexdigest()[:12],
+                        "url": bing_link,
+                        "author": "Bing Search Index",
+                        "title": f"Bing Live Query: {query_keywords}",
+                        "content": f"Live query for {query_keywords} on Bing Search",
+                        "timestamp": time.strftime("%Y-%m-%dT%H:%M:%SZ", time.gmtime()),
+                        "image_url": "",
+                        "source": "bing_web_search",
+                        "candidate_relevance_score": 0.40,
+                        "sha256_key": hashlib.sha256(bing_link.encode()).hexdigest()
+                    })
+                elif eng_name == "Yahoo Search Index":
+                    yahoo_link = f"https://search.yahoo.com/search?p={requests.utils.quote(query_keywords)}"
+                    items.append({
+                        "platform": "Yahoo",
+                        "post_id": hashlib.md5(yahoo_link.encode()).hexdigest()[:12],
+                        "url": yahoo_link,
+                        "author": "Yahoo Search Index",
+                        "title": f"Yahoo Query: {query_keywords}",
+                        "content": f"Live indexed query for {query_keywords} on Yahoo Search",
+                        "timestamp": time.strftime("%Y-%m-%dT%H:%M:%SZ", time.gmtime()),
+                        "image_url": "",
+                        "source": "yahoo_web_search",
+                        "candidate_relevance_score": 0.35,
+                        "sha256_key": hashlib.sha256(yahoo_link.encode()).hexdigest()
+                    })
+                elif eng_name == "Google News & Web":
+                    google_link = f"https://news.google.com/search?q={requests.utils.quote(query_keywords)}"
+                    items.append({
+                        "platform": "Google News",
+                        "post_id": hashlib.md5(google_link.encode()).hexdigest()[:12],
+                        "url": google_link,
+                        "author": "Google News Index",
+                        "title": f"Google News Query: {query_keywords}",
+                        "content": f"Live indexed news query for {query_keywords} on Google",
+                        "timestamp": time.strftime("%Y-%m-%dT%H:%M:%SZ", time.gmtime()),
+                        "image_url": "",
+                        "source": "google_news_search",
+                        "candidate_relevance_score": 0.35,
+                        "sha256_key": hashlib.sha256(google_link.encode()).hexdigest()
+                    })
+                elif eng_name == "Wikipedia Knowledge":
+                    wiki_link = f"https://en.wikipedia.org/wiki/Special:Search?search={requests.utils.quote(query_keywords)}"
+                    items.append({
+                        "platform": "Wikipedia",
+                        "post_id": hashlib.md5(wiki_link.encode()).hexdigest()[:12],
+                        "url": wiki_link,
+                        "author": "Wikipedia Knowledge Base",
+                        "title": f"Wikipedia Record Query: {query_keywords}",
+                        "content": f"Wikipedia public knowledge search for {query_keywords}",
+                        "timestamp": time.strftime("%Y-%m-%dT%H:%M:%SZ", time.gmtime()),
+                        "image_url": "",
+                        "source": "wikipedia_search",
+                        "candidate_relevance_score": 0.30,
+                        "sha256_key": hashlib.sha256(wiki_link.encode()).hexdigest()
+                    })
+                elif eng_name in ["Visual Reverse Match", "Platform Reference"]:
+                    # Keep empty for specialized image engines unless findings exist
+                    del search_engine_findings[eng_name]
 
         content_hash = selected_match.get("content_fingerprint")
 

@@ -49,7 +49,7 @@
             color: var(--text-light) !important;
             font-weight: 600;
             border-radius: 50px;
-            padding: 12px 32px;
+            padding: 9px 24px;
             border: none;
             text-decoration: none !important;
             box-shadow: 0 10px 25px rgba(107, 95, 168, 0.25);
@@ -66,12 +66,13 @@
         }
 
         .btn-pill-outline {
-            background: transparent;
+            background: #FFFFFF !important;
             color: var(--accent-violet) !important;
             font-weight: 600;
             border-radius: 50px;
-            padding: 12px 28px;
+            padding: 8px 20px;
             border: 2px solid var(--accent-violet);
+            box-shadow: 0 4px 14px rgba(30, 27, 58, 0.08);
             text-decoration: none !important;
             transition: all 0.3s ease;
             display: inline-flex;
@@ -81,18 +82,23 @@
         }
 
         .btn-pill-outline:hover {
-            background: rgba(107, 95, 168, 0.08);
+            background: #F3F0FA !important;
+            color: var(--accent-violet-hover) !important;
             transform: translateY(-2px);
+            box-shadow: 0 6px 18px rgba(107, 95, 168, 0.2);
+            text-decoration: none !important;
         }
 
         .navbar {
-            padding: 24px 0;
-            background: transparent;
+            padding: 10px 0;
+            background: #FFFFFF !important;
+            box-shadow: 0 4px 20px rgba(30, 27, 58, 0.07);
+            border-bottom: 1px solid rgba(107, 95, 168, 0.12);
         }
 
         .brand-logo {
             font-weight: 700;
-            font-size: 1.3rem;
+            font-size: 1.15rem;
             color: var(--primary-navy);
             display: flex;
             align-items: center;
@@ -142,10 +148,27 @@
                 <span>VeriFace Proof</span>
             </a>
             
-            <div class="d-flex align-items-center gap-3">
-                <a href="/" class="btn-pill-outline btn-sm px-4 py-2">
-                    <i class="fa-solid fa-arrow-left me-1"></i> Back to Main Generator Page
-                </a>
+            <div class="collapse navbar-collapse show" id="navbarContent">
+                <ul class="navbar-nav mx-auto mb-2 mb-lg-0 gap-4 font-semibold">
+                    <li class="nav-item">
+                        <a class="nav-link text-dark fw-semibold" href="/pipeline"><i class="fa-solid fa-key me-1" style="color: var(--accent-violet);"></i> Generate SHA</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link text-primary fw-bold" href="/verify"><i class="fa-solid fa-shield-check me-1 text-success"></i> Verify SHA</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link text-dark fw-semibold" href="/pipeline-details"><i class="fa-solid fa-diagram-project me-1 text-primary"></i> Pipeline Detailed</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link text-dark fw-semibold" href="/history"><i class="fa-solid fa-clock-rotate-left me-1 text-warning"></i> SHA History</a>
+                    </li>
+                </ul>
+
+                <div class="d-flex align-items-center gap-3">
+                    <a href="/team" class="btn-pill btn-sm px-4 py-2">
+                        <i class="fa-solid fa-users-viewfinder me-1"></i> Team GenZ
+                    </a>
+                </div>
             </div>
         </div>
     </nav>
@@ -157,18 +180,21 @@
 
                 <!-- Mode Navigation Switcher -->
                 <div class="d-flex justify-content-center gap-3 mb-4">
-                    <a href="/" class="btn-pill-outline px-4 shadow-sm">
+                    <a href="/pipeline" class="btn-pill-outline px-4 shadow-sm">
                         <i class="fa-solid fa-key me-1"></i> 1. Generate SHA (Run Pipeline)
                     </a>
                     <a href="/verify" class="btn-pill px-4 shadow-sm">
                         <i class="fa-solid fa-shield-check me-1"></i> 2. Verify SHA (Ledger Audit Page)
+                    </a>
+                    <a href="/history" class="btn-pill-outline px-4 shadow-sm">
+                        <i class="fa-solid fa-clock-rotate-left me-1"></i> 3. SHA Search History
                     </a>
                 </div>
 
                 <div class="custom-card-light mb-4 text-center">
                     <span class="micro-label"><i class="fa-solid fa-check-double me-1"></i> Decentralized Ledger Audit Page</span>
                     <h2 class="headline-sm mb-3">Verify SHA-256 On-Chain Record</h2>
-                    <p class="text-secondary leading-relaxed mb-4 max-w-600 mx-auto">
+                    <p class="text-dark fw-semibold leading-relaxed mb-4 max-w-600 mx-auto" style="color: #000000 !important; font-size: 1.05rem;">
                         Enter any 64-character transaction hash (TxHash) or cryptographic content fingerprint digest below to instantly audit and verify its tamper-evident proof against our PoW blockchain ledger.
                     </p>
 

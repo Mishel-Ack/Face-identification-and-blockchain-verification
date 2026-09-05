@@ -1,0 +1,279 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Pipeline Detailed Architecture - VeriFace Proof</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --bg-gradient-top: #F3F0FA;
+            --bg-gradient-bottom: #E2DBF2;
+            --primary-navy: #1E1B3A;
+            --accent-violet: #6B5FA8;
+            --accent-violet-hover: #594d94;
+            --text-primary: #1E1B3A;
+            --text-secondary: #1E1B3A;
+            --text-light: #FFFFFF;
+            --card-light-bg: rgba(255, 255, 255, 0.92);
+            --border-soft: rgba(107, 95, 168, 0.15);
+        }
+
+        body {
+            background: linear-gradient(180deg, rgba(243, 240, 250, 0.6) 0%, rgba(226, 219, 242, 0.8) 100%), url('/static/images/hero_bg.jpg') center/cover no-repeat;
+            background-attachment: fixed;
+            color: var(--text-primary);
+            font-family: 'Inter', system-ui, -apple-system, sans-serif;
+            min-height: 100vh;
+            margin: 0;
+            padding: 0;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .micro-label {
+            font-size: 0.75rem;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 0.15em;
+            color: var(--accent-violet);
+            display: inline-block;
+            margin-bottom: 0.75rem;
+        }
+
+        .btn-pill {
+            background: var(--accent-violet);
+            color: var(--text-light) !important;
+            font-weight: 600;
+            border-radius: 50px;
+            padding: 9px 24px;
+            border: none;
+            text-decoration: none !important;
+            box-shadow: 0 10px 25px rgba(107, 95, 168, 0.25);
+            transition: all 0.3s ease;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+        }
+
+        .btn-pill:hover {
+            background: var(--accent-violet-hover);
+            transform: translateY(-2px);
+        }
+
+        .navbar {
+            padding: 10px 0;
+            background: #FFFFFF !important;
+            box-shadow: 0 4px 20px rgba(30, 27, 58, 0.07);
+            border-bottom: 1px solid rgba(107, 95, 168, 0.12);
+        }
+
+        .brand-logo {
+            font-weight: 700;
+            font-size: 1.15rem;
+            color: var(--primary-navy);
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            text-decoration: none !important;
+        }
+
+        .brand-logo i {
+            color: var(--accent-violet);
+            font-size: 1.5rem;
+        }
+
+        .custom-card-light {
+            background: var(--card-light-bg);
+            backdrop-filter: blur(16px);
+            border: 1px solid var(--border-soft);
+            border-radius: 24px;
+            padding: 36px;
+            box-shadow: 0 15px 40px rgba(30, 27, 58, 0.06);
+            transition: all 0.3s ease;
+        }
+
+        .stage-badge {
+            width: 48px;
+            height: 48px;
+            border-radius: 16px;
+            background: rgba(107, 95, 168, 0.12);
+            color: var(--accent-violet);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.4rem;
+            font-weight: 700;
+            margin-bottom: 20px;
+        }
+
+        .code-box {
+            background: #141226;
+            border-radius: 14px;
+            padding: 16px 20px;
+            font-family: 'Fira Code', 'Consolas', monospace;
+            font-size: 0.88rem;
+            color: #D4CEF0;
+            word-break: break-all;
+            overflow-wrap: anywhere;
+        }
+    </style>
+</head>
+<body>
+
+    <!-- Navigation Bar -->
+    <nav class="navbar navbar-expand-lg">
+        <div class="container">
+            <a class="brand-logo" href="/">
+                <i class="fa-solid fa-shield-cat"></i>
+                <span>VeriFace Proof</span>
+            </a>
+            
+            <button class="navbar-toggler border-0" type="button" data-bs-toggle="collapse" data-bs-target="#navbarContent">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+
+            <div class="collapse navbar-collapse" id="navbarContent">
+                <ul class="navbar-nav mx-auto mb-2 mb-lg-0 gap-4 font-semibold">
+                    <li class="nav-item">
+                        <a class="nav-link text-dark fw-semibold" href="/pipeline"><i class="fa-solid fa-key me-1" style="color: var(--accent-violet);"></i> Generate SHA</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link text-dark fw-semibold" href="/verify"><i class="fa-solid fa-shield-check me-1 text-success"></i> Verify SHA</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link text-primary fw-bold" href="/pipeline-details"><i class="fa-solid fa-diagram-project me-1 text-primary"></i> Pipeline Detailed</a>
+                    </li>
+                </ul>
+
+                <div class="d-flex align-items-center gap-3">
+                    <a href="/team" class="btn-pill btn-sm px-4 py-2">
+                        <i class="fa-solid fa-users-viewfinder me-1"></i> Team GenZ
+                    </a>
+                </div>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Detailed Architecture Main Workspace -->
+    <main class="container my-5">
+        <div class="text-center mb-5">
+            <span class="micro-label"><i class="fa-solid fa-sitemap me-1"></i> Architecture Deep Dive</span>
+            <h1 class="fw-bold mb-3" style="color: var(--primary-navy); font-size: 2.6rem;">Three-Stage Verification Pipeline Detailed</h1>
+            <p class="text-dark fw-semibold leading-relaxed max-w-700 mx-auto" style="color: #000000 !important; font-size: 1.05rem;">
+                An end-to-end cryptographic identification system integrating OpenCV biometrics, concurrent OSINT multi-engine web discovery, and Proof-of-Work blockchain ledger anchoring.
+            </p>
+        </div>
+
+        <!-- Stage 1 Card -->
+        <div class="custom-card-light mb-4">
+            <div class="row align-items-center g-4">
+                <div class="col-lg-7">
+                    <div class="stage-badge"><i class="fa-solid fa-user-astronaut"></i></div>
+                    <span class="micro-label">Stage 1 &bull; Biometric Feature Extraction</span>
+                    <h3 class="fw-bold mb-3" style="color: var(--primary-navy);">Face Identification & Descriptor Hashing</h3>
+                    <p class="text-secondary mb-3 leading-relaxed">
+                        Input images or webcam frames are processed using OpenCV Haar Cascades for facial region detection. The cropped facial ROI undergoes histogram equalization, scaling, and feature extraction via scale-invariant ORB (Oriented FAST and Rotated BRIEF) keypoint descriptors.
+                    </p>
+                    <ul class="text-secondary small mb-3 ps-3">
+                        <li>Automated face region detection and bounding box isolation.</li>
+                        <li>512-bit ORB keypoint descriptor array encoding.</li>
+                        <li>SHA-256 visual perceptual hash generation for privacy-preserving storage.</li>
+                    </ul>
+                </div>
+                <div class="col-lg-5">
+                    <div class="code-box">
+                        <span class="text-warning"># Stage 1 Execution Sample</span><br>
+                        face_cascade = cv2.CascadeClassifier(...)<br>
+                        orb = cv2.ORB_create(nfeatures=500)<br>
+                        kp, des = orb.detectAndCompute(gray_roi, None)<br>
+                        visual_sha256 = hashlib.sha256(des.tobytes()).hexdigest()<br>
+                        <span class="text-success">&gt; Face SHA-256 Generated</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Stage 2 Card -->
+        <div class="custom-card-light mb-4">
+            <div class="row align-items-center g-4">
+                <div class="col-lg-7">
+                    <div class="stage-badge" style="background: rgba(16, 185, 129, 0.12); color: #10B981;"><i class="fa-solid fa-globe"></i></div>
+                    <span class="micro-label" style="color: #10B981;">Stage 2 &bull; Multi-Engine Social OSINT</span>
+                    <h3 class="fw-bold mb-3" style="color: var(--primary-navy);">Concurrent Multi-Engine Web Discovery</h3>
+                    <p class="text-secondary mb-3 leading-relaxed">
+                        Concurrently queries dynamic web search engines (DuckDuckGo, Yahoo, Google, Bing, Wikipedia) to aggregate matching social profiles across LinkedIn, X/Twitter, Instagram, GitHub, and Facebook. Crawled metadata is normalized and hashed into a canonical content fingerprint.
+                    </p>
+                    <ul class="text-secondary small mb-3 ps-3">
+                        <li>Parallel web scraping across 5 search engines.</li>
+                        <li>Social media profile URL extraction and platform classification.</li>
+                        <li>Combined payload canonical fingerprint calculation.</li>
+                    </ul>
+                </div>
+                <div class="col-lg-5">
+                    <div class="code-box">
+                        <span class="text-warning"># Stage 2 Search Engines</span><br>
+                        engines = ['DuckDuckGo', 'Yahoo', 'Google', 'Bing', 'Wikipedia']<br>
+                        discovered_profiles = concurrent_search(name, handle)<br>
+                        content_sha256 = hashlib.sha256(metadata).hexdigest()<br>
+                        <span class="text-success">&gt; OSINT Metadata SHA-256 Generated</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Stage 3 Card -->
+        <div class="custom-card-light mb-5">
+            <div class="row align-items-center g-4">
+                <div class="col-lg-7">
+                    <div class="stage-badge" style="background: rgba(245, 158, 11, 0.12); color: #F59E0B;"><i class="fa-solid fa-link"></i></div>
+                    <span class="micro-label" style="color: #F59E0B;">Stage 3 &bull; Proof-of-Work Blockchain</span>
+                    <h3 class="fw-bold mb-3" style="color: var(--primary-navy);">Tamper-Evident Ledger Anchoring</h3>
+                    <p class="text-secondary mb-3 leading-relaxed">
+                        Combines the facial perceptual hash and social web fingerprint into a unified cryptographic transaction payload. A SHA-256 Proof-of-Work mining puzzle is solved to mint a block hash with leading zero difficulty, permanently recording the proof in SQLite blockchain ledger.
+                    </p>
+                    <ul class="text-secondary small mb-3 ps-3">
+                        <li>PoW Block mining with configurable difficulty target (e.g. 0000...).</li>
+                        <li>Merkle tree chaining of previous block hash to current TxHash.</li>
+                        <li>Instant verification and auditability via TxHash lookups.</li>
+                    </ul>
+                </div>
+                <div class="col-lg-5">
+                    <div class="code-box">
+                        <span class="text-warning"># Stage 3 Ledger Block Structure</span><br>
+                        block = {<br>
+                        &nbsp;&nbsp;'index': block_id,<br>
+                        &nbsp;&nbsp;'face_sha': visual_sha256,<br>
+                        &nbsp;&nbsp;'web_sha': content_sha256,<br>
+                        &nbsp;&nbsp;'previous_hash': prev_hash,<br>
+                        &nbsp;&nbsp;'nonce': min_nonce<br>
+                        }<br>
+                        <span class="text-success">&gt; Block Mined & Anchored On-Chain</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- CTA Action Banner -->
+        <div class="p-4 rounded-4 text-center" style="background: var(--primary-navy); color: #FFFFFF;">
+            <h3 class="text-white fw-bold mb-2">Ready to Run the Pipeline?</h3>
+            <p class="text-white-50 max-w-600 mx-auto mb-4">Test the complete end-to-end verification engine by capturing or uploading a face scan now.</p>
+            <div class="d-flex justify-content-center gap-3">
+                <a href="/pipeline" class="btn-pill"><i class="fa-solid fa-bolt me-1"></i> Launch Pipeline (Generate SHA)</a>
+                <a href="/verify" class="btn-pill" style="background: rgba(255,255,255,0.15);"><i class="fa-solid fa-shield-check me-1"></i> Audit Ledger (Verify SHA)</a>
+            </div>
+        </div>
+    </main>
+
+    <footer class="py-2 text-center border-top text-muted small bg-white mt-auto" style="font-size: 0.78rem;">
+        VeriFace Proof &bull; Cryptographic Identity Verification Platform
+    </footer>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>

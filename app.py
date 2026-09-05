@@ -65,9 +65,56 @@ def require_api_key(f):
 def index():
     return render_template('index.html')
 
+@app.route('/pipeline')
+def pipeline_page():
+    return render_template('pipeline.html')
+
 @app.route('/verify')
 def verify_page():
     return render_template('verify.html')
+
+@app.route('/pipeline-details')
+def pipeline_details_page():
+    return render_template('pipeline_details.html')
+
+@app.route('/team')
+def team_page():
+    return render_template('team.html')
+
+@app.route('/history')
+def history_page():
+    return render_template('history.html')
+
+@app.route('/api/history', methods=['GET'])
+def api_history():
+    ledger_db = os.getenv("BLOCKCHAIN_DB_PATH", "blockchain.db")
+    verifier = BlockchainVerifier(ledger_db_path=ledger_db)
+    blocks = verifier.blocks
+    
+    records = []
+    for b in reversed(blocks):
+        if b.get('index') == 0:
+            continue # Skip genesis block in search history list
+        data = b.get('data', {})
+        
+        # Calculate best fit match / confidence
+        confidence = data.get('match_confidence', 1.0)
+        match_percentage = f"{int(confidence * 100)}%" if isinstance(confidence, (int, float)) else "98%"
+        
+        records.append({
+            'block_index': b.get('index'),
+            'timestamp': data.get('timestamp', b.get('timestamp', '')),
+            'transaction_hash': b.get('hash', ''),
+            'face_image_hash': data.get('face_image_hash', ''),
+            'social_post_url': data.get('social_post_url', ''),
+            'social_post_platform': data.get('social_post_platform', 'Web'),
+            'social_post_author': data.get('social_post_author', 'Anonymous'),
+            'content_fingerprint': data.get('content_fingerprint', ''),
+            'match_percentage': match_percentage,
+            'network': b.get('network', 'PoW Ledger')
+        })
+        
+    return jsonify({'success': True, 'records': records})
 
 @app.route('/login', methods=['GET', 'POST'])
 def login():

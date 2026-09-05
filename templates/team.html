@@ -1,0 +1,320 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Team GenZ - VeriFace Proof</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --bg-gradient-top: #F3F0FA;
+            --bg-gradient-bottom: #E2DBF2;
+            --primary-navy: #1E1B3A;
+            --accent-violet: #6B5FA8;
+            --accent-violet-hover: #594d94;
+            --text-primary: #1E1B3A;
+            --text-secondary: #64748B;
+            --text-light: #FFFFFF;
+            --card-light-bg: rgba(255, 255, 255, 0.94);
+            --border-soft: rgba(107, 95, 168, 0.15);
+        }
+
+        body {
+            background: linear-gradient(180deg, rgba(243, 240, 250, 0.6) 0%, rgba(226, 219, 242, 0.8) 100%), url('/static/images/hero_bg.jpg') center/cover no-repeat;
+            background-attachment: fixed;
+            color: var(--text-primary);
+            font-family: 'Inter', system-ui, -apple-system, sans-serif;
+            min-height: 100vh;
+            margin: 0;
+            padding: 0;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .micro-label {
+            font-size: 0.75rem;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 0.15em;
+            color: var(--accent-violet);
+            display: inline-block;
+            margin-bottom: 0.75rem;
+        }
+
+        .btn-pill {
+            background: var(--accent-violet);
+            color: var(--text-light) !important;
+            font-weight: 600;
+            border-radius: 50px;
+            padding: 9px 24px;
+            border: none;
+            text-decoration: none !important;
+            box-shadow: 0 10px 25px rgba(107, 95, 168, 0.25);
+            transition: all 0.3s ease;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+        }
+
+        .btn-pill:hover {
+            background: var(--accent-violet-hover);
+            transform: translateY(-2px);
+        }
+
+        .navbar {
+            padding: 10px 0;
+            background: #FFFFFF !important;
+            box-shadow: 0 4px 20px rgba(30, 27, 58, 0.07);
+            border-bottom: 1px solid rgba(107, 95, 168, 0.12);
+        }
+
+        .brand-logo {
+            font-weight: 700;
+            font-size: 1.15rem;
+            color: var(--primary-navy);
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            text-decoration: none !important;
+        }
+
+        .brand-logo i {
+            color: var(--accent-violet);
+            font-size: 1.5rem;
+        }
+
+        .team-card {
+            background: var(--card-light-bg);
+            backdrop-filter: blur(16px);
+            border: 1px solid var(--border-soft);
+            border-radius: 24px;
+            padding: 34px 26px;
+            box-shadow: 0 12px 36px rgba(30, 27, 58, 0.06);
+            transition: all 0.3s ease;
+            text-align: center;
+            height: 100%;
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+        }
+
+        .team-card:hover {
+            transform: translateY(-6px);
+            box-shadow: 0 20px 45px rgba(107, 95, 168, 0.18);
+            border-color: var(--accent-violet);
+        }
+
+        .member-avatar-img {
+            width: 120px;
+            height: 120px;
+            border-radius: 50%;
+            object-fit: cover;
+            margin: 0 auto 18px;
+            box-shadow: 0 10px 25px rgba(107, 95, 168, 0.3);
+            border: 4px solid #FFFFFF;
+            background: #E2DBF2;
+            display: block;
+        }
+
+        .member-role-badge {
+            font-size: 0.8rem;
+            font-weight: 700;
+            padding: 5px 14px;
+            border-radius: 50px;
+            display: inline-block;
+            margin-bottom: 10px;
+        }
+
+        .social-link-btn {
+            width: 42px;
+            height: 42px;
+            border-radius: 50%;
+            background: rgba(107, 95, 168, 0.1);
+            color: var(--primary-navy);
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            text-decoration: none;
+            transition: all 0.2s ease;
+            font-size: 1.15rem;
+        }
+
+        .social-link-btn:hover {
+            background: #0077b5;
+            color: #FFFFFF;
+            transform: translateY(-2px);
+            box-shadow: 0 6px 16px rgba(0, 119, 181, 0.3);
+        }
+    </style>
+</head>
+<body>
+
+    <!-- Navigation Bar -->
+    <nav class="navbar navbar-expand-lg">
+        <div class="container">
+            <a class="brand-logo" href="/">
+                <i class="fa-solid fa-shield-cat"></i>
+                <span>VeriFace Proof</span>
+            </a>
+            
+            <button class="navbar-toggler border-0" type="button" data-bs-toggle="collapse" data-bs-target="#navbarContent">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+
+            <div class="collapse navbar-collapse" id="navbarContent">
+                <ul class="navbar-nav mx-auto mb-2 mb-lg-0 gap-4 font-semibold">
+                    <li class="nav-item">
+                        <a class="nav-link text-dark fw-semibold" href="/pipeline"><i class="fa-solid fa-key me-1" style="color: var(--accent-violet);"></i> Generate SHA</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link text-dark fw-semibold" href="/verify"><i class="fa-solid fa-shield-check me-1 text-success"></i> Verify SHA</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link text-dark fw-semibold" href="/pipeline-details"><i class="fa-solid fa-diagram-project me-1 text-primary"></i> Pipeline Detailed</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link text-dark fw-semibold" href="/history"><i class="fa-solid fa-clock-rotate-left me-1 text-warning"></i> SHA History</a>
+                    </li>
+                </ul>
+
+                <div class="d-flex align-items-center gap-3">
+                    <a href="/team" class="btn-pill btn-sm px-4 py-2">
+                        <i class="fa-solid fa-users-viewfinder me-1"></i> Team GenZ
+                    </a>
+                </div>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Main Team Content Container -->
+    <main class="container my-5">
+        <div class="text-center mb-5">
+            <span class="micro-label"><i class="fa-solid fa-users me-1"></i> Student Engineering Team</span>
+            <h1 class="fw-bold mb-3" style="color: var(--primary-navy); font-size: 2.6rem;">Meet Team GenZ</h1>
+            <p class="text-dark fw-semibold leading-relaxed max-w-700 mx-auto" style="color: #000000 !important; font-size: 1.05rem;">
+                Third-Year B.Tech Computer Engineering students from <strong>CHARUSAT University, Gujarat</strong>, pioneering decentralized artificial intelligence and cryptographic blockchain verification.
+            </p>
+        </div>
+
+        <!-- Team Members Grid -->
+        <div class="row g-4 justify-content-center mb-5">
+            <!-- Member 1: Krishkumar Darji (Team Leader) -->
+            <div class="col-md-6 col-lg-4">
+                <div class="team-card">
+                    <div>
+                        <img src="/static/images/krishkumar_darji.jpg" alt="Krishkumar Darji" class="member-avatar-img">
+                        <h4 class="fw-bold mb-1" style="color: var(--primary-navy);">Krishkumar Darji</h4>
+                        <span class="member-role-badge bg-primary text-white mb-2">
+                            <i class="fa-solid fa-crown me-1 text-warning"></i> Team Leader
+                        </span>
+                        <div class="text-muted small fw-semibold mb-1">
+                            <i class="fa-solid fa-graduation-cap me-1 text-primary"></i> B.Tech Computer Engineering
+                        </div>
+                        <div class="text-primary small fw-bold mb-2">
+                            3rd Year Student
+                        </div>
+                        <div class="text-secondary small fw-medium mb-3">
+                            <i class="fa-solid fa-building-columns me-1 text-secondary"></i> CHARUSAT University, Gujarat
+                        </div>
+                        <p class="small text-secondary mb-3">
+                            Project lead overseeing system architecture, Proof-of-Work blockchain consensus, cryptographic ledger auditing, and full-stack integration.
+                        </p>
+                    </div>
+                    <div class="pt-3 border-top d-flex justify-content-center">
+                        <a href="https://www.linkedin.com/in/krishkumar-d-b4a7952b1" target="_blank" class="social-link-btn" title="Krishkumar Darji LinkedIn">
+                            <i class="fa-brands fa-linkedin-in"></i>
+                        </a>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Member 2: Ashiti Agath -->
+            <div class="col-md-6 col-lg-4">
+                <div class="team-card">
+                    <div>
+                        <img src="/static/images/ashiti_agath.jpg" alt="Ashiti Agath" class="member-avatar-img">
+                        <h4 class="fw-bold mb-1" style="color: var(--primary-navy);">Ashiti Agath</h4>
+                        <span class="member-role-badge bg-success-subtle text-success border border-success-subtle mb-2">
+                            <i class="fa-solid fa-code-branch me-1"></i> Core Developer
+                        </span>
+                        <div class="text-muted small fw-semibold mb-1">
+                            <i class="fa-solid fa-graduation-cap me-1 text-primary"></i> B.Tech Computer Engineering
+                        </div>
+                        <div class="text-primary small fw-bold mb-2">
+                            3rd Year Student
+                        </div>
+                        <div class="text-secondary small fw-medium mb-3">
+                            <i class="fa-solid fa-building-columns me-1 text-secondary"></i> CHARUSAT University, Gujarat
+                        </div>
+                        <p class="small text-secondary mb-3">
+                            Computer vision feature engineering, multi-tier facial detection, and perceptual keypoint descriptor hashing algorithms.
+                        </p>
+                    </div>
+                    <div class="pt-3 border-top d-flex justify-content-center">
+                        <a href="https://www.linkedin.com/in/ashiti-agath-567730317/" target="_blank" class="social-link-btn" title="Ashiti Agath LinkedIn">
+                            <i class="fa-brands fa-linkedin-in"></i>
+                        </a>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Member 3: Hasti Borda -->
+            <div class="col-md-6 col-lg-4">
+                <div class="team-card">
+                    <div>
+                        <img src="/static/images/hasti_borda.jpg" alt="Hasti Borda" class="member-avatar-img">
+                        <h4 class="fw-bold mb-1" style="color: var(--primary-navy);">Hasti Borda</h4>
+                        <span class="member-role-badge bg-warning-subtle text-dark border border-warning-subtle mb-2">
+                            <i class="fa-solid fa-magnifying-glass-chart me-1"></i> Core Developer
+                        </span>
+                        <div class="text-muted small fw-semibold mb-1">
+                            <i class="fa-solid fa-graduation-cap me-1 text-primary"></i> B.Tech Computer Engineering
+                        </div>
+                        <div class="text-primary small fw-bold mb-2">
+                            3rd Year Student
+                        </div>
+                        <div class="text-secondary small fw-medium mb-3">
+                            <i class="fa-solid fa-building-columns me-1 text-secondary"></i> CHARUSAT University, Gujarat
+                        </div>
+                        <p class="small text-secondary mb-3">
+                            OSINT metadata fingerprinting, multi-engine web intelligence retrieval, and decentralized ledger verification integration.
+                        </p>
+                    </div>
+                    <div class="pt-3 border-top d-flex justify-content-center">
+                        <a href="https://www.linkedin.com/in/hasti-borda-535834320/" target="_blank" class="social-link-btn" title="Hasti Borda LinkedIn">
+                            <i class="fa-brands fa-linkedin-in"></i>
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Academic & University Highlight Card -->
+        <div class="p-4 rounded-4" style="background: var(--primary-navy); color: #FFFFFF; border: 1px solid rgba(107, 95, 168, 0.3);">
+            <div class="row align-items-center g-4">
+                <div class="col-lg-8">
+                    <span class="micro-label" style="color: #A397E2;"><i class="fa-solid fa-graduation-cap me-1"></i> Academic & Innovation Excellence</span>
+                    <h3 class="text-white fw-bold mb-2">CHARUSAT University &bull; Team GenZ</h3>
+                    <p class="text-white-50 mb-0">
+                        Developed by 3rd-year B.Tech Computer Engineering students at Charotar University of Science and Technology (CHARUSAT), Gujarat. Dedicated to creating high-trust, privacy-preserving biometrics backed by decentralized blockchain ledger transparency.
+                    </p>
+                </div>
+                <div class="col-lg-4 text-lg-end">
+                    <a href="/pipeline" class="btn-pill"><i class="fa-solid fa-bolt me-1"></i> Launch Verification Pipeline</a>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <footer class="py-2 text-center border-top text-muted small bg-white mt-auto" style="font-size: 0.78rem;">
+        VeriFace Proof &bull; Team GenZ &bull; CHARUSAT University Gujarat
+    </footer>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>
