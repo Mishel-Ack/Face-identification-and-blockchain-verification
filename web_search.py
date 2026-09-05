@@ -73,7 +73,14 @@ class WebSearchEngine:
                         "title": item.get("title", ""),
                         "content": item.get("body", ""),
                         "timestamp": time.strftime("%Y-%m-%dT%H:%M:%SZ", time.gmtime()),
-                        "image_url": item["href"],
+                        # NOTE: DuckDuckGo's text search API does not return a
+                        # distinct preview image, only the page URL -- so there
+                        # is no real image to visually compare here. Leaving
+                        # image_url empty (rather than reusing the page URL)
+                        # ensures the scoring step below correctly treats this
+                        # as "no visual evidence available" instead of trying
+                        # and failing to decode an HTML page as an image.
+                        "image_url": "",
                         "associated_tags": ["WebResult", "LiveSearch"],
                         "source": "duckduckgo_text_search"
                     })
@@ -129,11 +136,19 @@ class WebSearchEngine:
     def search_google_vision_web(self, image_path: str) -> List[Dict[str, Any]]:
         """
         Performs real image-based reverse search via Google Cloud Vision WEB_DETECTION API.
-        Requires google-cloud-vision SDK and valid Application Default Credentials.
+        Requires the `google-cloud-vision` package and valid Application Default
+        Credentials (env var GOOGLE_APPLICATION_CREDENTIALS pointing at a service
+        account JSON key, or `gcloud auth application-default login`).
         """
         results = []
         try:
             from google.cloud import vision
+        except ImportError:
+            print("[WebSearchEngine] Google Vision skipped: 'google-cloud-vision' "
+                  "not installed (pip install google-cloud-vision).")
+            return results
+
+        try:
             client = vision.ImageAnnotatorClient()
             with open(image_path, "rb") as image_file:
                 content = image_file.read()
@@ -157,7 +172,9 @@ class WebSearchEngine:
                         "source": "google_cloud_vision_api"
                     })
         except Exception as e:
-            pass
+            # Most common causes: missing/invalid Application Default Credentials,
+            # billing not enabled on the GCP project, or API not enabled.
+            print(f"[WebSearchEngine] Google Cloud Vision API warning: {e}")
 
         return results
 
@@ -194,6 +211,19 @@ class WebSearchEngine:
             search_results.extend(self.mock_social_posts)
             is_demo_fallback = True
 
+        # 3b. De-duplicate by URL across Bing/Google/DuckDuckGo sources,
+        # keeping the first (highest-priority, since reverse-image sources
+        # were appended before the keyword search) occurrence of each URL.
+        seen_urls = set()
+        deduped_results = []
+        for item in search_results:
+            url = item.get("url", "")
+            if url and url in seen_urls:
+                continue
+            seen_urls.add(url)
+            deduped_results.append(item)
+        search_results = deduped_results
+
         # 4. Candidate Scoring & Visual Face Embedding Verification
         query_terms = [t.lower() for t in query_keywords.split()]
         scored_matches = []
@@ -202,23 +232,32 @@ class WebSearchEngine:
         if face_data.get("faces") and len(face_data["faces"]) > 0:
             input_embedding = face_data["faces"][0]["encoding"].get("embedding")
 
+        # Sources that came from an actual image-based reverse search carry
+        # much stronger evidence than a keyword text match, so they get a
+        # higher ceiling / weighting once a real visual comparison succeeds.
+        REVERSE_IMAGE_SOURCES = {"bing_visual_search_api", "google_cloud_vision_api"}
+
         for item in search_results:
             title_text = item.get("title", "").lower()
             content_text = item.get("content", "").lower()
-            
+
             # Text relevance score
             text_matches = sum(1 for term in query_terms if term in title_text or term in content_text)
             term_score = text_matches / len(query_terms) if query_terms else 0.5
-            
+
             # Social platform boost
             url_lower = item.get("url", "").lower()
             is_social = any(p in url_lower for p in ["twitter.com", "x.com", "linkedin.com", "instagram.com", "facebook.com", "github.com", "youtube.com", "reddit.com"])
             platform_boost = 0.30 if is_social else 0.05
-            
-            # Real face visual similarity evaluation
-            visual_sim = 0.50
+
+            # Real face visual similarity evaluation.
+            # visual_sim = None means "no visual comparison was possible at
+            # all" (no image to check), which is scored differently from a
+            # low-but-computed similarity (which means "we checked and it
+            # does NOT look like the same person").
+            visual_sim = None
             item_img_url = item.get("image_url", "")
-            
+
             if input_embedding and len(input_embedding) > 0 and item_img_url:
                 try:
                     img_bytes = None
@@ -236,19 +275,46 @@ class WebSearchEngine:
                         if cand_img is not None:
                             from face_engine import FaceEngine
                             temp_engine = FaceEngine()
-                            cand_bboxes, cand_crops = temp_engine.detect_faces_from_array(cand_img) if hasattr(temp_engine, 'detect_faces_from_array') else ([(0, 0, cand_img.shape[1], cand_img.shape[0])], [cand_img])
+                            cand_bboxes, cand_crops = temp_engine.detect_faces_from_array(cand_img)
                             if cand_crops:
                                 cand_encoding = temp_engine.encode_face(cand_crops[0])
                                 input_enc_dict = face_data["faces"][0]["encoding"]
                                 visual_sim = temp_engine.compute_similarity(input_enc_dict, cand_encoding)
-                except Exception:
-                    visual_sim = 0.40
+                except Exception as err:
+                    print(f"[WebSearchEngine] Visual comparison failed for {item_img_url}: {err}")
+                    visual_sim = None
 
-            # Compute Candidate Relevance Score (Text + Platform + Real Visual Similarity)
-            candidate_relevance_score = min(0.99, max(0.20, round(0.30 * term_score + platform_boost + 0.50 * visual_sim, 4)))
-            
-            item["visual_verified"] = visual_sim >= 0.60
-            item["computed_visual_sim"] = visual_sim
+            has_verified_visual = visual_sim is not None
+            source = item.get("source", "unknown")
+
+            if has_verified_visual:
+                # A real, computed face-similarity score exists: this is the
+                # strongest evidence available and should dominate the score
+                # regardless of which source produced the candidate.
+                candidate_relevance_score = min(
+                    0.99,
+                    round(0.15 * term_score + 0.10 * platform_boost + 0.75 * visual_sim, 4)
+                )
+            elif source in REVERSE_IMAGE_SOURCES:
+                # Came from a real reverse-image-search API, but we couldn't
+                # download/decode its preview image to verify -- still more
+                # credible than a pure keyword guess, but capped below any
+                # visually-verified result.
+                candidate_relevance_score = min(
+                    0.65,
+                    round(0.30 * term_score + platform_boost + 0.20, 4)
+                )
+            else:
+                # Pure keyword/text match with no visual evidence at all
+                # (DuckDuckGo text search, or demo fallback data). Capped
+                # well below anything that has been visually checked.
+                candidate_relevance_score = min(
+                    0.55,
+                    max(0.15, round(0.40 * term_score + platform_boost, 4))
+                )
+
+            item["visual_verified"] = bool(has_verified_visual and visual_sim >= 0.60)
+            item["computed_visual_sim"] = visual_sim  # None if no comparison was possible
             item["candidate_relevance_score"] = candidate_relevance_score
             scored_matches.append((candidate_relevance_score, item))
 

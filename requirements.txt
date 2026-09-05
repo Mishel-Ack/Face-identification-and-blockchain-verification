@@ -22,3 +22,9 @@ insightface>=0.7.3
 # face_recognition>=1.3.0
 # deepface>=0.0.90
 
+# Reverse image search (optional). Bing Visual Search only needs `requests`
+# (already listed above) plus the BING_VISUAL_SEARCH_KEY env var. Google
+# Cloud Vision needs this SDK plus Application Default Credentials -- see
+# README "Reverse Image Search Setup" for both.
+google-cloud-vision>=3.7.0
+

@@ -939,12 +939,25 @@
                 <div class="mb-4">
                     <span class="micro-label">Stage 2</span>
                     <h5 class="fw-bold mb-2">Web & Social Discovery</h5>
+                    ${search.is_demo_fallback ? `
+                        <div class="alert alert-warning py-2 px-3 mb-2" style="font-size: 0.9rem;">
+                            <i class="fa-solid fa-triangle-exclamation me-2"></i>
+                            <strong>Demo data:</strong> no live search results were found for this
+                            query, so the result below is placeholder/sample data, not a real match
+                            discovered on the web.
+                        </div>
+                    ` : ''}
                     <div class="code-box">
                         <div><strong>Matched Platform:</strong> <span class="badge" style="background: var(--accent-violet);">${post.platform}</span></div>
                         <div><strong>Title / Headline:</strong> ${cleanTitle}</div>
                         <div><strong>Author / Domain:</strong> ${post.author}</div>
                         <div><strong>Discovered URL:</strong> <a href="${post.url}" target="_blank" style="color: #A397E2; word-break: break-all;">${post.url}</a></div>
-                        <div><strong>Match Confidence:</strong> ${(search.match_confidence * 100).toFixed(1)}%</div>
+                        <div><strong>Candidate Relevance Score:</strong> ${(search.candidate_relevance_score * 100).toFixed(1)}%</div>
+                        <div><strong>Search Source:</strong> <span class="badge" style="background:#3a3a4a;">${search.search_source}</span>
+                            ${search.post_metadata.computed_visual_sim !== null && search.post_metadata.computed_visual_sim !== undefined
+                                ? ` &nbsp;|&nbsp; Real face similarity checked: ${(search.post_metadata.computed_visual_sim * 100).toFixed(1)}%`
+                                : ' &nbsp;|&nbsp; No candidate image could be visually compared'}
+                        </div>
                         <div class="mt-1"><strong>Cryptographic Content Fingerprint:</strong></div>
                         <div class="fw-bold text-white text-break" style="word-break: break-all;">${search.content_fingerprint}</div>
                     </div>
