@@ -116,15 +116,43 @@ class WebSearchEngine:
             is_social = any(p in url_lower for p in ["twitter.com", "x.com", "linkedin.com", "instagram.com", "facebook.com", "github.com", "youtube.com", "reddit.com"])
             platform_boost = 0.30 if is_social else 0.05
             
-            # Calculate cosine visual similarity factor if available
-            visual_sim = 0.85
-            if input_embedding and len(input_embedding) > 0:
-                # Calculate deterministic visual match ratio based on perceptual face hashes
-                sim_hash_match = 0.95 if face_data.get("image_hash") else 0.80
-                visual_sim = sim_hash_match
+            # Calculate real visual similarity if input face embedding exists
+            visual_sim = 0.50  # default baseline if no visual comparison possible
+            item_img_url = item.get("image_url", "")
+            
+            if input_embedding and len(input_embedding) > 0 and item_img_url:
+                try:
+                    # Attempt to fetch image content from candidate URL
+                    img_bytes = None
+                    if item_img_url.startswith("http://") or item_img_url.startswith("https://"):
+                        resp = requests.get(item_img_url, timeout=4)
+                        if resp.status_code == 200:
+                            img_bytes = resp.content
+                    elif os.path.exists(item_img_url):
+                        with open(item_img_url, "rb") as f:
+                            img_bytes = f.read()
 
-            confidence = min(0.99, max(0.65, round(0.35 * term_score + platform_boost + 0.35 * visual_sim, 4)))
-            item["visual_verified"] = True
+                    if img_bytes:
+                        # Decode image from memory
+                        np_arr = np.frombuffer(img_bytes, np.uint8)
+                        cand_img = cv2.imdecode(np_arr, cv2.IMREAD_COLOR)
+                        if cand_img is not None:
+                            # Encode candidate face
+                            from face_engine import FaceEngine
+                            temp_engine = FaceEngine()
+                            cand_bboxes, cand_crops = temp_engine.detect_faces_from_array(cand_img) if hasattr(temp_engine, 'detect_faces_from_array') else ([(0, 0, cand_img.shape[1], cand_img.shape[0])], [cand_img])
+                            if cand_crops:
+                                cand_encoding = temp_engine.encode_face(cand_crops[0])
+                                # Compute real similarity with input face encoding
+                                input_enc_dict = face_data["faces"][0]["encoding"]
+                                visual_sim = temp_engine.compute_similarity(input_enc_dict, cand_encoding)
+                except Exception as err:
+                    # If image download/encoding fails, fall back to conservative visual similarity estimate
+                    visual_sim = 0.40
+
+            confidence = min(0.99, max(0.20, round(0.30 * term_score + platform_boost + 0.50 * visual_sim, 4)))
+            item["visual_verified"] = visual_sim >= 0.60
+            item["computed_visual_sim"] = visual_sim
             scored_matches.append((confidence, item))
 
         # Sort matches by calculated confidence score

@@ -80,13 +80,22 @@ def test_blockchain_verification(sample_image):
     assert is_valid is True
     assert details["valid"] is True
 
-    # Test Tamper Detection
+    # Test Tamper Detection: Fingerprint Mismatch
     is_valid_tampered, tamper_details = verifier.verify_on_chain_record(
         tx_record["transaction_hash"],
         expected_content_fingerprint="INVALID_TAMPERED_FINGERPRINT"
     )
     assert is_valid_tampered is False
     assert "Fingerprint mismatch" in tamper_details["error"]
+
+    # Test Full Chain Tamper Detection: Deleting middle block
+    if len(verifier.blocks) > 1:
+        original_blocks = list(verifier.blocks)
+        verifier.blocks.pop(0)  # delete genesis block
+        chain_ok, chain_msg = verifier.validate_full_chain()
+        assert chain_ok is False
+        assert "Chain broken" in chain_msg or "Previous hash mismatch" in chain_msg
+        verifier.blocks = original_blocks
 
     if os.path.exists(ledger_path):
         os.remove(ledger_path)

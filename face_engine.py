@@ -40,11 +40,30 @@ class FaceEngine:
         bboxes = []
         face_crops = []
 
-        # 1. Try face_recognition (dlib ResNet CNN face detector - 99.38% LFW Accuracy)
+    def detect_faces(self, image_path: str):
+        """
+        Detects faces using multi-stage DNN/CNN and Haar cascades for maximum accuracy.
+        Returns bounding boxes [(x, y, w, h)] and cropped face images.
+        """
+        if not os.path.exists(image_path):
+            raise FileNotFoundError(f"Image file not found: {image_path}")
+
+        img = cv2.imread(image_path)
+        if img is None:
+            raise ValueError(f"Could not load image file: {image_path}")
+
+        bboxes = []
+        face_crops = []
+
+        # 1. Try face_recognition (CNN model preferred for accuracy; fallback to upsampled HOG)
         try:
             import face_recognition
             rgb_img = cv2.cvtColor(img, cv2.COLOR_BGR2RGB)
-            face_locations = face_recognition.face_locations(rgb_img, model="hog")
+            try:
+                face_locations = face_recognition.face_locations(rgb_img, model="cnn")
+            except Exception:
+                face_locations = face_recognition.face_locations(rgb_img, number_of_times_to_upsample=1, model="hog")
+                
             for top, right, bottom, left in face_locations:
                 w, h = right - left, bottom - top
                 bboxes.append((int(left), int(top), int(w), int(h)))
@@ -69,10 +88,51 @@ class FaceEngine:
 
         return bboxes, face_crops
 
+    def detect_faces_from_array(self, img: np.ndarray):
+        """
+        Detects faces directly from a numpy BGR image array.
+        """
+        if img is None or img.size == 0:
+            return [], []
+
+        bboxes = []
+        face_crops = []
+
+        try:
+            import face_recognition
+            rgb_img = cv2.cvtColor(img, cv2.COLOR_BGR2RGB)
+            try:
+                face_locations = face_recognition.face_locations(rgb_img, model="cnn")
+            except Exception:
+                face_locations = face_recognition.face_locations(rgb_img, number_of_times_to_upsample=1, model="hog")
+                
+            for top, right, bottom, left in face_locations:
+                w, h = right - left, bottom - top
+                bboxes.append((int(left), int(top), int(w), int(h)))
+                face_crops.append(img[top:bottom, left:right])
+        except Exception:
+            pass
+
+        if len(bboxes) == 0 and self.face_cascade is not None:
+            gray = cv2.cvtColor(img, cv2.COLOR_BGR2GRAY)
+            faces = self.face_cascade.detectMultiScale(gray, scaleFactor=1.1, minNeighbors=4, minSize=(30, 30))
+            for (x, y, w, h) in faces:
+                crop = img[y:y+h, x:x+w]
+                face_crops.append(crop)
+                bboxes.append((int(x), int(y), int(w), int(h)))
+
+        if len(face_crops) == 0:
+            h, w = img.shape[:2]
+            face_crops.append(img)
+            bboxes.append((0, 0, w, h))
+
+        return bboxes, face_crops
+
     def encode_face(self, face_img: np.ndarray) -> dict:
         """
         Encodes face region into a feature vector descriptor, deep embedding vector, and cryptographic perceptual hash.
         """
+        h_crop, w_crop = face_img.shape[:2]
         gray = cv2.cvtColor(face_img, cv2.COLOR_BGR2GRAY) if len(face_img.shape) == 3 else face_img
         gray_resized = cv2.resize(gray, (128, 128))
 
@@ -81,22 +141,22 @@ class FaceEngine:
         if self.orb is not None:
             keypoints, descriptors = self.orb.detectAndCompute(gray_resized, None)
 
-        # Try 128-d ResNet face_recognition deep feature vector (99.38% LFW Accuracy Benchmark)
+        # Try 128-d ResNet face_recognition deep feature vector (passing explicit crop bounding box)
         resnet_embedding = None
         try:
             import face_recognition
             rgb_face = cv2.cvtColor(face_img, cv2.COLOR_BGR2RGB)
-            encs = face_recognition.face_encodings(rgb_face)
+            known_loc = [(0, w_crop, h_crop, 0)]
+            encs = face_recognition.face_encodings(rgb_face, known_face_locations=known_loc)
             if encs and len(encs) > 0:
                 resnet_embedding = encs[0].tolist()
         except Exception:
             pass
 
-        # Try deep feature encoding (Inspired by EVS DeepFace & ML-Server 128-d embeddings)
+        # Try deep feature encoding (DeepFace)
         deep_embedding = None
         try:
             from deepface import DeepFace
-            # Run lightweight VGG-Face / Facenet representation if installed
             embedding_objs = DeepFace.represent(img_path=face_img, model_name="VGG-Face", enforce_detection=False)
             if embedding_objs and len(embedding_objs) > 0:
                 deep_embedding = embedding_objs[0]["embedding"]
@@ -131,26 +191,46 @@ class FaceEngine:
             "embedding": final_embedding,
             "vector_type": vector_type,
             "is_deep_embedding": resnet_embedding is not None or deep_embedding is not None,
-            "dimensions": {"width": face_img.shape[1], "height": face_img.shape[0]}
+            "dimensions": {"width": w_crop, "height": h_crop}
         }
 
     def compute_similarity(self, encoding1: dict, encoding2: dict) -> float:
         """
-        Computes robust similarity score (0.0 to 1.0) between two face encodings.
-        Handles variations between professional DP/headshot photos and live webcam captures.
+        Computes similarity score (0.0 to 1.0) between two face encodings.
+        Calibrated against standard face recognition distance metrics.
         """
         vec1 = np.array(encoding1.get("embedding", []))
         vec2 = np.array(encoding2.get("embedding", []))
         if len(vec1) == 0 or len(vec2) == 0 or len(vec1) != len(vec2):
             return 0.0
 
-        if encoding1.get("vector_type") == "ResNet-128d (99.38% LFW Accuracy)":
-            # Euclidean distance for 128d ResNet face embeddings (threshold ~0.6)
-            euclidean_dist = np.linalg.norm(vec1 - vec2)
-            similarity = max(0.0, 1.0 - (euclidean_dist / 1.2))
+        vtype1 = encoding1.get("vector_type", "")
+        vtype2 = encoding2.get("vector_type", "")
+
+        # Refuse to claim high similarity for Pixel Intensity Profile fallbacks (lighting artifacts)
+        if vtype1 == "Pixel Intensity Profile" or vtype2 == "Pixel Intensity Profile":
+            dot_product = np.dot(vec1, vec2)
+            norm1 = np.linalg.norm(vec1)
+            norm2 = np.linalg.norm(vec2)
+            if norm1 == 0 or norm2 == 0:
+                return 0.0
+            pixel_sim = float((dot_product / (norm1 * norm2) + 1.0) / 2.0)
+            # Cap confidence low since it's only a pixel intensity profile
+            return float(np.round(min(0.40, pixel_sim * 0.40), 4))
+
+        if vtype1 == "ResNet-128d (99.38% LFW Accuracy)" and vtype2 == "ResNet-128d (99.38% LFW Accuracy)":
+            # Euclidean distance for 128d ResNet face embeddings
+            # Standard dlib threshold: dist < 0.6 => same person
+            euclidean_dist = float(np.linalg.norm(vec1 - vec2))
+            if euclidean_dist < 0.6:
+                # Map distance [0.0, 0.6) to similarity [1.0, 0.70)
+                similarity = 1.0 - (euclidean_dist / 0.6) * 0.30
+            else:
+                # Map distance [0.6, 1.0] to similarity [0.70, 0.0]
+                similarity = max(0.0, 0.70 - ((euclidean_dist - 0.6) / 0.4) * 0.70)
             return float(np.round(similarity, 4))
 
-        # Standard Cosine Similarity for normalized vectors
+        # Cosine Similarity fallback for deep embeddings (e.g. DeepFace)
         dot_product = np.dot(vec1, vec2)
         norm1 = np.linalg.norm(vec1)
         norm2 = np.linalg.norm(vec2)
@@ -159,12 +239,8 @@ class FaceEngine:
             return 0.0
 
         cosine_sim = dot_product / (norm1 * norm2)
-        # Normalize from [-1, 1] to [0, 1]
         similarity = (cosine_sim + 1.0) / 2.0
-        return float(np.round(similarity, 4))
-
-        similarity = float(dot_product / (norm1 * norm2))
-        return max(0.0, min(1.0, similarity))
+        return float(np.round(max(0.0, min(1.0, similarity)), 4))
 
     def process_image(self, image_path: str) -> dict:
         """

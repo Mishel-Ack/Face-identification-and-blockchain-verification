@@ -28,12 +28,13 @@ class BlockchainVerifier:
                 pass
 
         # Create Genesis Block if ledger is empty
+        genesis_data = {"message": "Genesis Block - Face ID & Social Data Ledger"}
         genesis_block = {
             "index": 0,
             "timestamp": "2026-01-01T00:00:00Z",
-            "data": {"message": "Genesis Block - Face ID & Social Data Ledger"},
+            "data": genesis_data,
             "previous_hash": "0" * 64,
-            "hash": self._calculate_block_hash(0, "2026-01-01T00:00:00Z", {"message": "Genesis Block"}, "0" * 64, 0),
+            "hash": self._calculate_block_hash(0, "2026-01-01T00:00:00Z", genesis_data, "0" * 64, 0),
             "nonce": 0
         }
         self.blocks = [genesis_block]
@@ -86,7 +87,7 @@ class BlockchainVerifier:
         tx_payload = f"TX:{block_hash}:{record_payload['content_fingerprint']}:{timestamp}"
         tx_hash = "0x" + hashlib.sha256(tx_payload.encode()).hexdigest()
 
-        active_network = os.getenv("BLOCKCHAIN_NETWORK", "Polygon Amoy Testnet (Smart Contract & Proof Anchor)")
+        active_network = os.getenv("BLOCKCHAIN_NETWORK", "Cryptographic Local Ledger (SHA-256 Proof Anchor)")
 
         new_block = {
             "index": index,
@@ -113,25 +114,47 @@ class BlockchainVerifier:
             "record_payload": record_payload
         }
 
+    def validate_full_chain(self) -> Tuple[bool, str]:
+        """
+        Rigorously validates the entire hash chain from Genesis block down to the tip.
+        Checks block indices, previous hash linkage, and hash recalculations.
+        """
+        if not self.blocks:
+            return False, "Chain is empty."
+
+        for i, block in enumerate(self.blocks):
+            if block.get("index") != i:
+                return False, f"Chain broken: Block index mismatch at step {i} (found {block.get('index')})."
+
+            calc_hash = self._calculate_block_hash(
+                block["index"],
+                block["timestamp"],
+                block["data"],
+                block["previous_hash"],
+                block["nonce"]
+            )
+            if calc_hash != block["hash"]:
+                return False, f"Tampered block hash at index #{i}!"
+
+            if i > 0:
+                prev_block = self.blocks[i - 1]
+                if block["previous_hash"] != prev_block["hash"]:
+                    return False, f"Broken link between block #{i-1} and #{i}! Previous hash mismatch."
+
+        return True, "Chain integrity valid."
+
     def verify_on_chain_record(self, tx_hash: str, expected_content_fingerprint: str = None) -> Tuple[bool, Dict[str, Any]]:
         """
         Queries the blockchain ledger to verify transaction hash integrity & tamper status.
+        Performs a full chain walk to ensure overall chain continuity and block validity.
         """
+        chain_ok, chain_msg = self.validate_full_chain()
+        if not chain_ok:
+            return False, {"error": f"Blockchain validation failed: {chain_msg}"}
+
         for block in self.blocks:
             if block.get("transaction_hash") == tx_hash:
                 data = block["data"]
-                # Recalculate block hash to verify chain integrity
-                calc_hash = self._calculate_block_hash(
-                    block["index"],
-                    block["timestamp"],
-                    data,
-                    block["previous_hash"],
-                    block["nonce"]
-                )
-
-                if calc_hash != block["hash"]:
-                    return False, {"error": "Tampered block hash detected! Chain integrity compromised."}
-
                 if expected_content_fingerprint and data.get("content_fingerprint") != expected_content_fingerprint:
                     return False, {
                         "error": "Fingerprint mismatch! Discovered content does not match on-chain record.",
